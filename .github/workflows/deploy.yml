@@ -1,0 +1,112 @@
+name: Deploy Frontend
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Debug - Check Git Status
+        run: |
+          echo "Current branch:"
+          git branch --show-current
+          echo "\nAll branches:"
+          git branch -a
+          echo "\nLast commit:"
+          git log -1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: "./frontend/package-lock.json"
+
+      - name: Clean Install
+        working-directory: ./frontend
+        run: npm ci
+
+      - name: Build project
+        working-directory: ./frontend
+        run: |
+          echo "PUBLIC_URL set to: $PUBLIC_URL"
+          npm run build
+          echo "Build completed. Contents of build directory:"
+          ls -la build/
+        env:
+          CI: false
+          PUBLIC_URL: "https://code-clarity.insitechinternational.com"
+          # Add this if you're using Vite
+          VITE_APP_BASE_URL: "https://code-clarity.insitechinternational.com"
+
+      - name: Verify Build Output
+        working-directory: ./frontend
+        run: |
+          echo "Build directory structure:"
+          ls -la build/
+          echo "\nChecking for index.html in build:"
+          if [ -f "build/index.html" ]; then
+            echo "index.html exists in build directory"
+            echo "\nContent of index.html:"
+            head -n 20 build/index.html
+          else
+            echo "index.html is missing!"
+            echo "\nSearching for index.html:"
+            find . -name "index.html"
+          fi
+
+      - name: Prepare deployment
+        working-directory: ./frontend
+        run: |
+          # Ensure index.html exists and is in the right place
+          if [ ! -f "build/index.html" ]; then
+            echo "ERROR: index.html not found in build directory!"
+            exit 1
+          fi
+          # Create CNAME and .nojekyll
+          echo "code-clarity.insitechinternational.com" > build/CNAME
+          touch build/.nojekyll
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./frontend/build
+          publish_branch: gh-pages
+          force_orphan: true
+          enable_jekyll: false
+          cname: code-clarity.insitechinternational.com
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Verify Deployment
+        run: |
+          # Wait for GitHub Pages to deploy
+          sleep 30
+          echo "Checking deployment..."
+          git fetch origin gh-pages
+          git checkout gh-pages
+          echo "Deployed files in gh-pages branch:"
+          ls -la
+          echo "\nChecking for crucial files:"
+          for file in index.html CNAME .nojekyll; do
+            if [ -f "$file" ]; then
+              echo "✓ $file exists"
+            else
+              echo "✗ $file is missing"
+            fi
+          done
