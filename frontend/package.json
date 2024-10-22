@@ -2,7 +2,7 @@
   "version": "0.1.0",
   "private": true,
   "homepage": "https://code-clarity.insitechinternational.com",
-  "name": "code-clarity",
+  "name": "frontend",
   "scripts": {
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",

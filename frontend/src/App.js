@@ -12,6 +12,7 @@ import AboutPage from "./pages/AboutPage.js";
 import ContactPage from "./pages/ContactPage.js";
 import TermsPage from "./pages/TermsPage.js";
 import PrivacyPage from "./pages/PrivacyPage.js";
+import NotFoundPage from "./pages/NotFoundPage.js";
 
 function App() {
   return (
@@ -33,6 +34,8 @@ function App() {
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/terms" element={<TermsPage />} />
           <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="*" element={<NotFoundPage />} />{" "}
+          {/* Fallback for unknown routes */}
         </Routes>
         <Footer />
       </div>

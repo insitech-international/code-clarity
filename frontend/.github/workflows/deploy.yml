@@ -17,6 +17,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Debug - Check initial structure
+        run: |
+          echo "Initial project structure:"
+          ls -la
+          echo "\nFrontend directory contents:"
+          ls -la frontend/
+          echo "\nPublic directory contents:"
+          ls -la frontend/public/
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -30,24 +39,40 @@ jobs:
 
       - name: Build project
         working-directory: ./frontend
-        run: npm run build
+        run: |
+          echo "PUBLIC_URL set to: $PUBLIC_URL"
+          npm run build
         env:
           CI: true
+          PUBLIC_URL: "https://code-clarity.insitechinternational.com"
 
-      - name: Debug - Check build output
+      - name: Debug - Examine build output
         working-directory: ./frontend
         run: |
-          echo "Listing build directory contents:"
+          echo "Build directory structure:"
           ls -la build/
-          echo "Checking for index.html:"
-          cat build/index.html || echo "index.html not found"
-          echo "Checking for static directory:"
-          ls -la build/static || echo "static directory not found"
+          echo "\nChecking for index.html in build:"
+          if [ -f "build/index.html" ]; then
+            echo "index.html exists in build directory"
+            echo "\nContent of index.html:"
+            head -n 20 build/index.html
+          else
+            echo "index.html is missing!"
+            echo "\nSearching for index.html:"
+            find . -name "index.html"
+          fi
 
-      - name: Create necessary files
+      - name: Prepare deployment
+        working-directory: ./frontend
         run: |
-          echo "code-clarity.insitechinternational.com" > ./frontend/build/CNAME
-          touch ./frontend/build/.nojekyll
+          # Ensure index.html exists and is in the right place
+          if [ ! -f "build/index.html" ]; then
+            echo "ERROR: index.html not found in build directory!"
+            exit 1
+          fi
+          # Create CNAME and .nojekyll
+          echo "code-clarity.insitechinternational.com" > build/CNAME
+          touch build/.nojekyll
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
@@ -55,15 +80,21 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./frontend/build
           publish_branch: gh-pages
-          keep_files: false
+          force_orphan: true
+          enable_jekyll: false
           cname: code-clarity.insitechinternational.com
-          commit_message: "Deploy: ${{ github.event.head_commit.message }}"
 
-      - name: Verify deployment files
+      - name: Verify deployment
         run: |
           git fetch origin gh-pages
           git checkout gh-pages
-          echo "Contents of gh-pages branch:"
+          echo "Deployed files in gh-pages branch:"
           ls -la
-          echo "Checking for index.html in root:"
-          cat index.html || echo "index.html not found in root"
+          echo "\nChecking for crucial files:"
+          for file in index.html CNAME .nojekyll; do
+            if [ -f "$file" ]; then
+              echo "✓ $file exists"
+            else
+              echo "✗ $file is missing"
+            fi
+          done
