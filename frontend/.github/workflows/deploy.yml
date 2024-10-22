@@ -23,8 +23,8 @@ jobs:
           ls -la
           echo "\nFrontend directory contents:"
           ls -la frontend/
-          echo "\nPublic directory contents:"
-          ls -la frontend/public/
+          echo "\nContent of package.json:"
+          cat frontend/package.json
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -35,44 +35,68 @@ jobs:
 
       - name: Install dependencies
         working-directory: ./frontend
-        run: npm ci
+        run: |
+          npm ci
+          echo "Node modules after install:"
+          ls -la node_modules/
+
+      - name: Check build configuration
+        working-directory: ./frontend
+        run: |
+          if [ -f "vite.config.js" ]; then
+            echo "Vite config found:"
+            cat vite.config.js
+          elif [ -f "webpack.config.js" ]; then
+            echo "Webpack config found:"
+            cat webpack.config.js
+          else
+            echo "No build config found"
+          fi
 
       - name: Build project
         working-directory: ./frontend
         run: |
+          echo "Starting build process..."
+          echo "Current working directory: $(pwd)"
           echo "PUBLIC_URL set to: $PUBLIC_URL"
           npm run build
+          echo "Build completed. Contents of build directory:"
+          ls -la build/
         env:
           CI: true
           PUBLIC_URL: "https://code-clarity.insitechinternational.com"
+          # Add this if you're using Vite
+          VITE_APP_BASE_URL: "https://code-clarity.insitechinternational.com"
 
       - name: Debug - Examine build output
         working-directory: ./frontend
         run: |
           echo "Build directory structure:"
           ls -la build/
-          echo "\nChecking for index.html in build:"
+          echo "\nFull directory tree of build:"
+          tree build/ || ls -R build/
+          echo "\nChecking for index.html:"
+          find . -name "index.html"
           if [ -f "build/index.html" ]; then
-            echo "index.html exists in build directory"
             echo "\nContent of index.html:"
             head -n 20 build/index.html
           else
-            echo "index.html is missing!"
-            echo "\nSearching for index.html:"
-            find . -name "index.html"
+            echo "WARNING: index.html not found in expected location!"
           fi
 
       - name: Prepare deployment
         working-directory: ./frontend
         run: |
-          # Ensure index.html exists and is in the right place
           if [ ! -f "build/index.html" ]; then
+            echo "Searching for index.html in other locations..."
+            find . -name "index.html"
             echo "ERROR: index.html not found in build directory!"
             exit 1
           fi
-          # Create CNAME and .nojekyll
           echo "code-clarity.insitechinternational.com" > build/CNAME
           touch build/.nojekyll
+          echo "Deployment directory contents:"
+          ls -la build/
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
