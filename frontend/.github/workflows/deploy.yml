@@ -9,7 +9,7 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    
+
     permissions:
       contents: write
 
@@ -34,8 +34,20 @@ jobs:
         env:
           CI: true
 
-      - name: Create CNAME file
-        run: echo "code-clarity.insitechinternational.com" > ./frontend/build/CNAME
+      - name: Debug - Check build output
+        working-directory: ./frontend
+        run: |
+          echo "Listing build directory contents:"
+          ls -la build/
+          echo "Checking for index.html:"
+          cat build/index.html || echo "index.html not found"
+          echo "Checking for static directory:"
+          ls -la build/static || echo "static directory not found"
+
+      - name: Create necessary files
+        run: |
+          echo "code-clarity.insitechinternational.com" > ./frontend/build/CNAME
+          touch ./frontend/build/.nojekyll
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
@@ -46,3 +58,12 @@ jobs:
           keep_files: false
           cname: code-clarity.insitechinternational.com
           commit_message: "Deploy: ${{ github.event.head_commit.message }}"
+
+      - name: Verify deployment files
+        run: |
+          git fetch origin gh-pages
+          git checkout gh-pages
+          echo "Contents of gh-pages branch:"
+          ls -la
+          echo "Checking for index.html in root:"
+          cat index.html || echo "index.html not found in root"

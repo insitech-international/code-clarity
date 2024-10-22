@@ -1,7 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 
-const API_BASE_URL = "http://127.0.0.1:8000";
+const API_BASE_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://code-clarity.insitechinternational.com"
+    : "http://127.0.0.1:8000";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -58,7 +61,7 @@ export const useQuestionData = () => {
         questions: data.questions || [],
         total: data.total,
         skip: data.skip,
-        limit: data.limit
+        limit: data.limit,
       };
     } catch (err) {
       console.error("Error fetching questions:", err);
@@ -124,6 +127,6 @@ export const useQuestionData = () => {
     fetchSolution,
     fetchFeaturedQuestions,
     testDbConnection,
-    triggerDatabaseUpdate
+    triggerDatabaseUpdate,
   };
 };
