@@ -53,7 +53,7 @@ jobs:
           publish_branch: gh-pages
           keep_files: true
           commit_message: "Deploy: ${{ github.event.head_commit.message }}"
-      run:
+    run:
         working-directory: ./frontend
 
     steps:
