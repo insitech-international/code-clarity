@@ -9,9 +9,9 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./frontend
+    
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout repository
@@ -24,18 +24,18 @@ jobs:
           cache: "npm"
           cache-dependency-path: "./frontend/package-lock.json"
 
-      - name: Configure custom domain
-        run: echo "code-clarity.insitechinternational.com" > ./frontend/public/CNAME
-
       - name: Install dependencies
+        working-directory: ./frontend
         run: npm ci
 
       - name: Build project
+        working-directory: ./frontend
         run: npm run build
         env:
           CI: true
-          # Remove the PUBLIC_URL since we're using a custom subdomain
-          # PUBLIC_URL: "/code-clarity"
+
+      - name: Create CNAME file
+        run: echo "code-clarity.insitechinternational.com" > ./frontend/build/CNAME
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
@@ -43,6 +43,6 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./frontend/build
           publish_branch: gh-pages
-          keep_files: true
+          keep_files: false
           cname: code-clarity.insitechinternational.com
           commit_message: "Deploy: ${{ github.event.head_commit.message }}"
