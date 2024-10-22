@@ -1,5 +1,3 @@
-# Deploy.yml
-
 name: Deploy Frontend
 
 on:
@@ -30,6 +28,7 @@ jobs:
         working-directory: ./frontend
         run: |
           npm ci
+          npm list react-router-dom
 
       - name: Build project
         working-directory: ./frontend
@@ -37,6 +36,23 @@ jobs:
           CI=false npm run build
           echo "Build completed. Contents of build directory:"
           ls -la build/
+          echo "Contents of build/static directory:"
+          ls -la build/static || echo "No static directory found"
+
+      - name: Check build artifacts
+        working-directory: ./frontend
+        run: |
+          echo "Checking critical files..."
+          for file in build/index.html build/404.html build/static; do
+            if [ -e "$file" ]; then
+              echo "✅ $file exists"
+            else
+              echo "❌ $file is missing"
+            fi
+          done
+
+          echo "Contents of index.html:"
+          head -n 20 build/index.html
 
       - name: Prepare deployment
         working-directory: ./frontend
@@ -45,12 +61,13 @@ jobs:
             echo "ERROR: index.html is missing!"
             exit 1
           fi
-          # Create CNAME file
           echo "code-clarity.insitechinternational.com" > build/CNAME
-          # Create .nojekyll file
           touch build/.nojekyll
-          # Copy index.html to 404.html to handle client-side routing
           cp build/index.html build/404.html
+          echo "Deployment files prepared:"
+          ls -la build/
+          echo "CNAME contents:"
+          cat build/CNAME
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
@@ -61,3 +78,9 @@ jobs:
           force_orphan: true
           enable_jekyll: false
           cname: code-clarity.insitechinternational.com
+
+      - name: Verify deployment
+        run: |
+          echo "Waiting for GitHub Pages deployment..."
+          sleep 30
+          curl -I https://code-clarity.insitechinternational.com || echo "Site not accessible yet - may need more time for DNS propagation"
