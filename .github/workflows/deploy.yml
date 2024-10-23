@@ -2,7 +2,7 @@ name: Deploy Frontend
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -14,6 +14,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -24,12 +26,20 @@ jobs:
 
       - name: Install dependencies
         working-directory: ./frontend
-        run: npm ci
+        run: |
+          npm ci
+          npm list gh-pages || npm install --save-dev gh-pages
+
+      - name: Configure Git
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
 
       - name: Build
         working-directory: ./frontend
         env:
           CI: false
+          PUBLIC_URL: "https://code-clarity.insitechinternational.com"
         run: npm run build
 
       - name: Prepare deployment
@@ -40,17 +50,10 @@ jobs:
           touch .nojekyll
           cp index.html 404.html
 
-      - name: List build contents
-        working-directory: ./frontend/build
-        run: |
-          echo "Build directory contents:"
-          ls -la
-          echo "Index.html preview:"
-          head -n 20 index.html
-
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: frontend/build
           branch: gh-pages
           clean: true
+          single-commit: true
