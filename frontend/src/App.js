@@ -16,12 +16,12 @@ import NotFoundPage from "./pages/NotFoundPage.js";
 
 function App() {
   return (
-    <Router basename="/">
+    <Router>
       <div className="App">
         <Header />
         <Navbar />
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route exact path="/" element={<HomePage />} />
           <Route path="/category/:categoryName" element={<CategoryPage />} />
           <Route
             path="/category/:categoryName/questions"
