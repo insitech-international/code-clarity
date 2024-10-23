@@ -2,7 +2,7 @@ name: Deploy Frontend
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -10,12 +10,12 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    
+      pages: write # Required for pages configuration
+      id-token: write # Required for pages configuration
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -30,17 +30,14 @@ jobs:
           npm ci
           npm list gh-pages || npm install --save-dev gh-pages
 
-      - name: Configure Git
-        run: |
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
-
       - name: Build
         working-directory: ./frontend
         env:
           CI: false
           PUBLIC_URL: "https://code-clarity.insitechinternational.com"
-        run: npm run build
+        run: |
+          echo "REACT_APP_BASE_URL=https://code-clarity.insitechinternational.com" > .env
+          npm run build
 
       - name: Prepare deployment
         working-directory: ./frontend
@@ -50,10 +47,33 @@ jobs:
           touch .nojekyll
           cp index.html 404.html
 
-      - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@v4
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          folder: frontend/build
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./frontend/build
+          force_orphan: true
+          user_name: "github-actions[bot]"
+          user_email: "github-actions[bot]@users.noreply.github.com"
+          commit_message: "Deploy to GitHub Pages"
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v4
+        with:
+          enablement: true
+          source: gh-pages
           branch: gh-pages
-          clean: true
-          single-commit: true
+
+      - name: Wait for branch creation
+        run: |
+          echo "Waiting for gh-pages branch to be created..."
+          sleep 30  # Give GitHub some time to process
+
+      - name: Verify deployment
+        run: |
+          if git ls-remote --heads origin gh-pages > /dev/null; then
+            echo "gh-pages branch exists and is ready"
+          else
+            echo "Error: gh-pages branch was not created"
+            exit 1
+          fi
