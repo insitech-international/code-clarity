@@ -16,7 +16,7 @@ import NotFoundPage from "./pages/NotFoundPage.js";
 
 function App() {
   return (
-    <Router>
+    <Router basename="/">
       <div className="App">
         <Header />
         <Navbar />

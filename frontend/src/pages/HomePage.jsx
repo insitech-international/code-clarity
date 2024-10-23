@@ -19,6 +19,10 @@ import FeaturedQuestions from "../components/common/FeaturedQuestions";
 import { useQuestionData, useCategories } from "../hooks/useQuestionData";
 import BucesrCarousel from "../components/common/BucesrCarousel";
 
+useEffect(() => {
+  console.log('HomePage mounted');
+}, []);
+
 const HomePage = () => {
   const [featuredQuestions, setFeaturedQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
