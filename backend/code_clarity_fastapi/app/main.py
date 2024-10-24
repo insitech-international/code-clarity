@@ -4,6 +4,7 @@ import logging
 from code_clarity_fastapi.app.routes import router, initialize
 from code_clarity_fastapi.app.file_manager import DatabaseManager, FileManager, QuestionManager, update_database
 from code_clarity_fastapi.settings import settings
+import os
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -17,12 +18,13 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:3001",  # Your local development frontend URL
         "https://code-clarity.insitechinternational.com",  # Your production custom domain
-        "https://b9a9-5-133-46-243.ngrok-free.app",
+        os.getenv("NGROK_URL")  # Read ngrok URL from environment variable
     ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 db_manager = DatabaseManager()
 file_manager = FileManager()
