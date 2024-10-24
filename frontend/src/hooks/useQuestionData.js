@@ -3,8 +3,8 @@ import axios from "axios";
 
 const API_BASE_URL =
   process.env.NODE_ENV === "production"
-    ? "https://code-clarity.insitechinternational.com"
-    : "http://127.0.0.1:8000";
+    ? process.env.REACT_APP_API_BASE_URL
+    : "http://127.0.0.1:5000"; // Ensure this matches your local backend port
 
 const api = axios.create({
   baseURL: API_BASE_URL,

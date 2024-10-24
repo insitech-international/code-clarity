@@ -14,7 +14,11 @@ app = FastAPI()
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3001"],  # Add your frontend URL here
+    allow_origins=[
+        "http://localhost:3001",  # Your local development frontend URL
+        "https://code-clarity.insitechinternational.com",  # Your production custom domain
+        "https://b9a9-5-133-46-243.ngrok-free.app",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
