@@ -55,7 +55,7 @@ class FileManager:
 
     @staticmethod
     def parse_markdown_file(content: str) -> Dict[str, Any]:
-        sections = {}
+        sections = {}   
         current_section = None
         section_content = ""
 
@@ -167,7 +167,7 @@ class FileManager:
                     if FileManager.extract_id_from_filename(file) == file_id:
                         return file_path
 
-        logger.warning(f"No file found for ID: {file_id} in {file_type}")
+        # logger.warning(f"No file found for ID: {file_id} in {file_type}")
         return None
 
 class QuestionManager:
@@ -234,7 +234,7 @@ def update_database(base_dir: str):
     question_manager = QuestionManager(db_manager, file_manager, base_dir)
 
     # Define paths for both directories
-    data_dir = os.path.join(base_dir, 'data')
+    data_dir = os.path.join(base_dir, 'code_clarity_fastapi', 'data')
     question_dir = os.path.join(data_dir, 'question_bank')
     solution_dir = os.path.join(data_dir, 'solution_bank')
 
