@@ -1,2 +1,0 @@
-# Solution for Two Sum
-

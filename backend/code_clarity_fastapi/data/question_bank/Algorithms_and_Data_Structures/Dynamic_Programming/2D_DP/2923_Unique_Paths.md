@@ -1,2 +1,0 @@
-# Solution for Unique Paths
-

@@ -1,2 +1,0 @@
-# Solution for LRU Cache
-
