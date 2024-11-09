@@ -8,7 +8,9 @@ on:
 env:
   NODE_VERSION: "20"
   WORKING_DIRECTORY: "./frontend"
-  API_BASE_URL: "https://b9a9-5-133-46-243.ngrok-free.app"
+  PUBLIC_URL: ${{ secrets.PUBLIC_URL }}
+  REACT_APP_API_URL: ${{ secrets.API_URL }}
+  REACT_APP_STATIC_URL: ${{ secrets.STATIC_URL }}
 
 jobs:
   build-and-deploy:
@@ -17,8 +19,39 @@ jobs:
       contents: write
       pages: write
       id-token: write
+      deployments: write
 
     steps:
+      - name: Install GitHub CLI
+        run: sudo apt-get install -y gh
+
+      - name: Authenticate GitHub CLI
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
+
+      - name: Cancel In-Progress Deployments
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Checking for in-progress deployments..."
+          deployments=$(gh api \
+            repos/insitech-international/code-clarity/deployments \
+            --jq '.[] | select(.environment == "github-pages" and .state == "in_progress") | .id' \
+            2>/dev/null || echo "")
+
+          if [ -z "$deployments" ]; then
+            echo "No in-progress deployments found"
+            exit 0
+          fi
+
+          for deployment in $deployments; do
+            echo "Canceling deployment $deployment..."
+            gh api \
+              -X POST \
+              repos/insitech-international/code-clarity/deployments/$deployment/statuses \
+              -f state="inactive" \
+              --silent || echo "Failed to cancel deployment $deployment"
+          done
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -29,50 +62,157 @@ jobs:
           cache: "npm"
           cache-dependency-path: ${{ env.WORKING_DIRECTORY }}/package-lock.json
 
-      - name: Create production environment file
+      - name: Setup environment
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: |
-          echo "REACT_APP_API_BASE_URL=${{ env.API_BASE_URL }}" > .env.production
-          echo "Created .env.production with content:"
-          cat .env.production
+          cat > .env << EOF
+          REACT_APP_API_URL=${{ env.REACT_APP_API_URL }}
+          REACT_APP_STATIC_URL=${{ env.REACT_APP_STATIC_URL }}
+          PUBLIC_URL=${{ env.PUBLIC_URL }}
+          NODE_ENV=production
+          EOF
 
-      - name: Clean install dependencies
-        working-directory: ./frontend
+          cat .env
+
+      - name: Create and populate data directories
+        working-directory: ${{ env.WORKING_DIRECTORY }}
         run: |
-          echo "Removing existing node_modules and lock file..."
-          rm -rf node_modules
-          rm -f package-lock.json
+          mkdir -p public/static/data/{questions,solutions}
 
-          echo "Installing dependencies..."
-          npm install
-          npm install react-icons@4.12.0
-          npm install gh-pages --save-dev
-          npm install axios fs-extra
+          echo "Copying question bank..."
+          if ! cp -r ../backend/code_clarity_fastapi/data/question_bank/* public/static/data/questions/; then
+            echo "Error copying question bank"
+            exit 1
+          fi
 
-      - name: Generate Static Cache
-        working-directory: ./frontend
-        env:
-          API_BASE_URL: ${{ env.API_BASE_URL }}
+          echo "Copying solution bank..."
+          if ! cp -r ../backend/code_clarity_fastapi/data/solution_bank/* public/static/data/solutions/; then
+            echo "Error copying solution bank"
+            exit 1
+          fi
+
+          find public/static/data/questions -type d | while read dir; do
+            (cd "$dir" && ls -1 > directory_listing.txt)
+          done
+
+          find public/static/data/solutions -type d | while read dir; do
+            (cd "$dir" && ls -1 > directory_listing.txt)
+          done
+
+          echo "Verifying directory structure..."
+          find public/static/data -type d
+          echo "Verifying file counts..."
+          echo "Questions: $(find public/static/data/questions -type f -name "*.md" | wc -l)"
+          echo "Solutions: $(find public/static/data/solutions -type f -name "*.md" | wc -l)"
+
+      - name: Generate index files
+        working-directory: ${{ env.WORKING_DIRECTORY }}
         run: |
-          mkdir -p src/cache/static
-          node scripts/generateCache.js
+          # Create scripts directory if it doesn't exist
+          mkdir -p scripts
 
-      - name: Build
-        working-directory: ./frontend
+          # Create the Node.js script file
+          cat > scripts/generateIndex.js << 'EOF'
+          const fs = require('fs');
+          const path = require('path');
+
+          function walkDir(dir) {
+            let results = [];
+            const list = fs.readdirSync(dir);
+            
+            list.forEach(file => {
+              const filePath = path.join(dir, file);
+              const stat = fs.statSync(filePath);
+              
+              if (stat && stat.isDirectory()) {
+                results = results.concat(walkDir(filePath));
+              } else if (path.extname(file) === '.md') {
+                // Extract question ID from filename (assumes format: 111_Something.md)
+                const id = file.split('_')[0];
+                results.push({
+                  id: parseInt(id),
+                  path: filePath.replace(/^public\/static\/data\//, '') // Updated path replacement
+                });
+              }
+            });
+            
+            return results;
+          }
+
+          function generateIndex() {
+            const questionsDir = path.join(process.cwd(), 'public/static/data/questions');
+            const solutionsDir = path.join(process.cwd(), 'public/static/data/solutions');
+            
+            const index = {
+              questions: walkDir(questionsDir),
+              solutions: walkDir(solutionsDir)
+            };
+            
+            // Write index file
+            fs.writeFileSync(
+              path.join(process.cwd(), 'public/static/data/index.json'),
+              JSON.stringify(index, null, 2)
+            );
+          }
+
+          generateIndex();
+          EOF
+
+          # Execute the script
+          node scripts/generateIndex.js
+
+          # Verify the generated files
+          echo "Checking generated files..."
+          ls -l public/static/data/index.json
+
+      - name: Install dependencies
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: |
+          rm -rf node_modules package-lock.json
+
+          npm install --no-package-lock
+          npm install --save \
+            react-icons@4.12.0 \
+            gh-pages@6.1.1 \
+            axios@1.6.7 \
+            fs-extra@11.2.0
+          npm install --save-dev @babel/plugin-proposal-private-property-in-object@7.21.11
+
+          npm list --depth=0
+
+      - name: Setup environment
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: |
+          cat > .env << EOF
+          REACT_APP_BASE_URL=${{ env.PUBLIC_URL }}
+          PUBLIC_URL=${{ env.PUBLIC_URL }}
+          EOF
+
+          cat .env
+
+      - name: Build application
+        working-directory: ${{ env.WORKING_DIRECTORY }}
         env:
           CI: false
-          PUBLIC_URL: "https://code-clarity.insitechinternational.com"
         run: |
-          echo "REACT_APP_BASE_URL=https://code-clarity.insitechinternational.com" > .env
           npm run build
 
-      - name: Prepare deployment
-        working-directory: ./frontend
+          if [ ! -d "build" ]; then
+            echo "Build directory not created!"
+            exit 1
+          fi
+          echo "Build size: $(du -sh build)"
+
+      - name: Prepare deployment artifacts
+        working-directory: ${{ env.WORKING_DIRECTORY }}
         run: |
           cd build
-          echo "code-clarity.insitechinternational.com" > CNAME
+          echo "${{ env.PUBLIC_URL }}" | sed 's/https:\/\///' > CNAME
           touch .nojekyll
           cp index.html 404.html
+
+          ls -la
+          cat CNAME
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
@@ -82,23 +222,32 @@ jobs:
           force_orphan: true
           user_name: "github-actions[bot]"
           user_email: "github-actions[bot]@users.noreply.github.com"
-          commit_message: "Deploy to GitHub Pages"
+          commit_message: "Deploy to GitHub Pages [skip ci]"
+          full_commit_message: |
+            Deploy to GitHub Pages
+
+            Deployed from commit: ${{ github.sha }}
+            Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v4
         with:
           enablement: true
 
-      - name: Wait for branch creation
+      - name: Verify deployment branch
         run: |
-          echo "Waiting for gh-pages branch to be created..."
-          sleep 30
+          MAX_ATTEMPTS=10
+          ATTEMPT=1
 
-      - name: Verify deployment
-        run: |
-          if git ls-remote --heads origin gh-pages > /dev/null; then
-            echo "gh-pages branch exists and is ready"
-          else
-            echo "Error: gh-pages branch was not created"
-            exit 1
-          fi
+          while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
+            echo "Checking gh-pages branch (attempt $ATTEMPT/$MAX_ATTEMPTS)..."
+            if git ls-remote --heads origin gh-pages > /dev/null; then
+              echo "✓ gh-pages branch exists and is ready"
+              exit 0
+            fi
+            ATTEMPT=$((ATTEMPT + 1))
+            sleep 10
+          done
+
+          echo "Error: gh-pages branch was not created after $MAX_ATTEMPTS attempts"
+          exit 1
