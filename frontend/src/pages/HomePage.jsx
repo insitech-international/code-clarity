@@ -99,7 +99,7 @@ const HomePage = () => {
       >
         <Container maxWidth="lg">
           <Typography variant="h2" component="h1" gutterBottom align="center" sx={{ fontWeight: 'bold' }}>
-            Code Clarity: The 5 How Approach
+            Qode Clarity: The 5 How Approach
           </Typography>
           <Typography variant="body1" align="center" paragraph>
             Master complex algorithmic and data structure challenges using BUCESR Framework and the '5 How Approach':
