@@ -114,7 +114,6 @@ class FileManager:
         question_id = FileManager.extract_id_from_filename(file_name)
 
         metadata = FileManager.parse_metadata(sections.get('metadata', ''))
-        logger.info(f"MetaData: {metadata}")
         question_data = {
             # "question_id": question_id,
             "question_id": metadata.get('id', question_id),
@@ -234,34 +233,82 @@ def update_database(base_dir: str):
     file_manager = FileManager()
     question_manager = QuestionManager(db_manager, file_manager, base_dir)
 
-    questions_dir = os.path.join(base_dir, 'data')
-    if not os.path.exists(questions_dir):
-        logger.error(f"Questions directory does not exist: {questions_dir}")
+    # Define paths for both directories
+    data_dir = os.path.join(base_dir, 'data')
+    question_dir = os.path.join(data_dir, 'question_bank')
+    solution_dir = os.path.join(data_dir, 'solution_bank')
+
+    # Validate base data directory
+    if not os.path.exists(data_dir):
+        logger.error(f"Data directory does not exist: {data_dir}")
         return
 
-    question_count = 0
-    solution_count = 0
+    question_files = []
+    solution_files = []
 
-    for root, _, files in os.walk(questions_dir):
+    # Find all markdown files in question_bank directory and its subdirectories
+    for root, _, files in os.walk(question_dir):
         for file in files:
             if file.endswith('.md') and re.match(r'^(\d+)_', file):
-                try:
-                    question_id = FileManager.extract_id_from_filename(file)
-                    
-                    if 'question_bank' in root:
-                        if question_manager.get_question(question_id, force_update=True):
-                            question_count += 1
-                    elif 'solution_bank' in root:
-                        if question_manager.get_solution(question_id, force_update=True):
-                            solution_count += 1
+                question_files.append(os.path.join(root, file))
 
-                except Exception as e:
-                    logger.error(f"Error processing file {file}: {str(e)}", exc_info=True)
+    # Find all markdown files in solution_bank directory and its subdirectories
+    for root, _, files in os.walk(solution_dir):
+        for file in files:
+            if file.endswith('.md') and re.match(r'^(\d+)_', file):
+                solution_files.append(os.path.join(root, file))
 
-    logger.info(f"Processed {question_count} questions and {solution_count} solutions")
+    question_count = process_files(question_files, question_manager, 'question')
+    solution_count = process_files(solution_files, question_manager, 'solution')
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    logger.info(f"Successfully processed {question_count} questions and {solution_count} solutions")
+    
+    # Validate matching questions and solutions
+    validate_question_solution_pairs(question_files, solution_files)
+
+def process_files(files: list, question_manager: QuestionManager, file_type: str) -> int:
+    """Process a list of files and return the count of successfully processed files."""
+    count = 0
+    for file_path in files:
+        try:
+            file_name = os.path.basename(file_path)
+            question_id = FileManager.extract_id_from_filename(file_name)
+            
+            if file_type == 'question':
+                success = question_manager.get_question(question_id, force_update=True)
+            else:
+                success = question_manager.get_solution(question_id, force_update=True)
+                
+            if success:
+                count += 1
+                # logger.info(f"Processed {file_type} file: {file_path}")
+            
+        except Exception as e:
+            logger.error(f"Error processing {file_type} file {file_path}: {str(e)}", exc_info=True)
+    
+    return count
+
+def validate_question_solution_pairs(question_files: list, solution_files: list):
+    """Validate that each question has a corresponding solution and vice versa."""
+    question_ids = {FileManager.extract_id_from_filename(os.path.basename(f)) 
+                   for f in question_files}
+    solution_ids = {FileManager.extract_id_from_filename(os.path.basename(f)) 
+                   for f in solution_files}
+    
+    # Find questions without solutions
+    missing_solutions = question_ids - solution_ids
+    if missing_solutions:
+        # logger.warning(f"Questions without solutions: {missing_solutions}")
+        for qid in missing_solutions:
+            matching_files = [f for f in question_files 
+                            if FileManager.extract_id_from_filename(os.path.basename(f)) == qid]
+            # logger.warning(f"Question files without solutions: {matching_files}")
+    
+    # Find solutions without questions
+    missing_questions = solution_ids - question_ids
+    if missing_questions:
+        # logger.warning(f"Solutions without questions: {missing_questions}")
+        for sid in missing_questions:
+            matching_files = [f for f in solution_files 
+                            if FileManager.extract_id_from_filename(os.path.basename(f)) == sid]
+            # logger.warning(f"Solution files without questions: {matching_files}")     
