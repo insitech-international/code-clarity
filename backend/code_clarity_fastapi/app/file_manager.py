@@ -1,314 +1,353 @@
 import os
 import re
 import logging
-from typing import List, Dict, Optional, Any, Tuple
-from pymongo import MongoClient
+import asyncio
+from typing import List, Dict, Optional, Any, Tuple, Set
+from enum import Enum
 from fastapi import FastAPI
-from typing import Dict, Any, Optional
-from pymongo import MongoClient
+from motor.motor_asyncio import AsyncIOMotorClient
 from code_clarity_fastapi.app.schemas import QuestionSchema, SolutionSchema
 from code_clarity_fastapi.settings import settings
 
+# Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = FastAPI()
+class BankType(Enum):
+    """Enum for different types of content banks"""
+    QUESTION = 'question_bank'
+    SOLUTION = 'solution_bank'
 
 class DatabaseManager:
-    def __init__(self):
-        self.client = MongoClient(str(settings.db_url))
-        self.db = self.client[settings.db_base]
-    
-    def upsert_document(self, collection: str, document: Dict):
-        query = {"question_id": document["question_id"]}
-        # Remove the '_id' field from the document before updating
-        document_without_id = {k: v for k, v in document.items() if k != '_id'}
-        self.db[collection].update_one(query, {"$set": document_without_id}, upsert=True)
+    """Handles all database operations"""
+    def __init__(self, db_url: str = str(settings.db_url), db_name: str = settings.db_base):
+        self.client = AsyncIOMotorClient(db_url)
+        self.db = self.client[db_name]
+        self.logger = logging.getLogger(__name__)
 
-    def get_document(self, collection: str, query: Dict) -> Optional[Dict]:
-        return self.db[collection].find_one(query)
+    async def upsert_document(self, collection: str, document: Dict) -> None:
+        """Upsert a document in the specified collection."""
+        try:
+            query = {"question_id": document["question_id"]}
+            document_without_id = {k: v for k, v in document.items() if k != '_id'}
+            await self.db[collection].update_one(
+                query, 
+                {"$set": document_without_id}, 
+                upsert=True
+            )
+        except Exception as e:
+            self.logger.error(f"Error upserting document: {str(e)}")
+            raise
 
-    def get_questions_list(self, filters: Dict[str, Any], skip: int = 0, limit: Optional[int] = None) -> Tuple[List[Dict], int]:
-        cursor = self.db.questions.find(filters).skip(skip)
-        if limit:
-            cursor = cursor.limit(limit)
-        
-        questions = list(cursor)
-        total = self.db.questions.count_documents(filters)
-        
-        return questions, total
+    async def get_document(self, collection: str, query: Dict) -> Optional[Dict]:
+        """Get a single document from the specified collection."""
+        try:
+            return await self.db[collection].find_one(query)
+        except Exception as e:
+            self.logger.error(f"Error getting document: {str(e)}")
+            raise
 
-    def get_categories(self) -> List[str]:
-        return self.db.questions.distinct("category")
+    async def get_categories(self) -> List[str]:
+        """Get unique categories from questions collection."""
+        try:
+            categories = await self.db.questions.distinct('category')
+            return sorted([cat for cat in categories if cat])
+        except Exception as e:
+            self.logger.error(f"Error fetching categories: {str(e)}")
+            raise
+
+    async def get_questions_list(
+        self, 
+        filters: Dict[str, Any], 
+        skip: int = 0, 
+        limit: int = 10
+    ) -> Tuple[List[Dict], int]:
+        """Get filtered list of questions with pagination."""
+        try:
+            total = await self.db.questions.count_documents(filters)
+            cursor = self.db.questions.find(filters).skip(skip).limit(limit)
+            questions = await cursor.to_list(length=limit)
+            return questions, total
+        except Exception as e:
+            self.logger.error(f"Error in get_questions_list: {str(e)}")
+            raise
 
 class FileManager:
+    """Handles all file operations"""
+    def __init__(self):
+        self.logger = logging.getLogger(__name__)
+
     @staticmethod
-    def read_file(file_path: str) -> str:
+    def extract_id_from_filename(filename: str) -> int:
+        """Extract the numeric ID from a filename."""
+        try:
+            match = re.search(r'^(\d+)', filename)
+            return int(match.group(1)) if match else 0
+        except (AttributeError, ValueError) as e:
+            logger.error(f"Error extracting ID from filename {filename}: {str(e)}")
+            return 0
+
+    def read_file(self, file_path: str) -> str:
+        """Read content from a file with proper error handling."""
         try:
             with open(file_path, 'r', encoding='utf-8') as file:
                 return file.read()
         except FileNotFoundError:
-            logger.error(f"File not found: {file_path}")
+            self.logger.error(f"File not found: {file_path}")
+            raise
         except IOError as e:
-            logger.error(f"IO error reading file {file_path}: {str(e)}")
-        return ""
+            self.logger.error(f"IO error reading file {file_path}: {str(e)}")
+            raise
 
-    @staticmethod
-    def parse_markdown_file(content: str) -> Dict[str, Any]:
-        sections = {}   
+    def parse_markdown_sections(self, content: str) -> Dict[str, str]:
+        """Parse markdown content into sections."""
+        sections = {}
         current_section = None
-        section_content = ""
+        section_content = []
 
-        lines = content.split('\n')
-
-        for line in lines:
+        for line in content.split('\n'):
             if line.startswith('# '):
-                if current_section and section_content.strip():
-                    sections[current_section] = section_content.strip()
-                
+                if current_section:
+                    sections[current_section] = '\n'.join(section_content).strip()
                 current_section = line[2:].lower().replace(' ', '_')
-                section_content = ""
+                section_content = []
             else:
-                section_content += line + '\n'
+                section_content.append(line)
 
-        if current_section and section_content.strip():
-            sections[current_section] = section_content.strip()
-            
+        if current_section:
+            sections[current_section] = '\n'.join(section_content).strip()
+
         return sections
 
-    @staticmethod
-    def parse_metadata(content: str) -> Dict[str, Any]:
+    def parse_metadata(self, content: str) -> Dict[str, Any]:
+        """Parse metadata from content with improved error handling."""
         metadata = {}
-        for line in content.split('\n'):
-            if line.strip().startswith('-'):
-                key, value = map(str.strip, line.strip('- ').split(':', 1))
-                key = key.strip('**').lower().replace(' ', '_')
-                if value.strip():  # Only include non-empty values
-                    if key in ['similar_questions', 'real_life_domains']:
-                        metadata[key] = [item.strip() for item in value.split(',') if item.strip()]
-                    else:
-                        metadata[key] = value
-        return metadata
-
-    @staticmethod
-    def extract_id_from_filename(file_name: str) -> int:
-        match = re.search(r'^(\d+)', file_name)
-        return int(match.group(0)) if match else 0
-
-    @staticmethod
-    def parse_problem_versions(versions_content: str) -> List[str]:
-        problem_versions = []
-        # Updated regex pattern to capture everything including the version title
-        version_blocks = re.findall(r'(##\s*Version\s*\d+:.+?)(?=\n##\s*Version|\Z)', versions_content, re.DOTALL)
-
-        for block in version_blocks:
-            version = block.strip()
-            problem_versions.append(version)
-
-        return problem_versions
-    
-    @staticmethod
-    def parse_question_file(content: str, file_name: str) -> QuestionSchema:
-        sections = FileManager.parse_markdown_file(content)
-        problem_versions = FileManager.parse_problem_versions(sections.get('versions', ''))
-        question_id = FileManager.extract_id_from_filename(file_name)
-
-        metadata = FileManager.parse_metadata(sections.get('metadata', ''))
-        question_data = {
-            # "question_id": question_id,
-            "question_id": metadata.get('id', question_id),
-            "title": metadata.get('title', ''),
-            "difficulty": metadata.get('difficulty', ''),
-            "category": metadata.get('category', ''),
-            "subcategory": metadata.get('subcategory', ''),
-            "similar_questions": metadata.get('similar_questions', []),
-            "real_life_domains": metadata.get('real_life_domains', []),
-            "problem_description": sections.get('problem_description', ''),
-            "problem_versions": problem_versions,
-            "constraints": [c.strip() for c in sections.get('constraints', '').split('\n') if c.strip()],
-            "notes": [n.strip() for n in sections.get('notes', '').split('\n') if n.strip()],
-            "content": content
-        }
-
-        return QuestionSchema(**question_data)
-
-    @staticmethod
-    def parse_solution_file(content: str, file_name: str) -> SolutionSchema:
-        sections = FileManager.parse_markdown_file(content)
-        question_id = FileManager.extract_id_from_filename(file_name)
-
-        metadata = FileManager.parse_metadata(sections.get('metadata', ''))
+        list_fields = {'similar_questions', 'real_life_domains'}
         
-        solution_data = {
-            "question_id": question_id,
-            "category": metadata.get('category', ''),
-            "subcategory": metadata.get('subcategory', ''),
-            "classification_rationale": sections.get('classification_rationale', ''),
-            "introduction": sections.get('introduction', ''),
-            "mathematical_abstraction": sections.get('mathematical_abstraction', ''),
-            "pythonic_implementation": sections.get('pythonic_implementation', ''),
-            "bucesr_framework": sections.get('bucesr_framework', ''),
-            "complexity_analysis": sections.get('complexity_analysis', ''),
-            "real_world_analogies": sections.get('real_world_analogies', ''),
-            "storytelling_approach": sections.get('storytelling_approach', ''),
-            "visual_representation": sections.get('visual_representation', ''),
-            "content": content
-        }
-
-        return SolutionSchema(**solution_data)
-
-    @staticmethod
-    def find_file_by_id(base_dir: str, file_id: int, file_type: str) -> Optional[str]:
-        search_dir = os.path.join(base_dir, 'data', file_type)
-        for root, _, files in os.walk(search_dir):
-            for file in files:
-                if file.endswith('.md'):
-                    file_path = os.path.join(root, file)
-                    if FileManager.extract_id_from_filename(file) == file_id:
-                        return file_path
-
-        # logger.warning(f"No file found for ID: {file_id} in {file_type}")
-        return None
+        try:
+            for line in content.split('\n'):
+                if line.strip().startswith('-'):
+                    try:
+                        key_value = line.strip('- ').split(':', 1)
+                        if len(key_value) != 2:
+                            continue
+                            
+                        key, value = map(str.strip, key_value)
+                        key = key.strip('**').lower().replace(' ', '_')
+                        
+                        if not value.strip():
+                            continue
+                            
+                        if key in list_fields:
+                            metadata[key] = [item.strip() for item in value.split(',') if item.strip()]
+                        else:
+                            metadata[key] = value.strip()
+                    except Exception as e:
+                        self.logger.warning(f"Error parsing metadata line '{line}': {str(e)}")
+                        continue
+                        
+            return metadata
+        except Exception as e:
+            self.logger.error(f"Error parsing metadata: {str(e)}")
+            return metadata
 
 class QuestionManager:
+    """Manages question and solution processing"""
+class QuestionManager:
+    """Manages question and solution processing"""
     def __init__(self, db_manager: DatabaseManager, file_manager: FileManager, base_dir: str):
         self.db_manager = db_manager
         self.file_manager = file_manager
         self.base_dir = base_dir
+        self.logger = logging.getLogger(__name__)
 
-    def get_question(self, question_id: int, force_update: bool = False) -> Optional[QuestionSchema]:
-        question_file = self.file_manager.find_file_by_id(self.base_dir, question_id, 'question_bank')
-        if not question_file:
+    def _find_file(self, question_id: int, bank_type: BankType) -> Optional[str]:
+        """Find the file path for a given question ID and bank type."""
+        try:
+            data_dir = os.path.join(self.base_dir, 'code_clarity_fastapi', 'data', bank_type.value)
+            
+            for root, _, files in os.walk(data_dir):
+                for file in files:
+                    if (file.endswith('.md') and 
+                        self.file_manager.extract_id_from_filename(file) == question_id):
+                        return os.path.join(root, file)
+            
+            self.logger.warning(f"No {bank_type.value} file found for ID: {question_id}")
+            return None
+            
+        except Exception as e:
+            self.logger.error(f"Error finding file for ID {question_id} in {bank_type.value}: {str(e)}")
             return None
 
+    async def process_question(self, question_id: int, force_update: bool = False) -> Optional[QuestionSchema]:
+        """Process a question and update the database if needed."""
         try:
+            question_file = self._find_file(question_id, BankType.QUESTION)
+            if not question_file:
+                return None
+
             content = self.file_manager.read_file(question_file)
-            file_name = os.path.basename(question_file)
-            question_data = self.file_manager.parse_question_file(content, file_name)
-
-            existing_question = self.db_manager.get_document('questions', {"question_id": question_id})
-            if force_update or not existing_question or existing_question.get('content') != content:
-                # Only update fields that are present in the parsed data
-                update_data = question_data.dict(exclude_unset=True)
-                self.db_manager.upsert_document('questions', update_data)
+            sections = self.file_manager.parse_markdown_sections(content)
+            metadata = self.file_manager.parse_metadata(content)
             
-            # Merge existing data with new data
-            if existing_question:
-                existing_question.update(update_data)
-                return QuestionSchema(**existing_question)
-            else:
-                return question_data
-        except Exception as e:
-            logger.error(f"Error loading question for ID {question_id}: {str(e)}", exc_info=True)
-            return None
-           
-    def get_solution(self, question_id: int, force_update: bool = False) -> Optional[SolutionSchema]:
-        solution_file = self.file_manager.find_file_by_id(self.base_dir, question_id, 'solution_bank')
-        if not solution_file:
-            return None
-
-        try:
-            content = self.file_manager.read_file(solution_file)
-            file_name = os.path.basename(solution_file)
-            solution_data = self.file_manager.parse_solution_file(content, file_name)
-
-            existing_solution = self.db_manager.get_document('solutions', {"question_id": question_id})
-            if force_update or not existing_solution or existing_solution.get('content') != content:
-                # Only update fields that are present in the parsed data
-                update_data = solution_data.dict(exclude_unset=True)
-                self.db_manager.upsert_document('solutions', update_data)
+            question_data = QuestionSchema(
+                question_id=question_id,
+                content=content,
+                title=metadata.get('title', ''),
+                category=metadata.get('category', ''),
+                subcategory=metadata.get('subcategory', ''),
+                difficulty=metadata.get('difficulty', ''),
+                similar_questions=metadata.get('similar_questions', []),
+                real_life_domains=metadata.get('real_life_domains', []),
+                problem_description=sections.get('problem_description', ''),
+                problem_versions=sections.get('versions', ''),
+                constraints=sections.get('constraints', '').splitlines(),
+                notes=sections.get('notes', '').splitlines()
+            )
             
-            # Merge existing data with new data
-            if existing_solution:
-                existing_solution.update(update_data)
-                return SolutionSchema(**existing_solution)
-            else:
-                return solution_data
-        except Exception as e:
-            logger.error(f"Error loading solution for question ID {question_id}: {str(e)}", exc_info=True)
-            return None
-
-def update_database(base_dir: str):
-    db_manager = DatabaseManager()
-    file_manager = FileManager()
-    question_manager = QuestionManager(db_manager, file_manager, base_dir)
-
-    # Define paths for both directories
-    data_dir = os.path.join(base_dir, 'code_clarity_fastapi', 'data')
-    question_dir = os.path.join(data_dir, 'question_bank')
-    solution_dir = os.path.join(data_dir, 'solution_bank')
-
-    # Validate base data directory
-    if not os.path.exists(data_dir):
-        logger.error(f"Data directory does not exist: {data_dir}")
-        return
-
-    question_files = []
-    solution_files = []
-
-    # Find all markdown files in question_bank directory and its subdirectories
-    for root, _, files in os.walk(question_dir):
-        for file in files:
-            if file.endswith('.md') and re.match(r'^(\d+)_', file):
-                question_files.append(os.path.join(root, file))
-
-    # Find all markdown files in solution_bank directory and its subdirectories
-    for root, _, files in os.walk(solution_dir):
-        for file in files:
-            if file.endswith('.md') and re.match(r'^(\d+)_', file):
-                solution_files.append(os.path.join(root, file))
-
-    question_count = process_files(question_files, question_manager, 'question')
-    solution_count = process_files(solution_files, question_manager, 'solution')
-
-    logger.info(f"Successfully processed {question_count} questions and {solution_count} solutions")
-    
-    # Validate matching questions and solutions
-    validate_question_solution_pairs(question_files, solution_files)
-
-def process_files(files: list, question_manager: QuestionManager, file_type: str) -> int:
-    """Process a list of files and return the count of successfully processed files."""
-    count = 0
-    for file_path in files:
-        try:
-            file_name = os.path.basename(file_path)
-            question_id = FileManager.extract_id_from_filename(file_name)
-            
-            if file_type == 'question':
-                success = question_manager.get_question(question_id, force_update=True)
-            else:
-                success = question_manager.get_solution(question_id, force_update=True)
+            if force_update or await self._should_update_question(question_id, content):
+                await self.db_manager.upsert_document('questions', question_data.dict())
                 
-            if success:
-                count += 1
-                # logger.info(f"Processed {file_type} file: {file_path}")
-            
+            return question_data
         except Exception as e:
-            logger.error(f"Error processing {file_type} file {file_path}: {str(e)}", exc_info=True)
-    
-    return count
+            self.logger.error(f"Error processing question {question_id}: {str(e)}")
+            return None
 
-def validate_question_solution_pairs(question_files: list, solution_files: list):
+    async def process_solution(self, question_id: int, force_update: bool = False) -> Optional[SolutionSchema]:
+        """Process a solution and update the database if needed."""
+        try:
+            solution_file = self._find_file(question_id, BankType.SOLUTION)
+            if not solution_file:
+                return None
+
+            content = self.file_manager.read_file(solution_file)
+            sections = self.file_manager.parse_markdown_sections(content)
+            metadata = self.file_manager.parse_metadata(content)
+            
+            solution_data = SolutionSchema(
+                question_id=question_id,
+                content=content,
+                title=metadata.get('title', ''),
+                category=metadata.get('category', ''),
+                subcategory=metadata.get('subcategory', ''),
+                difficulty=metadata.get('difficulty', ''),
+                similar_questions=metadata.get('similar_questions', []),
+                real_life_domains=metadata.get('real_life_domains', []),
+                approach=sections.get('approach', ''),
+                code=sections.get('code', ''),
+                explanation=sections.get('explanation', ''),
+                classification_rationale=sections.get('classification_rationale', ''),
+                introduction=sections.get('introduction', ''),
+                mathematical_abstraction=sections.get('mathematical_abstraction', ''),
+                pythonic_implementation=sections.get('pythonic_implementation', ''),
+                bucesr_framework=sections.get('bucesr_framework', ''),
+                complexity_analysis=sections.get('complexity_analysis', ''),
+                real_world_analogies=sections.get('real_world_analogies', ''),
+                storytelling_approach=sections.get('storytelling_approach', ''),
+                visual_representation=sections.get('visual_representation', '')
+            )
+            
+            if force_update or await self._should_update_solution(question_id, content):
+                await self.db_manager.upsert_document('solutions', solution_data.dict())
+                
+            return solution_data
+        except Exception as e:
+            self.logger.error(f"Error processing solution {question_id}: {str(e)}")
+            return None
+
+    async def _should_update_question(self, question_id: int, content: str) -> bool:
+        """Check if question needs to be updated."""
+        existing = await self.db_manager.get_document('questions', {"question_id": question_id})
+        return not existing or existing.get('content') != content
+
+    async def _should_update_solution(self, question_id: int, content: str) -> bool:
+        """Check if solution needs to be updated."""
+        existing = await self.db_manager.get_document('solutions', {"question_id": question_id})
+        return not existing or existing.get('content') != content
+
+def validate_pairs(question_files: List[str], solution_files: List[str]) -> None:
     """Validate that each question has a corresponding solution and vice versa."""
-    question_ids = {FileManager.extract_id_from_filename(os.path.basename(f)) 
-                   for f in question_files}
-    solution_ids = {FileManager.extract_id_from_filename(os.path.basename(f)) 
-                   for f in solution_files}
-    
-    # Find questions without solutions
-    missing_solutions = question_ids - solution_ids
-    if missing_solutions:
-        # logger.warning(f"Questions without solutions: {missing_solutions}")
-        for qid in missing_solutions:
-            matching_files = [f for f in question_files 
-                            if FileManager.extract_id_from_filename(os.path.basename(f)) == qid]
-            # logger.warning(f"Question files without solutions: {matching_files}")
-    
-    # Find solutions without questions
-    missing_questions = solution_ids - question_ids
-    if missing_questions:
-        # logger.warning(f"Solutions without questions: {missing_questions}")
-        for sid in missing_questions:
-            matching_files = [f for f in solution_files 
-                            if FileManager.extract_id_from_filename(os.path.basename(f)) == sid]
-            # logger.warning(f"Solution files without questions: {matching_files}")     
+    try:
+        question_ids = {FileManager.extract_id_from_filename(os.path.basename(f)) for f in question_files}
+        solution_ids = {FileManager.extract_id_from_filename(os.path.basename(f)) for f in solution_files}
+        
+        missing_solutions = question_ids - solution_ids
+        missing_questions = solution_ids - question_ids
+        
+        if missing_solutions:
+            logger.warning(f"Found {len(missing_solutions)} questions without solutions")
+            
+        if missing_questions:
+            logger.warning(f"Found {len(missing_questions)} solutions without questions")
+            
+    except Exception as e:
+        logger.error(f"Error during pair validation: {str(e)}")
+        raise
+
+async def update_database(base_dir: str) -> None:
+    """Update the database with questions and solutions."""
+    try:
+        db_manager = DatabaseManager()
+        file_manager = FileManager()
+        question_manager = QuestionManager(db_manager, file_manager, base_dir)
+
+        data_dir = os.path.join(base_dir, 'code_clarity_fastapi', 'data')
+        if not os.path.exists(data_dir):
+            raise FileNotFoundError(f"Data directory does not exist: {data_dir}")
+
+        question_files = []
+        solution_files = []
+        
+        # Get all markdown files
+        for bank_type in BankType:
+            bank_dir = os.path.join(data_dir, bank_type.value)
+            for root, _, files in os.walk(bank_dir):
+                for file in files:
+                    if file.endswith('.md') and re.match(r'^(\d+)_', file):
+                        full_path = os.path.join(root, file)
+                        if bank_type == BankType.QUESTION:
+                            question_files.append(full_path)
+                        else:
+                            solution_files.append(full_path)
+
+        # Process files concurrently
+        question_tasks = [
+            question_manager.process_question(
+                FileManager.extract_id_from_filename(os.path.basename(f)), 
+                force_update=True
+            )
+            for f in question_files
+        ]
+        
+        solution_tasks = [
+            question_manager.process_solution(
+                FileManager.extract_id_from_filename(os.path.basename(f)), 
+                force_update=True
+            )
+            for f in solution_files
+        ]
+        
+        # Wait for all tasks to complete
+        processed_questions = len([q for q in await asyncio.gather(*question_tasks) if q])
+        processed_solutions = len([s for s in await asyncio.gather(*solution_tasks) if s])
+
+        logger.info(f"Processed {processed_questions} questions and {processed_solutions} solutions")
+        validate_pairs(question_files, solution_files)
+
+    except Exception as e:
+        logger.error(f"Error updating database: {str(e)}")
+        raise
+
+# FastAPI app setup
+app = FastAPI(title="Code Clarity API")
+
+@app.on_event("startup")
+async def startup_event():
+    """Initialize database and process files on startup."""
+    try:
+        base_dir = os.getcwd()
+        logger.info(f"Starting up the application from {base_dir}")
+        await update_database(base_dir)
+    except Exception as e:
+        logger.error(f"Error during database update: {str(e)}")
+        raise

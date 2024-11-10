@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict, validator
 from typing import List, Optional, Any
 from bson import ObjectId
 
@@ -37,6 +37,13 @@ class QuestionSchema(BaseModel):
     constraints: List[str] = Field(default_factory=list)
     notes: List[str] = Field(default_factory=list)
     content: str = ""
+
+    @validator('problem_versions', pre=True)
+    def check_problem_versions(cls, v):
+        if isinstance(v, str):  # if it's a single string, split into a list
+            return v.split("\n")  # or any other logic for splitting
+        return v
+
 class SolutionSchema(BaseModel):
     model_config = ConfigDict(
         arbitrary_types_allowed=True,

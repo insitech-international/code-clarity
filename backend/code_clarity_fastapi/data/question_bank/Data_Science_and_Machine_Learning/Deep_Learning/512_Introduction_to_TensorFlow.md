@@ -3,8 +3,8 @@
 - **ID**: 512
 - **Title**: TensorFlow Essentials
 - **Difficulty**: Medium
-- **Category**: Deep Learning
-- **Subcategory**: TensorFlow Basics
+- **Category**: Data Science and Machine Learning
+- **Subcategory**: Deep Learning
 - **Prerequisites**: Python programming, Basic ML concepts
 - **Similar Questions**: TensorFlow Documentation, DeepLearning.AI: "Introduction to TensorFlow"
 - **Real Life Domains**: Image Processing, Text Analysis, Speech Recognition
