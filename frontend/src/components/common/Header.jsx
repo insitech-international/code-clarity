@@ -1,80 +1,80 @@
-  import React, { useState } from "react";
-  import { Link } from "react-router-dom";
-  import {
-    AppBar,
-    Toolbar,
-    Typography,
-    Button,
-    IconButton,
-    Modal,
-    Box,
-    Paper,
-    Divider,
-    List,
-    ListItem,
-    ListItemText,
-    useTheme,
-    useMediaQuery
-  } from "@mui/material";
-  import { styled } from "@mui/material/styles";
-  import CloseIcon from '@mui/icons-material/Close';
-  import MenuIcon from '@mui/icons-material/Menu';
-  
-  // Styled components
-  const StyledAppBar = styled(AppBar)(({ theme }) => ({
-    backgroundColor: theme.palette.grey[100],
-    color: theme.palette.text.primary,
-    boxShadow: 'none', // Remove AppBar shadow for a cleaner look
-  }));
-  
-  const StyledToolbar = styled(Toolbar)(({ theme }) => ({
-    justifyContent: 'space-between',
-    padding: theme.spacing(2),
-  }));
-  
-  const NavLinks = styled('nav')(({ theme }) => ({
-    display: 'flex',
-    alignItems: 'center',
-    [theme.breakpoints.down('sm')]: {
-      display: 'none',
-    },
-  }));
-  
-  const StyledButton = styled(Button)(({ theme }) => ({
-    color: theme.palette.text.primary,
-    marginLeft: theme.spacing(2),
-    padding: theme.spacing(1, 3),
-    fontWeight: 'bold',
-    '&:hover': {
-      backgroundColor: theme.palette.action.hover,
-      color: theme.palette.primary.main,
-    },
-    transition: 'background-color 0.3s, color 0.3s',
-  }));
-  
-  const modalStyle = (theme) => ({
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: '90%',
-    maxWidth: 800,
-    maxHeight: '90vh',
-    bgcolor: 'background.paper',
-    boxShadow: 24,
-    p: 4,
-    overflowY: 'auto',
-    [theme.breakpoints.down('sm')]: {
-      width: '95%',
-      p: 2,
-    },
-  });
-  
-  // Color generator for subcategory headings
-  const getRandomColor = () => {
-    const colors = ['#f44336', '#2196f3', '#4caf50', '#ff9800', '#9c27b0'];
-    return colors[Math.floor(Math.random() * colors.length)];
-  };
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  IconButton,
+  Modal,
+  Box,
+  Paper,
+  Divider,
+  List,
+  ListItem,
+  ListItemText,
+  useTheme,
+  useMediaQuery
+} from "@mui/material";
+import { styled } from "@mui/material/styles";
+import CloseIcon from '@mui/icons-material/Close';
+import MenuIcon from '@mui/icons-material/Menu';
+
+// Styled components
+const StyledToolbar = styled(Toolbar)(({ theme }) => ({
+  justifyContent: 'space-between',
+  padding: theme.spacing(2),
+}));
+
+const StyledAppBar = styled(AppBar)(({ theme }) => ({
+  background: 'linear-gradient(135deg, #9c27b0, #3f51b5, #673ab7)', // Gradient from purple to violet through blue
+  color: '#ffffff', // White text color by default
+  boxShadow: 'none', // Remove AppBar shadow for a cleaner look
+}));
+
+const StyledButton = styled(Button)(({ theme }) => ({
+  color: '#ffffff', // White text by default
+  marginLeft: theme.spacing(2),
+  padding: theme.spacing(1, 3),
+  fontWeight: 'bold',
+  '&:hover': {
+    backgroundColor: '#4caf50', // Change to greenish color on hover (can be customized)
+    color: '#000000', // Dark text color on hover
+  },
+  transition: 'background-color 0.3s, color 0.3s', // Smooth transition for hover effect
+}));
+
+const NavLinks = styled('nav')(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  [theme.breakpoints.down('sm')]: {
+    display: 'none',
+  },
+}));
+
+const modalStyle = (theme) => ({
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: '90%',
+  maxWidth: 800,
+  maxHeight: '90vh',
+  bgcolor: 'background.paper',
+  boxShadow: 24,
+  p: 4,
+  overflowY: 'auto',
+  [theme.breakpoints.down('sm')]: {
+    width: '95%',
+    p: 2,
+  },
+});
+
+// Color generator for subcategory headings
+const getRandomColor = () => {
+  const colors = ['#f44336', '#2196f3', '#4caf50', '#ff9800', '#9c27b0'];
+  return colors[Math.floor(Math.random() * colors.length)];
+};
 
 // bucesrContent object
 const bucesrContent = {
@@ -140,148 +140,157 @@ const bucesrContent = {
   }
 };
 
-  const Header = () => {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  
-    const openModal = () => setIsModalOpen(true);
-    const closeModal = () => setIsModalOpen(false);
-    const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
-  
-    const navItems = [
-      { name: "Home", path: "/" },
-      { name: "About Us", path: "/about" },
-      { name: "Contact Us", path: "/contact" },
-      { name: "BUCESR Framework", action: openModal },
-    ];
-  
-    return (
-      <>
-        <StyledAppBar position="static">
-          <StyledToolbar>
-          <Typography 
-              variant="h6" 
-              component="div" 
-              sx={{
-                fontWeight: 'bold',
-                color: '#1976d2', // change the color
-                backgroundColor: '#e3f2fd', // add a light background
-                padding: '8px 16px', // add some padding
-                borderRadius: '4px', // give it rounded corners
-                boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)', // add a subtle shadow
-              }}
-            >
-              Qode Clarity
-            </Typography>
+const Header = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-            {isMobile ? (
-              <IconButton
-                size="large"
-                edge="start"
-                color="inherit"
-                aria-label="menu"
-                onClick={toggleMobileMenu}
-              >
-                <MenuIcon />
-              </IconButton>
-            ) : (
-              <NavLinks>
-                {navItems.map((item) => (
-                  item.action ? (
-                    <StyledButton key={item.name} onClick={item.action}>
-                      {item.name}
-                    </StyledButton>
-                  ) : (
-                    <StyledButton key={item.name} component={Link} to={item.path}>
-                      {item.name}
-                    </StyledButton>
-                  )
-                ))}
-              </NavLinks>
-            )}
-          </StyledToolbar>
-        </StyledAppBar>
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+  const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
+
+  const navItems = [
+    { name: "Home", path: "/" },
+    { name: "About Us", path: "/about" },
+    { name: "Contact Us", path: "/contact" },
+    { name: "BUCESR Framework", action: openModal },
+  ];
+
+  return (
+    <>
+      <StyledAppBar position="static">
+        <StyledToolbar>
+          <Typography 
+            variant="h6" 
+            component="div" 
+            sx={{
+              fontWeight: 'bold',
+              color: '#ffffff', // Ensure the title text is white
+              backgroundColor: 'transparent',
+              padding: '8px 16px',
+              borderRadius: '4px',
+              boxShadow: 'none', // No box shadow on title for a sleek look
+            }}
+          >
+            Qode Clarity
+          </Typography>
   
-        {/* Mobile Menu */}
-        <Modal
-          open={mobileMenuOpen}
-          onClose={toggleMobileMenu}
-          aria-labelledby="mobile-menu-modal"
-        >
-          <Box sx={modalStyle(theme)}>
+          {isMobile ? (
             <IconButton
+              size="large"
+              edge="start"
+              color="inherit"
+              aria-label="menu"
               onClick={toggleMobileMenu}
-              sx={{ position: 'absolute', right: 8, top: 8 }}
             >
-              <CloseIcon />
+              <MenuIcon />
             </IconButton>
-            <List>
+          ) : (
+            <NavLinks>
               {navItems.map((item) => (
-                <ListItem
-                  button
-                  key={item.name}
-                  onClick={() => {
-                    if (item.action) item.action();
-                    toggleMobileMenu();
-                  }}
-                  component={item.path ? Link : 'li'}
-                  to={item.path}
-                >
-                  <ListItemText primary={item.name} />
-                </ListItem>
+                item.action ? (
+                  <StyledButton key={item.name} onClick={item.action}>
+                    {item.name}
+                  </StyledButton>
+                ) : (
+                  <StyledButton key={item.name} component={Link} to={item.path}>
+                    {item.name}
+                  </StyledButton>
+                )
               ))}
-            </List>
-          </Box>
-        </Modal>
+            </NavLinks>
+          )}
+        </StyledToolbar>
+      </StyledAppBar>
   
-        {/* BUCESR Framework Modal */}
-        <Modal
-          open={isModalOpen}
-          onClose={closeModal}
-          aria-labelledby="bucesr-modal-title"
-        >
-          <Paper elevation={24} sx={modalStyle(theme)}>
-            <IconButton
-              onClick={closeModal}
-              sx={{ position: 'absolute', right: 8, top: 8 }}
-            >
-              <CloseIcon />
-            </IconButton>
-            <Typography id="bucesr-modal-title" variant="h4" component="h2" gutterBottom>
-              BUCESR Framework
-            </Typography>
-            <Typography variant="h6" gutterBottom>
-              When solving coding problems, it's essential to have a structured approach that can guide you through the process effectively.
-            </Typography>
-            <Divider sx={{ my: 2 }} />
-            {Object.entries(bucesrContent).map(([letter, content], index) => (
-              <Box key={letter} mt={index > 0 ? 4 : 2}>
-                <Typography
-                  variant="h5"
-                  gutterBottom
-                  style={{ color: getRandomColor() }} // Apply random color to each subcategory heading
+      {/* Mobile Menu */}
+      <Modal
+        open={mobileMenuOpen}
+        onClose={toggleMobileMenu}
+        aria-labelledby="mobile-menu-modal"
+      >
+        <Box sx={modalStyle(theme)}>
+          <IconButton
+            onClick={toggleMobileMenu}
+            sx={{ position: 'absolute', right: 8, top: 8 }}
+          >
+            <CloseIcon />
+          </IconButton>
+          <List>
+            {navItems.map((item) => (
+              <ListItem
+                button
+                key={item.name}
+                onClick={() => {
+                  if (item.action) item.action();
+                  toggleMobileMenu();
+                }}
+                component={item.path ? Link : 'li'}
+                to={item.path}
+              >
+                {/* Use StyledButton inside ListItem */}
+                <StyledButton 
+                  fullWidth
+                  sx={{ textAlign: 'center' }} // Make button fill the list item
                 >
-                  <strong>{letter} - {content.title}</strong>
-                </Typography>
-                <Typography variant="body1" paragraph>
-                  {content.description}
-                </Typography>
-                <List>
-                  {content.questions.map((question, qIndex) => (
-                    <ListItem key={qIndex}>
-                      <ListItemText primary={`- ${question}`} />
-                    </ListItem>
-                  ))}
-                </List>
-              </Box>
+                  {item.name}
+                </StyledButton>
+              </ListItem>
             ))}
-          </Paper>
-        </Modal>
-      </>
-    );
-  };
+          </List>
+        </Box>
+      </Modal>
   
-  export default Header;
+      {/* BUCESR Framework Modal */}
+      <Modal
+        open={isModalOpen}
+        onClose={closeModal}
+        aria-labelledby="bucesr-modal-title"
+      >
+        <Paper elevation={24} sx={modalStyle(theme)}>
+          <IconButton
+            onClick={closeModal}
+            sx={{ position: 'absolute', right: 8, top: 8 }}
+          >
+            <CloseIcon />
+          </IconButton>
+          <Typography id="bucesr-modal-title" variant="h4" component="h2" gutterBottom>
+            BUCESR Framework
+          </Typography>
+          <Typography variant="h6" gutterBottom>
+            When solving coding problems, it's essential to have a structured approach that can guide you through the process effectively.
+          </Typography>
+          <Divider sx={{ my: 2 }} />
+          {Object.entries(bucesrContent).map(([letter, content], index) => (
+            <Box key={letter} mt={index > 0 ? 4 : 2}>
+              <Typography
+                variant="h5"
+                gutterBottom
+                style={{ color: getRandomColor() }} // Random color for subcategory headings
+              >
+                <strong>{letter} - {content.title}</strong>
+              </Typography>
+              <Typography variant="body1" paragraph>
+                {content.description}
+              </Typography>
+              <List>
+                {content.questions.map((question, qIndex) => (
+                  <ListItem key={qIndex}>
+                    <ListItemText primary={`- ${question}`} />
+                  </ListItem>
+                ))}
+              </List>
+            </Box>
+          ))}
+        </Paper>
+      </Modal>
+    </>
+  );
+  
+};
+
+export default Header;
+
+
   

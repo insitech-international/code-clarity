@@ -59,15 +59,27 @@ const CombinedQuestionSolutionView = ({ question, solution }) => {
 
 const QuestionCard = ({ question }) => (
   <Card
-    elevation={3}
-    sx={{ height: "100%", display: "flex", flexDirection: "column" }}
+    elevation={2}
+    sx={{
+      height: "100%",
+      display: "flex",
+      flexDirection: "column",
+      borderRadius: "12px",
+      p: 2,
+      transition: "0.3s",
+      "&:hover": {
+        boxShadow: 4,
+        transform: "translateY(-3px)",
+      },
+      backgroundColor: "background.paper",
+    }}
   >
     <CardContent sx={{ flexGrow: 1 }}>
       <Box display="flex" flexDirection="column" alignItems="center" mb={2}>
         <Typography
           variant="h5"
           align="center"
-          sx={{ color: "primary.main", fontWeight: "bold", mb: 1 }}
+          sx={{ color: "primary.main", fontWeight: "500", mb: 1 }}
         >
           {question.title}
         </Typography>
@@ -76,6 +88,7 @@ const QuestionCard = ({ question }) => (
             label={`ID: ${question.question_id}`}
             color="primary"
             size="small"
+            sx={{ borderRadius: "8px" }}
           />
           <Chip
             label={question.difficulty}
@@ -87,6 +100,7 @@ const QuestionCard = ({ question }) => (
                 : "success"
             }
             size="small"
+            sx={{ borderRadius: "8px" }}
           />
         </Box>
         <Typography
@@ -99,13 +113,17 @@ const QuestionCard = ({ question }) => (
         </Typography>
       </Box>
 
-      <Divider sx={{ my: 2 }} />
+      <Divider sx={{ my: 2, borderColor: "divider" }} />
 
       <Section title="Similar Questions">
         <Box display="flex" gap={1} flexWrap="wrap">
           {question.similar_questions?.map((q, index) => (
             <Chip key={index} label={q} variant="outlined" size="small" />
-          )) || "No similar questions available"}
+          )) || (
+            <Typography variant="body2" color="text.secondary">
+              No similar questions available
+            </Typography>
+          )}
         </Box>
       </Section>
 
@@ -113,7 +131,11 @@ const QuestionCard = ({ question }) => (
         <Box display="flex" gap={1} flexWrap="wrap">
           {question.real_life_domains?.map((domain, index) => (
             <Chip key={index} label={domain} variant="outlined" size="small" />
-          )) || "No real-life domains specified"}
+          )) || (
+            <Typography variant="body2" color="text.secondary">
+              No real-life domains specified
+            </Typography>
+          )}
         </Box>
       </Section>
 
@@ -122,20 +144,34 @@ const QuestionCard = ({ question }) => (
           <Box key={index} mb={2}>
             <MarkdownRenderer content={version} />
           </Box>
-        )) || "No problem versions available"}
+        )) || (
+          <Typography variant="body2" color="text.secondary">
+            No problem versions available
+          </Typography>
+        )}
       </AccordionSection>
 
       <AccordionSection title="Constraints">
         <MarkdownRenderer
           content={
-            question.constraints?.join("\n") || "No constraints specified"
+            question.constraints?.join("\n") || (
+              <Typography variant="body2" color="text.secondary">
+                No constraints specified
+              </Typography>
+            )
           }
         />
       </AccordionSection>
 
       <AccordionSection title="Notes">
         <MarkdownRenderer
-          content={question.notes?.join("\n") || "No notes available"}
+          content={
+            question.notes?.join("\n") || (
+              <Typography variant="body2" color="text.secondary">
+                No notes available
+              </Typography>
+            )
+          }
         />
       </AccordionSection>
     </CardContent>
@@ -238,13 +274,29 @@ const SolutionCard = ({
 
   return (
     <Card
-      elevation={3}
-      sx={{ height: "100%", display: "flex", flexDirection: "column" }}
+      elevation={2}
+      sx={{
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        borderRadius: "12px",
+        p: 2,
+        transition: "0.3s",
+        "&:hover": {
+          boxShadow: 4,
+          transform: "translateY(-3px)",
+        },
+        backgroundColor: "background.paper",
+      }}
     >
       <CardContent
         sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}
       >
-        <Typography variant="h5" gutterBottom sx={{ color: "secondary.main" }}>
+        <Typography
+          variant="h5"
+          gutterBottom
+          sx={{ color: "secondary.main", fontWeight: "500" }}
+        >
           Solution
         </Typography>
         <Box
@@ -278,24 +330,19 @@ const SolutionCard = ({
             {tabContent.map((tab, index) => (
               <Tooltip key={index} title={tab.description} arrow>
                 <Tab
-                  label={
-                    <Box display="flex" alignItems="center">
-                      {tab.label}
-                      <IconButton size="small" sx={{ ml: 0.5 }}>
-                        <InfoOutlinedIcon fontSize="inherit" />
-                      </IconButton>
-                    </Box>
-                  }
+                  label={tab.label}
                   sx={{
                     textTransform: "none",
                     minWidth: "auto",
                     padding: "6px 12px",
-                    borderRadius: "4px",
+                    borderRadius: "8px",
+                    transition: "background-color 0.3s",
                     "&:hover": {
                       backgroundColor: "rgba(0, 0, 0, 0.04)",
                     },
                     "&.Mui-selected": {
                       backgroundColor: "rgba(0, 0, 0, 0.08)",
+                      color: "secondary.main",
                     },
                   }}
                 />
@@ -311,7 +358,7 @@ const SolutionCard = ({
             </IconButton>
           )}
         </Box>
-        <Box mt={2} sx={{ flexGrow: 1, overflow: "auto" }}>
+        <Box mt={2} sx={{ flexGrow: 1, overflow: "auto", p: 1 }}>
           <MarkdownRenderer content={tabContent[tabValue].content} />
         </Box>
       </CardContent>

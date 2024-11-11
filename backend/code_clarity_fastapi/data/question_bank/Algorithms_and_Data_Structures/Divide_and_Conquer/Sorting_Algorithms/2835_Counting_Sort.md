@@ -2,7 +2,7 @@
 
 - **ID**: 2835
 - **Title**: Counting Sort: Efficient Integer Sorting for Limited Ranges
-- **Difficulty**: Easy to Medium
+- **Difficulty**: Easy
 - **Category**: Sorting Algorithms
 - **Subcategory**: Non-Comparative Sorts, Distribution Sorts
 - **Similar Questions**: LeetCode: 912. Sort an Array, 1122. Relative Sort Array
@@ -19,6 +19,7 @@ Counting Sort is an efficient, non-comparative sorting algorithm that sorts elem
 Implement the basic Counting Sort algorithm to sort an array of non-negative integers.
 
 Example:
+
 - Input: nums = [4, 2, 2, 8, 3, 3, 1]
 - Output: [1, 2, 2, 3, 3, 4, 8]
 
@@ -27,6 +28,7 @@ Example:
 Extend the Counting Sort algorithm to sort objects based on a specific integer attribute.
 
 Example:
+
 - Input: students = [{name: "Alice", age: 22}, {name: "Bob", age: 20}, {name: "Charlie", age: 22}]
 - Output: Sorted by age
 
@@ -35,6 +37,7 @@ Example:
 Implement a stable version of Counting Sort that preserves the relative order of elements with equal keys.
 
 Example:
+
 - Input: nums = [{value: 4, id: 1}, {value: 2, id: 2}, {value: 2, id: 3}, {value: 3, id: 4}]
 - Output: Sorted by value, preserving order of equal elements
 
@@ -83,7 +86,7 @@ The algorithm should handle billions of k-mers efficiently, considering the limi
 
 # Constraints
 
-- 1 ≤ nums.length ≤ 5 * 10^4
+- 1 ≤ nums.length ≤ 5 \* 10^4
 - 0 ≤ nums[i] ≤ 10^4
 
 # Notes

@@ -2,7 +2,7 @@
 
 - **ID**: 1331
 - **Title**: Access Modifiers in Object-Oriented Programming
-- **Difficulty**: Medium to Hard
+- **Difficulty**: Medium
 - **Category**: Object-Oriented Programming
 - **Subcategory**: Encapsulation
 - **Similar Concepts**: Visibility, Information Hiding, Data Protection

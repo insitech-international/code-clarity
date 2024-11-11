@@ -43,14 +43,27 @@ const QuestionCard = ({ question }) => {
         display: 'flex',
         flexDirection: 'column',
         transition: '0.3s',
-        '&:hover': { 
+        '&:hover': {
           boxShadow: 6,
-          transform: 'translateY(-5px)'
+          transform: 'translateY(-5px)',
         },
+        p: 2, // Add padding to create a well-defined margin inside the card
       }}
     >
       <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-        <Typography variant="h6" gutterBottom noWrap>
+        <Typography
+          variant="h6"
+          gutterBottom
+          sx={{
+            fontWeight: 'bold',
+            display: '-webkit-box',
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden',
+            WebkitLineClamp: 2, // Allow the title to display up to 2 lines
+            wordWrap: 'break-word', // Ensure long words are wrapped
+            mb: 1, // Add margin-bottom to separate from other content
+          }}
+        >
           {question.title || "Untitled Question"}
         </Typography>
         <Box sx={{ mb: 2 }}>
@@ -64,10 +77,10 @@ const QuestionCard = ({ question }) => {
           )}
           <DifficultyChip difficulty={question.difficulty} />
         </Box>
-        <Typography 
-          variant="body2" 
-          paragraph 
-          sx={{ 
+        <Typography
+          variant="body2"
+          paragraph
+          sx={{
             flexGrow: 1,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
@@ -79,22 +92,23 @@ const QuestionCard = ({ question }) => {
           {question.problem_description || "No description available."}
         </Typography>
         <Box sx={{ mt: 'auto' }}>
-          {question.real_life_domains && question.real_life_domains.slice(0, isMobile ? 2 : 3).map((domain, index) => (
-            <Chip 
-              key={index} 
-              label={domain} 
-              variant="outlined" 
-              size="small" 
-              sx={{ marginRight: '0.5rem', marginBottom: '0.5rem' }} 
-            />
-          ))}
+          {question.real_life_domains &&
+            question.real_life_domains.slice(0, isMobile ? 2 : 3).map((domain, index) => (
+              <Chip
+                key={index}
+                label={domain}
+                variant="outlined"
+                size="small"
+                sx={{ marginRight: '0.5rem', marginBottom: '0.5rem' }}
+              />
+            ))}
         </Box>
-        <Button 
-          component={Link} 
-          to={`/question/${question.question_id}`} 
-          variant="outlined" 
+        <Button
+          component={Link}
+          to={`/question/${question.question_id}`}
+          variant="outlined"
           size="small"
-          sx={{ mt: 2, alignSelf: 'flex-centre' }}
+          sx={{ mt: 2, alignSelf: 'flex-wrap' }}
         >
           View Details
         </Button>
@@ -103,9 +117,22 @@ const QuestionCard = ({ question }) => {
   );
 };
 
+
 const CategorySection = ({ category, questions, onViewAll }) => (
-  <Box mb={4}>
-    <Typography variant="h5" gutterBottom>
+  <Card
+    variant="outlined"
+    sx={{
+      mb: 4,
+      p: 2,
+      borderRadius: 3,
+      boxShadow: 1,
+      transition: '0.3s',
+      '&:hover': {
+        boxShadow: 3,
+      },
+    }}
+  >
+    <Typography variant="h5" gutterBottom sx={{ fontWeight: 'medium', color: 'primary.main' }}>
       {category}
     </Typography>
     <Grid container spacing={3}>
@@ -117,13 +144,14 @@ const CategorySection = ({ category, questions, onViewAll }) => (
     </Grid>
     <Button
       variant="contained"
-      sx={{ marginTop: '1rem' }}
+      sx={{ marginTop: '1rem', color: 'white' }}
       onClick={() => onViewAll(category)}
     >
       View All Questions in {category}
     </Button>
-  </Box>
+  </Card>
 );
+
 
 const FeaturedQuestions = () => {
   const { fetchFeaturedQuestions, loading, error } = useQuestionData();

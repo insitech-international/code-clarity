@@ -13,7 +13,7 @@ import {
   Alert,
   AlertTitle
 } from "@mui/material";
-import { motion, AnimatePresence, color } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import CategoryCarousel from "../components/category/CategoryCarousel";
 import FeaturedQuestions from "../components/common/FeaturedQuestions";
 import { useQuestionData, useCategories } from "../hooks/useQuestionData";
@@ -94,7 +94,9 @@ const HomePage = () => {
           background: `linear-gradient(to right, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
           color: 'white',
           py: 8,
-          mb: 4
+          mb: 4,
+          borderRadius: '16px',
+          boxShadow: 6
         }}
       >
         <Container maxWidth="lg">
@@ -113,7 +115,7 @@ const HomePage = () => {
                 animate="visible"
                 exit="exit"
               >
-                <Typography variant="h5" align="center" style={{ color: phrases[currentPhraseIndex].color }}>
+                <Typography variant="h5" align="center" style={{ color: phrases[currentPhraseIndex].color, fontWeight: 'bold' }}>
                   {phrases[currentPhraseIndex].text.split('').map((char, index) => (
                     <motion.span key={index} variants={letterVariants}>
                       {char}
@@ -128,27 +130,38 @@ const HomePage = () => {
 
       <Container maxWidth="lg">
         <Grid container spacing={4}>
-          <Grid item xs={12}>
-            <Card>
+          {/* Category Carousel Section */}
+          <Grid item xs={12} sm={12} md={12}>
+            <Card sx={{ boxShadow: 3, borderRadius: '12px' }}>
               <CardContent>
+                <Typography variant="h6" gutterBottom align="center">
+                  Categories
+                </Typography>
                 <CategoryCarousel categories={categories} />
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12}>
-            <Card>
-              <CardHeader title="BUCESR Framework" />
+
+          {/* BUCESR Framework Section */}
+          <Grid item xs={12} sm={12} md={12}>
+            <Card sx={{ boxShadow: 3, borderRadius: '12px' }}>
+              <CardHeader title="BUCESR Framework" sx={{ backgroundColor: theme.palette.primary.light }} />
               <CardContent>
-              <Typography variant="body1" paragraph>
+                <Typography variant="body1" paragraph>
                   The BUCESR <i style={{ color: "purple", fontWeight: "bold" }}>(Be Unique, Create Easy Solutions Regularly)</i> Framework is a systematic approach to break down and solve complex problems efficiently.
                 </Typography>
                 <BucesrCarousel />
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12}>
-            <Card>
+
+          {/* Featured Questions Section */}
+          <Grid item xs={12} sm={12} md={12}>
+            <Card sx={{ boxShadow: 3, borderRadius: '12px' }}>
               <CardContent>
+                <Typography variant="h6" gutterBottom align="center">
+                  Featured Questions
+                </Typography>
                 <FeaturedQuestions questions={featuredQuestions} />
               </CardContent>
             </Card>
@@ -160,6 +173,3 @@ const HomePage = () => {
 };
 
 export default HomePage;
-
-
-

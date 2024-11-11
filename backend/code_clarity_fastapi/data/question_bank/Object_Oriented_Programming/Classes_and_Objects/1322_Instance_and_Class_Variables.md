@@ -2,7 +2,7 @@
 
 - **ID**: 1322
 - **Title**: Instance and Class Variables in Object-Oriented Programming
-- **Difficulty**: Medium to Hard
+- **Difficulty**: Medium
 - **Category**: Object-Oriented Programming
 - **Subcategory**: Classes and Objects
 - **Similar Concepts**: Static Variables, Class Attributes, Instance Fields
@@ -19,21 +19,25 @@ Design and implement systems that effectively utilize both instance and class va
 Design a class-based system for managing the economy of an MMOG with the following requirements:
 
 1. Create a `Currency` class with:
+
    - Class variables: exchange_rates, total_currency_in_circulation
    - Instance variables: amount, owner
    - Methods: transfer(), convert_to(), inflate(), deflate()
 
 2. Implement a `Player` class with:
+
    - Class variables: total_players, player_wealth_distribution
    - Instance variables: id, name, inventory, bank_balance
    - Methods: earn(), spend(), trade(), calculate_net_worth()
 
 3. Design an `Item` class with:
+
    - Class variables: item_registry, global_drop_rates
    - Instance variables: id, name, value, rarity
    - Methods: use(), upgrade(), salvage()
 
 4. Create a `Market` class to handle player-to-player transactions:
+
    - Class variables: transaction_history, current_listings
    - Instance variables: commission_rate, allowed_currencies
    - Methods: list_item(), purchase_item(), cancel_listing()
@@ -49,30 +53,35 @@ How would you use class and instance variables to model both server-wide economi
 Create a class-based system for a multi-branch banking network with these specifications:
 
 1. Design a `BankAccount` class with:
+
    - Class variables: total_accounts, interest_rates
-   -## Version 2: Banking System with Multiple Branches (Continued)
+     -## Version 2: Banking System with Multiple Branches (Continued)
 
 1. Design a `BankAccount` class with:
+
    - Class variables: total_accounts, interest_rates
    - Instance variables: account_number, balance, owner, account_type
    - Methods: deposit(), withdraw(), transfer(), apply_interest()
 
-2. Implement a `Customer` class with:
+1. Implement a `Customer` class with:
+
    - Class variables: customer_count, customer_segmentation_criteria
    - Instance variables: id, name, contact_info, credit_score
    - Methods: open_account(), close_account(), update_credit_score()
 
-3. Create a `Branch` class to represent individual bank branches:
+1. Create a `Branch` class to represent individual bank branches:
+
    - Class variables: total_branches, branch_performance_metrics
    - Instance variables: branch_id, location, staff, available_services
    - Methods: process_transaction(), generate_branch_report()
 
-4. Design a `Loan` class for managing various types of loans:
+1. Design a `Loan` class for managing various types of loans:
+
    - Class variables: current_prime_rate, loan_approval_criteria
    - Instance variables: loan_id, borrower, principal, interest_rate, term
    - Methods: calculate_monthly_payment(), apply_for_loan(), foreclose()
 
-5. Implement a `BankingSystem` class to oversee the entire banking network:
+1. Implement a `BankingSystem` class to oversee the entire banking network:
    - Class variables: regulatory_compliance_rules, system_wide_alerts
    - Methods: audit_branches(), update_interest_rates(), generate_financial_reports()
 
@@ -83,21 +92,25 @@ How would you use class and instance variables to manage both system-wide bankin
 Design a class-based system for simulating a factory production line with the following criteria:
 
 1. Create a `Machine` class with:
+
    - Class variables: total_machines, machine_types, global_efficiency_factor
    - Instance variables: machine_id, current_status, production_rate, maintenance_schedule
    - Methods: start_production(), stop_production(), perform_maintenance()
 
 2. Implement a `Product` class to represent items being manufactured:
+
    - Class variables: product_catalog, quality_standards
    - Instance variables: product_id, name, components, production_stage
    - Methods: advance_stage(), quality_check(), package()
 
 3. Design a `Worker` class for factory employees:
+
    - Class variables: total_workers, shift_schedules, skill_matrix
    - Instance variables: employee_id, name, skills, current_station
    - Methods: clock_in(), clock_out(), operate_machine(), report_issue()
 
 4. Create a `ProductionLine` class to manage the manufacturing process:
+
    - Class variables: line_configurations, production_targets
    - Instance variables: line_id, active_machines, current_products, efficiency_rating
    - Methods: start_line(), stop_line(), reconfigure(), calculate_output()
@@ -126,6 +139,7 @@ How would you use class and instance variables to model both factory-wide settin
    Create a class hierarchy to simulate a complex ecosystem. Use class variables to represent environmental factors affecting all organisms and instance variables for individual organism states. Model various species, their interactions, and environmental changes over time.
 
 For each scenario, consider:
+
 - How would you balance the use of class and instance variables to efficiently represent shared and individual states?
 - What strategies would you employ to ensure thread-safety when multiple threads or processes might access class variables?
 - How would you handle the potential memory implications of using class variables in systems with a large number of instances?

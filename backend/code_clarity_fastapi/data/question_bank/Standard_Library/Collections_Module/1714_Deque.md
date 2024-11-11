@@ -6,9 +6,9 @@
 - **Title**: Deque
 - **Category**: Standard Library
 - **Subcategory**: Collections Module
-- **Difficulty**: Medium to Hard
-- **Similar Questions**: 
-- **Real Life Domains**: 
+- **Difficulty**: Medium
+- **Similar Questions**:
+- **Real Life Domains**:
 
 # Problem Description
 
@@ -40,9 +40,9 @@ Example:
 cache = LRUCache(2)
 cache.put(1, 1)
 cache.put(2, 2)
-cache.get(1)       # returns 1
-cache.put(3, 3)    # evicts key 2
-cache.get(2)       # returns -1 (not found)
+cache.get(1) # returns 1
+cache.put(3, 3) # evicts key 2
+cache.get(2) # returns -1 (not found)
 
 ## Version 4: Undo/Redo Functionality
 
@@ -52,8 +52,8 @@ Example:
 editor = TextEditor()
 editor.insert("Hello")
 editor.insert(" World")
-editor.undo()      # "Hello"
-editor.redo()      # "Hello World"
+editor.undo() # "Hello"
+editor.redo() # "Hello World"
 
 # Real-Life Scenarios
 

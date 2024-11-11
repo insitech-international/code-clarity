@@ -2,7 +2,7 @@
 
 - **ID**: 1332
 - **Title**: Properties in Object-Oriented Programming
-- **Difficulty**: Medium to Hard
+- **Difficulty**: Medium
 - **Category**: Object-Oriented Programming
 - **Subcategory**: Encapsulation
 - **Similar Concepts**: Getters and Setters, Computed Properties, Auto-implemented Properties
@@ -19,6 +19,7 @@ Design and implement systems that effectively utilize properties to create flexi
 Design a class-based portfolio management system with a focus on effective use of properties:
 
 1. Create an `Asset` class with:
+
    - Basic properties: name, purchase_date, purchase_price
    - Computed property: current_value (fetches real-time value)
    - Property with validation: quantity (must be non-negative)
@@ -26,17 +27,20 @@ Design a class-based portfolio management system with a focus on effective use o
    - Write-only property: set_valuation_source (sets the source for value computation)
 
 2. Implement a `Portfolio` class with:
+
    - Collection property: assets (allows adding/removing assets)
    - Computed property: total_value (sum of all asset values)
    - Computed property: performance (percentage change since inception)
    - Property with side effects: risk_profile (adjusts asset allocations when set)
 
 3. Design a `Transaction` class with:
+
    - Auto-implemented properties: date, type (buy/sell), asset_id
    - Computed property: impact_on_portfolio (calculates effect on portfolio value)
    - Property with lazy loading: detailed_transaction_record
 
 4. Create an `Investor` class with:
+
    - Properties with backing fields: name, contact_info
    - Computed property: net_worth (sum of all portfolio values)
    - Property with change notification: investment_strategy
@@ -53,6 +57,7 @@ How would you design these properties to ensure efficient computation, proper en
 Design a character progression system for a role-playing game using properties:
 
 1. Create a `Character` class with:
+
    - Basic properties: name, level, experience_points
    - Computed property: strength (based on level and equipment)
    - Property with level-up trigger: level (triggers level-up actions when increased)
@@ -60,16 +65,19 @@ Design a character progression system for a role-playing game using properties:
    - Computed property: combat_power (based on all attributes and skills)
 
 2. Implement an `Equipment` class with:
+
    - Properties with validation: durability (0-100), enchantment_level
    - Computed property: effectiveness (based on durability and enchantment)
    - Property with wear-and-tear simulation: condition (degrades over time)
 
 3. Design a `Skill` class with:
+
    - Auto-implemented properties: name, base_power
    - Computed property: actual_power (based on character attributes)
    - Property with cooldown: last_used (enforces usage restrictions)
 
 4. Create an `Inventory` class with:
+
    - Indexed property: items[slot] (manages equipped and stored items)
    - Computed property: total_weight (sum of all item weights)
    - Property with capacity check: add_item (checks inventory capacity before adding)
@@ -86,22 +94,26 @@ How would you design these properties to create a dynamic and responsive game sy
 Design an IoT sensor network management system using properties:
 
 1. Create a `Sensor` class with:
+
    - Basic properties: id, type, location
    - Computed property: status (based on last_reading_time and battery_level)
    - Property with throttling: current_reading (limits read frequency)
    - Property with alert triggering: battery_level (triggers alert when low)
 
 2. Implement a `SensorNetwork` class with:
+
    - Collection property: sensors (manages network of sensors)
    - Computed property: network_health (percentage of active sensors)
    - Property with load balancing: add_sensor (distributes sensors across network)
 
 3. Design a `DataStream` class with:
+
    - Computed property: average_value (moving average of sensor readings)
    - Property with buffering: add_reading (buffers readings before processing)
    - Indexed property: historical_data[timestamp] (retrieves historical data points)
 
 4. Create an `AlertSystem` class with:
+
    - Property with priority queue: pending_alerts (manages alerts by priority)
    - Computed property: alert_frequency (calculates alert frequency over time)
    - Property with callback: set_alert_handler (sets callback for alert processing)
@@ -131,6 +143,7 @@ How would you design these properties to ensure efficient real-time monitoring a
    Create a class hierarchy for a smart grid energy management system that uses properties to handle real-time power distribution, consumption forecasting, and dynamic pricing, while ensuring grid stability and efficiency.
 
 For each scenario, consider:
+
 - How would you use computed properties to derive complex values efficiently?
 - What strategies would you employ to ensure thread-safety for properties accessed by multiple threads?
 - How would you implement properties that interact with external systems or databases?

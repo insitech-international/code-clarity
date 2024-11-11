@@ -4,7 +4,7 @@
 
 - **ID**: 1322
 - **Title**: Memory Profiler: Analyzing Python Memory Usage
-- **Difficulty**: Medium to Hard
+- **Difficulty**: Medium
 - **Category**: Performance Optimization
 - **Subcategory**: Profiling
 - **Similar Topics**: pympler, objgraph, tracemalloc

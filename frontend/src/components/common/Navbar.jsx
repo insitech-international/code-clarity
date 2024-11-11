@@ -1,11 +1,11 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect } from "react"; 
 import { useLocation, useNavigate } from "react-router-dom";
 import { AppBar, Toolbar, Container, Box, Modal, Typography, Button, CircularProgress, TextField, MenuItem, IconButton, InputAdornment, Chip } from "@mui/material";
 import { styled, alpha } from "@mui/material/styles";
 import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
 import ClearIcon from '@mui/icons-material/Clear';
-import { useQuestionData } from "../../hooks/useQuestionData";
+import { useCategories, useQuestionData } from "../../hooks/useQuestionData";
 
 const SearchBar = styled(TextField)(({ theme }) => ({
   backgroundColor: 'white',
@@ -23,7 +23,8 @@ const SearchBar = styled(TextField)(({ theme }) => ({
 }));
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
-  backgroundColor: theme.palette.primary.main,
+  backgroundColor: 'transparent',  // Make the background transparent
+  boxShadow: 'none',  // Remove any box shadow
 }));
 
 const ModalContent = styled(Box)(({ theme }) => ({
@@ -40,6 +41,9 @@ const ModalContent = styled(Box)(({ theme }) => ({
   padding: theme.spacing(4),
   borderRadius: theme.shape.borderRadius,
   outline: 0,
+  [theme.breakpoints.up('sm')]: {
+    width: '60%',  // Better modal sizing on larger screens
+  },
 }));
 
 const Search = styled('div')(({ theme }) => ({
@@ -81,52 +85,6 @@ const StyledInputBase = styled(TextField)(({ theme }) => ({
   },
 }));
 
-// Function to extract categories and subcategories from the file structure
-const extractCategoriesAndSubcategories = () => {
-  const categories = [
-    "Advanced_Python_Concepts",
-    "Algorithms_and_Data_Structures",
-    "Basics",
-    "Best_Practices_and_Code_Style",
-    "Concurrency",
-    "Database_Operations",
-    "Data_Science_and_Machine_Learning",
-    "Deployment_and_DevOps",
-    "Design_Patterns",
-    "Exception_Handling",
-    "File_Handling",
-    "Networking",
-    "Object_Oriented_Programming",
-    "Performance_Optimization",
-    "Python_2_to_3_Migration",
-    "Security",
-    "Standard_Library_Deep_Dive",
-    "Testing",
-    "Web_Development"
-  ];
-
-  const subcategories = {
-    "Advanced_Python_Concepts": ["Context_Managers", "Coroutines_and_AsyncIO", "Descriptors", "Generators_and_Iterators", "Metaclasses"],
-    "Algorithms_and_Data_Structures": ["Advanced_Data_Structures", "Array", "Backtracking", "Bit_Manipulation", "Computational_Geometry", "Data_Structures", "Design", "Divide_and_Conquer", "Dynamic_Programming", "Functional_Programming", "Graph_Algorithms", "Greedy_Algorithms", "Heap", "Linked_List", "Mathematical_Algorithms", "Python_Internals", "Searching", "Sorting", "String_Algorithms", "Tree_Algorithms", "Two_Pointers"],
-    "Basics": ["Control_Flow", "Data_Types", "Functions", "Modules_and_Packages"],
-    "Best_Practices_and_Code_Style": ["Code_Documentation", "Code_Organization"],
-    "Concurrency": ["Asyncio", "Concurrent_Futures", "Mixing_Concurrency_Models", "Multiprocessing", "Threading"],
-    "Database_Operations": ["NoSQL_Databases", "ORM", "SQL_Databases"],
-    "Data_Science_and_Machine_Learning": ["Deep_Learning", "Machine_Learning_Pipelines", "Matplotlib_and_Seaborn", "NumPy", "Pandas", "Scikit-learn"],
-    "Deployment_and_DevOps": ["CI_CD", "Containerization", "Orchestration_and_Automation", "Package_Management", "Serverless", "Virtual_Environments"],
-    "Design_Patterns": ["Behavioral_Patterns", "Creational_Patterns", "Structural_Patterns"],
-    "Networking": ["HTTP_Requests", "Socket_Programming", "Web_Scraping"],
-    "Object_Oriented_Programming": ["Abstract_Classes_and_Interfaces", "Classes_and_Objects", "Encapsulation", "Inheritance", "Polymorphism"],
-    "Performance_Optimization": ["Code_Optimization", "Profiling"],
-    "Security": ["Cryptography", "Web_Security"],
-    "Standard_Library_Deep_Dive": ["Collections_Module", "Concurrent_Module", "Functools_Module", "Itertools_Module", "Re_Module", "Typing_Module"],
-    "Testing": ["Mocking", "Test_Coverage", "Unit_Testing"],
-    "Web_Development": ["Django", "FastAPI", "Flask"]
-  };
-
-  return { categories, subcategories };
-};
-
 const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -141,16 +99,10 @@ const Navbar = () => {
     category: "",
     subcategory: "",
   });
-  const [categories, setCategories] = useState([]);
+  const { categories, loading: categoriesLoading, error: categoriesError } = useCategories();
   const [subcategories, setSubcategories] = useState({});
 
   const { fetchQuestions } = useQuestionData();
-
-  useEffect(() => {
-    const { categories, subcategories } = extractCategoriesAndSubcategories();
-    setCategories(categories);
-    setSubcategories(subcategories);
-  }, []);
 
   const handleSearch = useCallback(async () => {
     if (!searchTerm.trim()) return;
@@ -163,17 +115,17 @@ const Navbar = () => {
 
     setLoading(true);
     try {
-        const results = await fetchQuestions({ search: searchTerm, ...filters });
-        console.log('Search Results:', results); // Debugging
-        setSearchResults(Array.isArray(results) ? results : []); // Ensure results is always an array
-        setError(null);
+      const results = await fetchQuestions({ search: searchTerm, ...filters });
+      console.log('Search Results:', results);
+      setSearchResults(Array.isArray(results) ? results : []);
+      setError(null);
     } catch (err) {
-        setError(err.message);
-        setSearchResults([]); // Reset results on error
+      setError(err.message);
+      setSearchResults([]);
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-}, [searchTerm, filters, searchParams, navigate, fetchQuestions]);
+  }, [searchTerm, filters, searchParams, navigate, fetchQuestions]);
 
   const handleFilterChange = (filterName, value) => {
     setFilters(prevFilters => ({
@@ -197,6 +149,17 @@ const Navbar = () => {
       handleSearch();
     }
   };
+
+  useEffect(() => {
+    if (filters.category) {
+      const selectedCategorySubcategories = categories.find(
+        (category) => category === filters.category
+      )?.subcategories || [];
+      setSubcategories(selectedCategorySubcategories);
+    } else {
+      setSubcategories({});
+    }
+  }, [filters.category, categories]);
 
   return (
     <>
@@ -227,7 +190,7 @@ const Navbar = () => {
                 }}
               />
             </Search>
-            <Button color="inherit" onClick={handleSearch}>Search</Button>
+            <Button sx={{ backgroundColor: 'purple', color: 'white', '&:hover': { backgroundColor: 'darkviolet' } }} onClick={handleSearch}>Search</Button>
           </Toolbar>
         </Container>
       </StyledAppBar>
@@ -265,11 +228,17 @@ const Navbar = () => {
               sx={{ minWidth: 200 }}
             >
               <MenuItem value="">All</MenuItem>
-              {categories.map((category) => (
-                <MenuItem key={category} value={category}>
-                  {category.replace(/_/g, ' ')}
-                </MenuItem>
-              ))}
+              {categoriesLoading ? (
+                <MenuItem disabled>Loading categories...</MenuItem>
+              ) : categoriesError ? (
+                <MenuItem disabled>Error loading categories</MenuItem>
+              ) : (
+                categories.map((category) => (
+                  <MenuItem key={category} value={category}>
+                    {category.replace(/_/g, ' ')}
+                  </MenuItem>
+                ))
+              )}
             </TextField>
 
             {filters.category && (
@@ -281,39 +250,30 @@ const Navbar = () => {
                 sx={{ minWidth: 200 }}
               >
                 <MenuItem value="">All</MenuItem>
-                {subcategories[filters.category]?.map((subcategory) => (
-                  <MenuItem key={subcategory} value={subcategory}>
-                    {subcategory.replace(/_/g, ' ')}
-                  </MenuItem>
-                ))}
+                {subcategories.length > 0 ? (
+                  subcategories.map((subcategory) => (
+                    <MenuItem key={subcategory} value={subcategory}>
+                      {subcategory.replace(/_/g, ' ')}
+                    </MenuItem>
+                  ))
+                ) : (
+                  <MenuItem disabled>No subcategories available</MenuItem>
+                )}
               </TextField>
             )}
           </Box>
 
-          <Button onClick={handleSearch} variant="contained" color="primary" fullWidth sx={{ mb: 2 }}>
-            Apply Filters
-          </Button>
-
-          {loading && (
-            <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
-              <CircularProgress />
+          {loading ? (
+            <CircularProgress />
+          ) : error ? (
+            <Typography color="error">{error}</Typography>
+          ) : (
+            <Box>
+              {searchResults.map((result) => (
+                <Chip key={result.id} label={result.question} sx={{ margin: 1 }} />
+              ))}
             </Box>
           )}
-
-          {error && <Typography color="error" sx={{ mb: 2 }}>Error: {error}</Typography>}
-
-          {!loading && !error && searchResults.length === 0 && (
-            <Typography sx={{ mb: 2 }}>No results found.</Typography>
-          )}
-
-          {!loading && searchResults.map((question) => (
-            <Chip
-              key={question.id}
-              label={question.title}
-              onClick={() => navigate(`/question/${question.id}`)}
-              sx={{ m: 0.5 }}
-            />
-          ))}
         </ModalContent>
       </Modal>
     </>

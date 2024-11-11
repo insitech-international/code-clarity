@@ -4,7 +4,7 @@
 
 - **ID**: 1132
 - **Title**: Scrapy Framework: Building Scalable Web Crawlers
-- **Difficulty**: Medium to Hard
+- **Difficulty**: Medium
 - **Category**: Networking
 - **Subcategory**: Web Scraping
 - **Similar Topics**: Pyspider, Crawlab, Colly (Go)

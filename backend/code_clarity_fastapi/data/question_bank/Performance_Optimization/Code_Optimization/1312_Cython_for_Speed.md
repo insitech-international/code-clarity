@@ -4,7 +4,7 @@
 
 - **ID**: 1312
 - **Title**: Cython for Speed: Accelerating Python Code
-- **Difficulty**: Medium to Hard
+- **Difficulty**: Medium
 - **Category**: Performance Optimization
 - **Subcategory**: Code Optimization
 - **Similar Topics**: Numba, PyPy, C Extensions for Python
