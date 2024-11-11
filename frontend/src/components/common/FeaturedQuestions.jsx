@@ -94,7 +94,7 @@ const QuestionCard = ({ question }) => {
           to={`/question/${question.question_id}`} 
           variant="outlined" 
           size="small"
-          sx={{ mt: 2, alignSelf: 'flex-start' }}
+          sx={{ mt: 2, alignSelf: 'flex-centre' }}
         >
           View Details
         </Button>
@@ -192,9 +192,6 @@ const FeaturedQuestions = () => {
 
   return (
     <section>
-      <Typography variant="h4" gutterBottom>
-        Featured Questions
-      </Typography>
       {sortedCategories.map(([category, questions]) => (
         <CategorySection
           key={category}

@@ -148,7 +148,6 @@ const HomePage = () => {
           </Grid>
           <Grid item xs={12}>
             <Card>
-              <CardHeader title="Featured Questions" />
               <CardContent>
                 <FeaturedQuestions questions={featuredQuestions} />
               </CardContent>
