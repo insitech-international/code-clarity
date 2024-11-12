@@ -157,14 +157,12 @@ const HomePage = () => {
 
           {/* Featured Questions Section */}
           <Grid item xs={12} sm={12} md={12}>
-            <Card sx={{ boxShadow: 3, borderRadius: '12px' }}>
               <CardContent>
                 <Typography variant="h6" gutterBottom align="center">
                   Featured Questions
                 </Typography>
                 <FeaturedQuestions questions={featuredQuestions} />
               </CardContent>
-            </Card>
           </Grid>
         </Grid>
       </Container>
