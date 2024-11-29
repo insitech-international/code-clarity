@@ -1,0 +1,7 @@
+CI_CD
+Containerization
+Orchestration_and_Automation
+Package_Management
+Serverless
+Virtual_Environments
+directory_listing.txt

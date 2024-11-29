@@ -1,0 +1,3 @@
+Observer.md
+Strategy.md
+directory_listing.txt

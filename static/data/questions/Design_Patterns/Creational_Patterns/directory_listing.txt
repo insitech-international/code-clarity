@@ -1,0 +1,3 @@
+921_Factory_Method.md
+922_Singleton.md
+directory_listing.txt

@@ -1,0 +1,19 @@
+{
+  "files": {
+    "main.css": "https://code-clarity.insitechinternational.com/static/css/main.2f76290d.css",
+    "main.js": "https://code-clarity.insitechinternational.com/static/js/main.a3660267.js",
+    "static/js/453.eac26909.chunk.js": "https://code-clarity.insitechinternational.com/static/js/453.eac26909.chunk.js",
+    "static/media/slick.svg": "https://code-clarity.insitechinternational.com/static/media/slick.2630a3e3eab21c607e21.svg",
+    "static/media/slick.eot": "https://code-clarity.insitechinternational.com/static/media/slick.a4e97f5a2a64f0ab1323.eot",
+    "static/media/slick.ttf": "https://code-clarity.insitechinternational.com/static/media/slick.c94f7671dcc99dce43e2.ttf",
+    "static/media/slick.woff": "https://code-clarity.insitechinternational.com/static/media/slick.295183786cd8a1389865.woff",
+    "index.html": "https://code-clarity.insitechinternational.com/index.html",
+    "main.2f76290d.css.map": "https://code-clarity.insitechinternational.com/static/css/main.2f76290d.css.map",
+    "main.a3660267.js.map": "https://code-clarity.insitechinternational.com/static/js/main.a3660267.js.map",
+    "453.eac26909.chunk.js.map": "https://code-clarity.insitechinternational.com/static/js/453.eac26909.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.2f76290d.css",
+    "static/js/main.a3660267.js"
+  ]
+}
