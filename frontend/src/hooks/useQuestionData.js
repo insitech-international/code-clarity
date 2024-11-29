@@ -2,40 +2,110 @@ import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import FileManager from "../services/fileManager";
 
-const API_BASE_URL = "http://127.0.0.1:8000";
-const FILE_BASE_URL =
-  "https://raw.githubusercontent.com/insitech-international/code-clarity/gh-pages/static/data";
+class DataFetcher {
+  constructor(config) {
+    this.API_BASE_URL = config.apiBaseUrl || "http://127.0.0.1:8000";
+    this.FILE_BASE_URL = config.fileBaseUrl || "https://raw.githubusercontent.com/insitech-international/code-clarity/gh-pages/static/data";
+    this.CACHE_DURATION = config.cacheDuration || 3600000;
+    
+    this.api = axios.create({
+      baseURL: this.API_BASE_URL,
+      timeout: 5000
+    });
+    
+    this.cache = new Map();
+  }
 
-const api = axios.create({
-  baseURL: API_BASE_URL,
-});
-
-// Combined fetch function that tries API first, then falls back to file system
-const fetchData = async (apiPath, filePath = null, params = null) => {
-  try {
-    // Try API first
-    const response = await api.get(apiPath, params ? { params } : undefined);
-    return response.data;
-  } catch (apiError) {
-    console.warn("API fetch failed, falling back to file system:", apiError);
-
-    if (!filePath) {
-      throw apiError;
+  async fetchData(apiPath, filePath = null, params = null) {
+    const cacheKey = this._generateCacheKey(apiPath, filePath, params);
+    
+    const cachedData = this._getFromCache(cacheKey);
+    if (cachedData) {
+      return cachedData;
     }
 
     try {
-      // Fall back to file system
-      const fileResponse = await fetch(`${FILE_BASE_URL}${filePath}`);
-      if (!fileResponse.ok) {
-        throw new Error(`HTTP error! status: ${fileResponse.status}`);
+      const apiData = await this._fetchFromAPI(apiPath, params);
+      this._saveToCache(cacheKey, apiData);
+      return apiData;
+    } catch (apiError) {
+      console.warn(`API fetch failed for ${apiPath}, falling back to static files:`, apiError);
+
+      if (!filePath) {
+        throw new Error(`No static file fallback path provided for ${apiPath}`);
       }
-      return await fileResponse.json();
-    } catch (fileError) {
-      console.error("File system fetch also failed:", fileError);
-      throw new Error("Both API and file system fetches failed");
+
+      try {
+        const fileData = await this._fetchFromStatic(filePath);
+        this._saveToCache(cacheKey, fileData);
+        return fileData;
+      } catch (fileError) {
+        console.error("Static file fetch also failed:", fileError);
+        throw new Error(`Failed to fetch data from both API and static files: ${apiPath}`);
+      }
     }
   }
-};
+
+  async _fetchFromAPI(apiPath, params) {
+    const response = await this.api.get(apiPath, params ? { params } : undefined);
+    return response.data;
+  }
+
+  async _fetchFromStatic(filePath) {
+    const fullPath = `${this.FILE_BASE_URL}${filePath}`;
+    const response = await fetch(fullPath);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
+      return await response.json();
+    }
+    return await response.text();
+  }
+
+  _generateCacheKey(apiPath, filePath, params) {
+    return JSON.stringify({ apiPath, filePath, params });
+  }
+
+  _getFromCache(key) {
+    const cached = this.cache.get(key);
+    if (cached && Date.now() - cached.timestamp < this.CACHE_DURATION) {
+      return cached.data;
+    }
+    return null;
+  }
+
+  _saveToCache(key, data) {
+    this.cache.set(key, {
+      data,
+      timestamp: Date.now()
+    });
+  }
+
+  clearCache() {
+    this.cache.clear();
+  }
+
+  async postData(apiPath, data) {
+    try {
+      const response = await this.api.post(apiPath, data);
+      return response.data;
+    } catch (error) {
+      console.error(`Error posting to ${apiPath}:`, error);
+      throw error;
+    }
+  }
+}
+
+// Create a singleton instance
+const dataFetcher = new DataFetcher({
+  apiBaseUrl: process.env.REACT_APP_API_BASE_URL,
+  fileBaseUrl: process.env.REACT_APP_FILE_BASE_URL,
+  cacheDuration: 3600000
+});
 
 export const useCategories = () => {
   const [categories, setCategories] = useState([]);
@@ -46,15 +116,11 @@ export const useCategories = () => {
     const fetchCategories = async () => {
       setLoading(true);
       try {
-        // Try API categories endpoint first, fall back to index.json
-        const data = await fetchData("/categories/", "/index.json");
+        const data = await dataFetcher.fetchData("/categories/", "/index.json");
 
-        // Handle both API and file system response formats
         if (Array.isArray(data)) {
-          // API response
           setCategories(data);
         } else if (data.questions) {
-          // File system response - extract categories from questions
           const uniqueCategories = [
             ...new Set(
               data.questions
@@ -88,11 +154,10 @@ export const useQuestionData = () => {
   const [error, setError] = useState(null);
   const [indexData, setIndexData] = useState(null);
 
-  // Load index data for file system fallback
   useEffect(() => {
     const loadIndexData = async () => {
       try {
-        const data = await fetchData(null, "/index.json");
+        const data = await dataFetcher.fetchData(null, "/index.json");
         setIndexData(data);
       } catch (err) {
         console.error("Error loading index data:", err);
@@ -110,11 +175,10 @@ export const useQuestionData = () => {
       setLoading(true);
       setError(null);
       try {
-        const data = await fetchData("/questions/", null, params);
+        const data = await dataFetcher.fetchData("/questions/", null, params);
         setQuestions(data.questions || []);
         return data;
       } catch (apiError) {
-        // Fall back to file system implementation
         try {
           if (!indexData) {
             throw new Error("Index data not loaded");
@@ -140,7 +204,7 @@ export const useQuestionData = () => {
           const questionDetails = await Promise.all(
             paginatedQuestions.map(async (q) => {
               const questionPath = q.path.replace(/^.*?\/static\/data/, "");
-              const content = await fetch(`${FILE_BASE_URL}${questionPath}`);
+              const content = await fetch(`${dataFetcher.FILE_BASE_URL}${questionPath}`);
               const text = await content.text();
               return FileManager.parseQuestionFile(text, q.path);
             })
@@ -168,7 +232,7 @@ export const useQuestionData = () => {
   const fetchQuestionDetails = useCallback(
     async (questionId) => {
       try {
-        return await fetchData(`/questions/${questionId}/`);
+        return await dataFetcher.fetchData(`/questions/${questionId}/`);
       } catch (apiError) {
         if (!indexData) {
           throw new Error("Index data not loaded");
@@ -181,11 +245,8 @@ export const useQuestionData = () => {
           throw new Error(`Question with ID ${questionId} not found`);
         }
 
-        const questionPath = questionInfo.path.replace(
-          /^.*?\/static\/data/,
-          ""
-        );
-        const response = await fetch(`${FILE_BASE_URL}${questionPath}`);
+        const questionPath = questionInfo.path.replace(/^.*?\/static\/data/, "");
+        const response = await fetch(`${dataFetcher.FILE_BASE_URL}${questionPath}`);
         const content = await response.text();
         return FileManager.parseQuestionFile(content, questionInfo.path);
       }
@@ -196,7 +257,7 @@ export const useQuestionData = () => {
   const fetchSolution = useCallback(
     async (questionId) => {
       try {
-        return await fetchData(`/solutions/${questionId}/`);
+        return await dataFetcher.fetchData(`/solutions/${questionId}/`);
       } catch (apiError) {
         if (!indexData) {
           throw new Error("Index data not loaded");
@@ -209,11 +270,8 @@ export const useQuestionData = () => {
           throw new Error(`Solution for question ID ${questionId} not found`);
         }
 
-        const solutionPath = solutionInfo.path.replace(
-          /^.*?\/static\/data/,
-          ""
-        );
-        const response = await fetch(`${FILE_BASE_URL}${solutionPath}`);
+        const solutionPath = solutionInfo.path.replace(/^.*?\/static\/data/, "");
+        const response = await fetch(`${dataFetcher.FILE_BASE_URL}${solutionPath}`);
         const content = await response.text();
         return FileManager.parseSolutionFile(content, solutionInfo.path);
       }
@@ -225,7 +283,7 @@ export const useQuestionData = () => {
     setLoading(true);
     setError(null);
     try {
-      return await fetchData("/featured_questions/");
+      return await dataFetcher.fetchData("/featured_questions/");
     } catch (apiError) {
       try {
         if (!indexData) {
@@ -252,11 +310,9 @@ export const useQuestionData = () => {
     }
   }, [indexData, fetchQuestionDetails]);
 
-  // API-only functions
   const testDbConnection = useCallback(async () => {
     try {
-      const data = await fetchData("/test-db-connection");
-      return data;
+      return await dataFetcher.fetchData("/test-db-connection");
     } catch (err) {
       console.error("Error testing DB connection:", err);
       throw new Error("Failed to test DB connection");
@@ -265,8 +321,7 @@ export const useQuestionData = () => {
 
   const triggerDatabaseUpdate = useCallback(async () => {
     try {
-      const data = await api.post("/update-database");
-      return data.data;
+      return await dataFetcher.postData("/update-database");
     } catch (err) {
       console.error("Error triggering database update:", err);
       throw new Error("Failed to trigger database update");
