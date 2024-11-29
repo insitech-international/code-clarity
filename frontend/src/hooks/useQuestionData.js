@@ -282,34 +282,78 @@ export const useQuestionData = () => {
   const fetchFeaturedQuestions = useCallback(async () => {
     setLoading(true);
     setError(null);
+    
     try {
-      return await dataFetcher.fetchData("/featured_questions/");
-    } catch (apiError) {
-      try {
-        if (!indexData) {
-          throw new Error("Index data not loaded");
-        }
-
-        const featuredIds = indexData.questions
-          .filter((q) => q.id != null)
-          .slice(0, 5)
-          .map((q) => q.id);
-
-        const featuredQuestions = await Promise.all(
-          featuredIds.map((id) => fetchQuestionDetails(id))
-        );
-
-        return { featured_questions: featuredQuestions };
-      } catch (err) {
-        console.error("Error fetching featured questions:", err);
-        setError("Failed to fetch featured questions. Please try again later.");
-        return { featured_questions: [] };
+      // First attempt: Try to get featured questions from API
+      const apiResponse = await dataFetcher.fetchData(
+        "/featured_questions/", 
+        "/index.json"
+      );
+      
+      if (apiResponse && apiResponse.featured_questions) {
+        return apiResponse;
       }
+      
+      // Load or use existing index data
+      let workingIndexData = indexData;
+      if (!workingIndexData) {
+        workingIndexData = await dataFetcher.fetchData(null, "/index.json");
+        if (!workingIndexData) {
+          throw new Error("Failed to load index data");
+        }
+        setIndexData(workingIndexData);
+      }
+      
+      // Get the first 5 questions from index data
+      const featuredIds = workingIndexData.questions
+        .filter(q => q.id != null)
+        .slice(0, 5)
+        .map(q => q.id);
+      
+      // Fetch full details for each featured question
+      const featuredQuestions = await Promise.all(
+        featuredIds.map(async (id) => {
+          try {
+            const questionInfo = workingIndexData.questions.find(q => q.id === id);
+            if (!questionInfo) {
+              throw new Error(`Question with ID ${id} not found`);
+            }
+            
+            const questionPath = questionInfo.path.replace(/^.*?\/static\/data/, "");
+            const content = await dataFetcher.fetchData(
+              `/questions/${id}/`,
+              questionPath
+            );
+            
+            if (typeof content === 'string') {
+              return FileManager.parseQuestionFile(content, questionInfo.path);
+            }
+            
+            return content;
+          } catch (err) {
+            console.error(`Error fetching featured question ${id}:`, err);
+            return null;
+          }
+        })
+      );
+      
+      const validFeaturedQuestions = featuredQuestions.filter(q => q !== null);
+      
+      if (validFeaturedQuestions.length === 0) {
+        throw new Error("No featured questions could be loaded");
+      }
+      
+      return { featured_questions: validFeaturedQuestions };
+      
+    } catch (err) {
+      console.error("Error fetching featured questions:", err);
+      setError("Failed to fetch featured questions. Please try again later.");
+      return { featured_questions: [] };
     } finally {
       setLoading(false);
     }
-  }, [indexData, fetchQuestionDetails]);
-
+  }, [indexData, dataFetcher]);
+  
   const testDbConnection = useCallback(async () => {
     try {
       return await dataFetcher.fetchData("/test-db-connection");
