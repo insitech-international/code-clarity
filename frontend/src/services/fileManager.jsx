@@ -1,33 +1,61 @@
 import React from 'react';
 
 class FileManager {
+  // Configure base URL for static files on GitHub Pages
+  static FILE_BASE_URL = 'https://raw.githubusercontent.com/insitech-international/code-clarity/gh-pages/static/data';
+  
+  // Cached data
   static indexData = null;
+  static questionCache = new Map();
+  static solutionCache = new Map();
 
+  // Method to load index data with caching and error handling
   static async loadIndexData() {
     if (!this.indexData) {
       try {
-        const response = await fetch('/static/data/index.json');
+        const response = await fetch(`${this.FILE_BASE_URL}/index.json`);
         if (!response.ok) {
           throw new Error('Failed to load index.json');
         }
         this.indexData = await response.json();
+        
+        // Filter out items with null ids and ensure unique entries
+        this.indexData.questions = Array.from(new Set(
+          this.indexData.questions
+            .filter(q => q.id != null && q.path)
+            .map(q => JSON.stringify(q))
+        )).map(q => JSON.parse(q));
+
+        this.indexData.solutions = Array.from(new Set(
+          this.indexData.solutions
+            .filter(s => s.id != null && s.path)
+            .map(s => JSON.stringify(s))
+        )).map(s => JSON.parse(s));
       } catch (error) {
         console.error('Error loading index.json:', error);
-        this.indexData = { questions: [], solutions: [] };
+        this.indexData = { 
+          questions: [], 
+          solutions: [],
+          lastUpdated: null 
+        };
       }
     }
     return this.indexData;
   }
 
+  // Read file from GitHub raw content URL with robust error handling
   static async readFile(filePath) {
     try {
-      // Convert absolute path to relative path for frontend
-      const relativePath = filePath.replace(/^.*?\/static\/data/, '/static/data');
-      const response = await fetch(relativePath);
+      // Construct full URL using the base URL
+      const fullUrl = `${this.FILE_BASE_URL}${filePath.replace(/^.*?\/static\/data/, '')}`;
+      
+      const response = await fetch(fullUrl);
+      
       if (!response.ok) {
-        console.error(`File not found: ${filePath}`);
+        console.error(`File not found: ${fullUrl}`);
         return "";
       }
+      
       return await response.text();
     } catch (error) {
       console.error(`IO error reading file ${filePath}: ${error.message}`);
@@ -35,48 +63,39 @@ class FileManager {
     }
   }
 
-  static async findFileById(fileId, fileType) {
-    try {
-      const index = await this.loadIndexData();
-      
-      // Determine which array to search based on fileType
-      const files = fileType === 'questions' ? index.questions : index.solutions;
-      
-      // Find the file with matching ID and non-null path
-      const fileInfo = files.find(file => file.id === fileId && file.path != null);
-      
-      if (!fileInfo) {
-        console.log(`No ${fileType} file found for ID: ${fileId}`);
-        return null;
-      }
-
-      return fileInfo.path;
-    } catch (error) {
-      console.error(`Error finding file for ID: ${fileId} in ${fileType}: ${error.message}`);
-      return null;
-    }
-  }
-
+  // Advanced markdown parsing with improved section detection
   static parseMarkdownFile(content) {
     const sections = {};
     let currentSection = null;
     let sectionContent = "";
 
     const lines = content.split('\n');
+    const sectionRegex = /^(#{1,3})\s*(.+)/;
 
     for (const line of lines) {
-      if (line.startsWith('# ')) {
+      const match = line.match(sectionRegex);
+      
+      if (match) {
+        // Save previous section if it exists
         if (currentSection && sectionContent.trim()) {
           sections[currentSection] = sectionContent.trim();
         }
 
-        currentSection = line.slice(2).toLowerCase().replace(/ /g, '_');
-        sectionContent = "";
-      } else {
+        // Determine section level and name
+        const level = match[1].length;
+        const sectionName = match[2].toLowerCase().replace(/[^\w\s]/g, '').replace(/\s+/g, '_');
+        
+        // Only capture top-level sections
+        if (level === 1) {
+          currentSection = sectionName;
+          sectionContent = "";
+        }
+      } else if (currentSection) {
         sectionContent += line + '\n';
       }
     }
 
+    // Save last section
     if (currentSection && sectionContent.trim()) {
       sections[currentSection] = sectionContent.trim();
     }
@@ -84,56 +103,70 @@ class FileManager {
     return sections;
   }
 
+  // Enhanced metadata parsing with more robust extraction
   static parseMetadata(content) {
     const metadata = {};
     const lines = content.split('\n');
+    const metadataRegex = /^-\s*([^:]+):\s*(.+)$/;
 
     for (const line of lines) {
-      if (line.trim().startsWith('-')) {
-        const [key, value] = line.trim().slice(1).split(':', 2).map(str => str.trim());
-        const processedKey = key.replace(/\*\*/g, '').toLowerCase().replace(/ /g, '_');
+      const match = line.match(metadataRegex);
+      
+      if (match) {
+        let key = match[1]
+          .replace(/\*\*/g, '')  // Remove bold markers
+          .toLowerCase()
+          .trim()
+          .replace(/\s+/g, '_');
+        
+        let value = match[2].trim();
 
-        if (value) {
-          if (['similar_questions', 'real_life_domains'].includes(processedKey)) {
-            metadata[processedKey] = value.split(',').map(item => item.trim()).filter(Boolean);
-          } else {
-            metadata[processedKey] = value;
-          }
+        // Special handling for list-type fields
+        if (['similar_questions', 'real_life_domains', 'tags'].includes(key)) {
+          metadata[key] = value
+            .split(',')
+            .map(item => item.trim())
+            .filter(Boolean);
+        } else {
+          metadata[key] = value;
         }
       }
     }
+
     return metadata;
   }
 
-  static parseProblemVersions(versionsContent) {
-    const problemVersions = [];
-    const versionPattern = /##\s*Version\s*\d+:.+?(?=\n##\s*Version|\Z)/gs;
-    const versionBlocks = versionsContent.match(versionPattern) || [];
-
-    return versionBlocks.map(block => block.trim());
-  }
-
+  // Comprehensive question file parsing
   static async parseQuestionFile(filePath) {
+    // Check cache first
+    if (this.questionCache.has(filePath)) {
+      return this.questionCache.get(filePath);
+    }
+
     try {
       const content = await this.readFile(filePath);
       const sections = this.parseMarkdownFile(content);
-      const problemVersions = this.parseProblemVersions(sections.versions || '');
-
       const metadata = this.parseMetadata(sections.metadata || '');
+
       const questionData = {
-        question_id: metadata.id,
+        question_id: metadata.id ? parseInt(metadata.id) : null,
         title: metadata.title || '',
         difficulty: metadata.difficulty || '',
         category: metadata.category || '',
         subcategory: metadata.subcategory || '',
         similar_questions: metadata.similar_questions || [],
         real_life_domains: metadata.real_life_domains || [],
-        problem_description: sections.problem_description || '',
-        problem_versions: problemVersions,
-        constraints: (sections.constraints || '').split('\n').map(c => c.trim()).filter(Boolean),
-        notes: (sections.notes || '').split('\n').map(n => n.trim()).filter(Boolean),
-        content: content
+        problem_description: sections.problem_description || sections.description || '',
+        problem_versions: this.parseProblemVersions(sections.versions || ''),
+        constraints: this.parseListSection(sections.constraints),
+        notes: this.parseListSection(sections.notes),
+        tags: metadata.tags || [],
+        content: content,
+        file_path: filePath
       };
+
+      // Cache the result
+      this.questionCache.set(filePath, questionData);
 
       return questionData;
     } catch (error) {
@@ -142,27 +175,37 @@ class FileManager {
     }
   }
 
+  // Comprehensive solution file parsing
   static async parseSolutionFile(filePath) {
+    // Check cache first
+    if (this.solutionCache.has(filePath)) {
+      return this.solutionCache.get(filePath);
+    }
+
     try {
       const content = await this.readFile(filePath);
       const sections = this.parseMarkdownFile(content);
       const metadata = this.parseMetadata(sections.metadata || '');
       
       const solutionData = {
-        question_id: metadata.id,
+        question_id: metadata.id ? parseInt(metadata.id) : null,
         category: metadata.category || '',
         subcategory: metadata.subcategory || '',
         classification_rationale: sections.classification_rationale || '',
         introduction: sections.introduction || '',
         mathematical_abstraction: sections.mathematical_abstraction || '',
         pythonic_implementation: sections.pythonic_implementation || '',
-        bucesr_framework: sections.bucesr_framework || '',
         complexity_analysis: sections.complexity_analysis || '',
         real_world_analogies: sections.real_world_analogies || '',
         storytelling_approach: sections.storytelling_approach || '',
         visual_representation: sections.visual_representation || '',
-        content: content
+        tags: metadata.tags || [],
+        content: content,
+        file_path: filePath
       };
+
+      // Cache the result
+      this.solutionCache.set(filePath, solutionData);
 
       return solutionData;
     } catch (error) {
@@ -171,16 +214,90 @@ class FileManager {
     }
   }
 
-  // Helper method to get all available questions
-  static async getAllQuestions() {
-    const index = await this.loadIndexData();
-    return index.questions.filter(q => q.id != null);
+  // Helper method to parse problem versions
+  static parseProblemVersions(versionsContent) {
+    const problemVersions = [];
+    const versionPattern = /##\s*Version\s*\d+:.+?(?=\n##\s*Version|\Z)/gs;
+    const versionBlocks = versionsContent.match(versionPattern) || [];
+
+    return versionBlocks.map(block => block.trim());
   }
 
-  // Helper method to get all available solutions
-  static async getAllSolutions() {
+  // Helper method to parse list-based sections
+  static parseListSection(sectionContent) {
+    return sectionContent ? 
+      sectionContent
+        .split('\n')
+        .map(item => item.replace(/^[-*]\s*/, '').trim())
+        .filter(Boolean)
+      : [];
+  }
+
+  // Get all questions with optional filtering
+  static async getAllQuestions(filters = {}) {
     const index = await this.loadIndexData();
-    return index.solutions.filter(s => s.id != null);
+    let questions = index.questions;
+
+    // Apply filters
+    if (filters.category) {
+      questions = questions.filter(q => 
+        q.path.includes(`/questions/${filters.category}/`)
+      );
+    }
+
+    // Fetch full details for each question
+    return Promise.all(
+      questions.map(q => this.parseQuestionFile(q.path))
+    );
+  }
+
+  // Get all solutions with optional filtering
+  static async getAllSolutions(filters = {}) {
+    const index = await this.loadIndexData();
+    let solutions = index.solutions;
+
+    // Apply filters
+    if (filters.category) {
+      solutions = solutions.filter(s => 
+        s.path.includes(`/solutions/${filters.category}/`)
+      );
+    }
+
+    // Fetch full details for each solution
+    return Promise.all(
+      solutions.map(s => this.parseSolutionFile(s.path))
+    );
+  }
+
+  // Find a specific question by ID
+  static async findQuestionById(questionId) {
+    const index = await this.loadIndexData();
+    const questionInfo = index.questions.find(q => q.id === questionId);
+    
+    if (!questionInfo) {
+      return null;
+    }
+
+    return await this.parseQuestionFile(questionInfo.path);
+  }
+
+  // Find a specific solution by ID
+  static async findSolutionById(questionId) {
+    const index = await this.loadIndexData();
+    const solutionInfo = index.solutions.find(s => s.id === questionId);
+    
+    if (!solutionInfo) {
+      return null;
+    }
+
+    return await this.parseSolutionFile(solutionInfo.path);
+  }
+
+  // Clear all caches
+  static clearCache() {
+    this.indexData = null;
+    this.questionCache.clear();
+    this.solutionCache.clear();
   }
 }
 
