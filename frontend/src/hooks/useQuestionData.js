@@ -173,60 +173,15 @@ export const useQuestionData = () => {
   const [error, setError] = useState(null);
   const [indexData, setIndexData] = useState(null);
 
-  // Load index data (existing logic)
-  useEffect(() => {
-    const loadIndexData = async () => {
-      try {
-        const data = await DataFetcher.fetchData(null, "/index.json");
-        setIndexData(data);
-        // Debug: Store index data globally for inspection
-        window.__DEBUG_INDEX_DATA = data;
-      } catch (err) {
-        console.error("Error loading index data:", err);
-        setError("Failed to load index data");
-      }
-    };
-
-    if (!indexData) {
-      loadIndexData();
-    }
-  }, [indexData]);
-
-// For index data loading:
-const loadIndexData = async () => {
-  try {
-    // Pass both API path and file path
-    const data = await DataFetcher.fetchData('/index/', '/index.json');
-    setIndexData(data);
-  } catch (err) {
-    console.error("Error loading index data:", err);
-    setError("Failed to load index data");
-  }
-};
-
-// For featured questions:
-const fetchFeaturedQuestions = useCallback(async () => {
-  setLoading(true);
-  setError(null);
-
-  try {
-    const response = await DataFetcher.fetchData(
-      '/featured_questions/',  // API path
-      '/index.json'           // Static fallback path
-    );
-    return response;
-  } catch (err) {
-    console.error("Error fetching featured questions:", err);
-    setError(err.message || "Failed to fetch featured questions. Please try again later.");
-    return { featured_questions: [] };
-  } finally {
-    setLoading(false);
-  }
-}, []);
-  
-  // Load index data
-  useEffect(() => {
-    const loadIndexData = async () => {
+  // Load index data - single unified function
+  // useQuestionData.js
+  const loadIndexData = useCallback(async () => {
+    if (DataFetcher.DEVELOPMENT_MODE) {
+      // In development, get categories from API
+      const data = await DataFetcher.fetchData("/categories/");
+      setIndexData({ questions: data });
+    } else {
+      // In production, try static file
       try {
         const data = await DataFetcher.fetchData(null, "/index.json");
         setIndexData(data);
@@ -234,12 +189,35 @@ const fetchFeaturedQuestions = useCallback(async () => {
         console.error("Error loading index data:", err);
         setError("Failed to load index data");
       }
-    };
+    }
+  }, []);
 
+  // Initial load of index data
+  useEffect(() => {
     if (!indexData) {
       loadIndexData();
     }
-  }, [indexData]);
+  }, [indexData, loadIndexData]);
+
+  // Fetch Featured Questions
+  const fetchFeaturedQuestions = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await DataFetcher.fetchData(
+        "/featured_questions/", // API path
+        "/featured_questions" // Static path
+      );
+      return response;
+    } catch (err) {
+      console.error("Error fetching featured questions:", err);
+      setError(err.message || "Failed to fetch featured questions");
+      return { featured_questions: [] };
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   // Fetch Questions
   const fetchQuestions = useCallback(
@@ -425,6 +403,7 @@ const fetchFeaturedQuestions = useCallback(async () => {
     fetchFeaturedQuestions,
     testDbConnection,
     triggerDatabaseUpdate,
+    loadIndexData,
   };
 };
 
