@@ -192,38 +192,38 @@ export const useQuestionData = () => {
     }
   }, [indexData]);
 
-  // Fetch Featured Questions with comprehensive error handling
-  const fetchFeaturedQuestions = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+// For index data loading:
+const loadIndexData = async () => {
+  try {
+    // Pass both API path and file path
+    const data = await DataFetcher.fetchData('/index/', '/index.json');
+    setIndexData(data);
+  } catch (err) {
+    console.error("Error loading index data:", err);
+    setError("Failed to load index data");
+  }
+};
 
-    try {
-      // First, try API
-      const apiResponse = await DataFetcher.fetchData(
-        "/featured_questions/",
-        "/index.json"
-      );
+// For featured questions:
+const fetchFeaturedQuestions = useCallback(async () => {
+  setLoading(true);
+  setError(null);
 
-      if (apiResponse && apiResponse.featured_questions) {
-        return apiResponse;
-      }
-
-      // Fallback to index data logic
-      return await fetchFeaturedQuestionsLogic(
-        indexData || (await DataFetcher.fetchData(null, "/index.json"))
-      );
-    } catch (err) {
-      console.error("Error fetching featured questions:", err);
-      setError(
-        err.message ||
-          "Failed to fetch featured questions. Please try again later."
-      );
-      return { featured_questions: [] };
-    } finally {
-      setLoading(false);
-    }
-  }, [indexData]);
-
+  try {
+    const response = await DataFetcher.fetchData(
+      '/featured_questions/',  // API path
+      '/index.json'           // Static fallback path
+    );
+    return response;
+  } catch (err) {
+    console.error("Error fetching featured questions:", err);
+    setError(err.message || "Failed to fetch featured questions. Please try again later.");
+    return { featured_questions: [] };
+  } finally {
+    setLoading(false);
+  }
+}, []);
+  
   // Load index data
   useEffect(() => {
     const loadIndexData = async () => {
