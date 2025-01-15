@@ -1,5 +1,6 @@
 class DataFetcher {
     constructor(config = {}) {
+      // Initialize properties
       const isProduction = !window.location.hostname.includes('localhost') && 
                           !window.location.hostname.includes('127.0.0.1');
       
@@ -10,11 +11,6 @@ class DataFetcher {
       this.API_TIMEOUT = 5000;
       this.cache = new Map();
   
-      // Bind methods to this instance
-      this.fetchData = this.fetchData.bind(this);
-      this._getFromCache = this._getFromCache.bind(this);
-      this._saveToCache = this._saveToCache.bind(this);
-  
       console.log('DataFetcher initialized:', {
         environment: isProduction ? 'production' : 'development',
         API_BASE_URL: this.API_BASE_URL,
@@ -23,6 +19,7 @@ class DataFetcher {
       });
     }
   
+    // Core data fetching method
     async fetchData(apiPath, staticPath = null, params = null) {
       // Development mode: Only use API
       if (this.DEVELOPMENT_MODE) {
@@ -82,59 +79,44 @@ class DataFetcher {
       }
   
       try {
-        return await this._handleStaticPath(staticPath, params);
+        console.log('Fetching static file:', `${this.STATIC_BASE_URL}${staticPath}`);
+        const response = await fetch(`${this.STATIC_BASE_URL}${staticPath}`);
+  
+        if (!response.ok) {
+          throw new Error(`Static file fetch failed: ${response.status}`);
+        }
+  
+        const contentType = response.headers.get('content-type');
+        let data;
+        
+        // Try JSON first, fallback to text
+        try {
+          data = await response.json();
+        } catch {
+          data = await response.text();
+        }
+  
+        return data;
       } catch (staticError) {
         console.error('Static file error:', staticError);
         throw staticError;
       }
     }
   
-    _getFromCache(key) {
-      const cached = this.cache.get(key);
-      if (cached && Date.now() - cached.timestamp < this.CACHE_DURATION) {
-        return cached.data;
-      }
-      return null;
-    }
-  
-    _saveToCache(key, data) {
-      this.cache.set(key, {
-        data,
-        timestamp: Date.now()
-      });
-    }
-  
-    async _handleStaticPath(staticPath, params) {
-      // Production only
-      if (this.DEVELOPMENT_MODE) {
-        throw new Error('Static paths not available in development mode');
-      }
-  
-      switch (staticPath) {
-        case '/index.json':
-          return this._getIndex();
-        case '/featured_questions':
-          return this._getFeaturedQuestionsStatic();
-        case '/categories':
-          return this._getCategoriesStatic();
-        case '/questions':
-          return this._getQuestionsListStatic(params);
-        default:
-          if (staticPath.includes('/questions/')) {
-            const id = parseInt(staticPath.split('/').pop());
-            return this._getQuestionDetailStatic(id);
-          }
-          if (staticPath.includes('/solutions/')) {
-            const id = parseInt(staticPath.split('/').pop());
-            return this._getSolutionDetailStatic(id);
-          }
-          throw new Error(`Unhandled static path: ${staticPath}`);
+    // Helper method for testing connection
+    async testConnection() {
+      try {
+        const response = await fetch(`${this.API_BASE_URL}/test-connection`);
+        return response.ok;
+      } catch {
+        return false;
       }
     }
-  
-    // ... rest of the static file handlers ...
   }
   
+  // Create singleton instance
   const dataFetcher = new DataFetcher();
+  
+  // Export both the instance and the class
   export { DataFetcher };
   export default dataFetcher;
