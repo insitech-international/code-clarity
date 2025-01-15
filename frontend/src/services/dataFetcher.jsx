@@ -2,214 +2,144 @@ import axios from "axios";
 import FileManager from "./fileManager";
 
 class DataFetcher {
-  constructor(config = {}) {
-    // Base URLs
-    this.API_BASE_URL = config.apiBaseUrl || 
-      process.env.REACT_APP_API_BASE_URL || 
-      "http://127.0.0.1:8000";
-    
-    this.FILE_BASE_URL = config.fileBaseUrl || 
-      process.env.REACT_APP_FILE_BASE_URL || 
-      "https://raw.githubusercontent.com/insitech-international/code-clarity/gh-pages/static/data";
-    
-    // Caching configuration
-    this.CACHE_DURATION = config.cacheDuration || 3600000; // 1 hour
-    this.OFFLINE_MODE = config.offlineMode || false;
-
-    // Axios instance for API calls
-    this.api = axios.create({
-      baseURL: this.API_BASE_URL,
-      timeout: 5000,
-    });
-
-    // Internal cache
-    this.cache = new Map();
-  }
-
-  // Generate a unique cache key
-  _generateCacheKey(apiPath, filePath, params) {
-    return JSON.stringify({ apiPath, filePath, params });
-  }
-
-  // Check and retrieve from cache
-  _getFromCache(key) {
-    const cached = this.cache.get(key);
-    if (cached && Date.now() - cached.timestamp < this.CACHE_DURATION) {
-      return cached.data;
-    }
-    return null;
-  }
-
-  // Save to cache
-  _saveToCache(key, data) {
-    this.cache.set(key, {
-      data,
-      timestamp: Date.now(),
-    });
-  }
-
-  // Fetch data with comprehensive fallback mechanism
-  async fetchData(apiPath, filePath = null, params = null, options = {}) {
-    // Determine effective offline mode
-    const isOffline = options.offlineOnly || this.OFFLINE_MODE;
-
-    // Generate cache key
-    const cacheKey = this._generateCacheKey(apiPath, filePath, params);
-    
-    // Check cache first
-    const cachedData = this._getFromCache(cacheKey);
-    if (cachedData) {
-      return cachedData;
-    }
-
-    // Offline mode or API disabled
-    if (isOffline) {
-      if (!filePath) {
-        throw new Error("No static file path provided for offline mode");
-      }
-      const fileData = await this._fetchFromStatic(filePath);
-      this._saveToCache(cacheKey, fileData);
-      return fileData;
-    }
-
-    try {
-      // Attempt API fetch
-      const apiData = await this._fetchFromAPI(apiPath, params);
-      this._saveToCache(cacheKey, apiData);
-      return apiData;
-    } catch (apiError) {
-      console.warn(
-        `API fetch failed for ${apiPath}, falling back to static files:`,
-        apiError
-      );
-
-      // No static file fallback
-      if (!filePath) {
-        throw new Error(`No static file fallback path provided for ${apiPath}`);
-      }
-
-      try {
-        // Fetch from static files
-        const fileData = await this._fetchFromStatic(filePath);
-        this._saveToCache(cacheKey, fileData);
-        return fileData;
-      } catch (fileError) {
-        console.error("Static file fetch also failed:", fileError);
-        throw new Error(
-          `Failed to fetch data from both API and static files: ${apiPath}`
-        );
-      }
-    }
-  }
-
-  // API data fetching
-  async _fetchFromAPI(apiPath, params) {
-    const response = await this.api.get(
-      apiPath,
-      params ? { params } : undefined
-    );
-    return response.data;
-  }
-
-  // Static file fetching
-  async _fetchFromStatic(filePath) {
-    const fullPath = `${this.FILE_BASE_URL}${filePath.replace(/^.*?\/static\/data/, '')}`;
-    const response = await fetch(fullPath);
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const contentType = response.headers.get("content-type");
-    if (contentType && contentType.includes("application/json")) {
-      return await response.json();
-    }
-    return await response.text();
-  }
-
-  // POST data method
-  async postData(apiPath, data, options = {}) {
-    // If in offline mode or offlineOnly is set, throw an error
-    if (this.OFFLINE_MODE || options.offlineOnly) {
-      throw new Error("Cannot post data in offline mode");
-    }
-
-    try {
-      const response = await this.api.post(apiPath, data);
-      return response.data;
-    } catch (error) {
-      console.error(`Error posting to ${apiPath}:`, error);
+    constructor(config = {}) {
+      // Determine environment
+      const isProduction = !window.location.hostname.includes('localhost') && 
+                          !window.location.hostname.includes('127.0.0.1');
       
-      // Optional fallback mechanism
-      if (options.fallbackToStatic) {
+      // In both environments, try API first
+      this.API_BASE_URL = "http://127.0.0.1:8000";
+      this.STATIC_BASE_URL = '/static/data';
+      
+      // In development: Only use API
+      // In production: Try API first, fallback to static
+      this.DEVELOPMENT_MODE = !isProduction;
+      this.CACHE_DURATION = config.cacheDuration || 3600000;
+      this.API_TIMEOUT = 5000;
+      this.cache = new Map();
+  
+      console.log('DataFetcher initialized:', {
+        environment: isProduction ? 'production' : 'development',
+        API_BASE_URL: this.API_BASE_URL,
+        STATIC_BASE_URL: this.STATIC_BASE_URL,
+        DEVELOPMENT_MODE: this.DEVELOPMENT_MODE
+      });
+    }
+  
+    async fetchData(apiPath, filePath = null, params = null) {
+      if (!apiPath) {
+        throw new Error('API path is required');
+      }
+  
+      const cacheKey = this._generateCacheKey(apiPath, filePath, params);
+      const cachedData = this._getFromCache(cacheKey);
+      
+      if (cachedData) {
+        console.log('Using cached data for:', apiPath);
+        return cachedData;
+      }
+  
+      // Always try API first
+      try {
+        console.log('Attempting API fetch:', `${this.API_BASE_URL}${apiPath}`);
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), this.API_TIMEOUT);
+  
+        const response = await fetch(`${this.API_BASE_URL}${apiPath}`, {
+          signal: controller.signal,
+          ...(params && { params })
+        });
+        
+        clearTimeout(timeoutId);
+  
+        if (response.ok) {
+          const data = await response.json();
+          this._saveToCache(cacheKey, data);
+          console.log('API fetch successful');
+          return data;
+        }
+        throw new Error('API request failed');
+      } catch (apiError) {
+        console.warn('API fetch failed:', apiError);
+  
+        // In development mode, don't fall back to static files
+        if (this.DEVELOPMENT_MODE) {
+          throw new Error('API is required in development mode');
+        }
+  
+        // In production, try static files as fallback
+        if (!filePath) {
+          throw new Error('No static file path provided for fallback');
+        }
+  
+        // Attempt static file fallback
         try {
-          // Construct a static fallback path based on API path
-          const fallbackPath = `${apiPath.replace(/^\//, '')}.json`;
-          return await this._fetchFromStatic(fallbackPath);
-        } catch (staticFallbackError) {
-          console.error("Static fallback also failed:", staticFallbackError);
+          console.log('Falling back to static file:', `${this.STATIC_BASE_URL}${filePath}`);
+          const response = await fetch(`${this.STATIC_BASE_URL}${filePath}`);
+  
+          if (!response.ok) {
+            throw new Error(`Static file fetch failed: ${response.status}`);
+          }
+  
+          // Clone the response before reading it
+          const responseClone = response.clone();
+  
+          try {
+            // Try to parse as JSON first
+            const jsonData = await response.json();
+            this._saveToCache(cacheKey, jsonData);
+            console.log('Static file fetch successful');
+            return jsonData;
+          } catch (jsonError) {
+            // If JSON parsing fails, get as text
+            const textData = await responseClone.text();
+            this._saveToCache(cacheKey, textData);
+            return textData;
+          }
+        } catch (staticError) {
+          console.error('Static file fetch error:', staticError);
+          throw new Error(`Failed to fetch from both API and static files: ${staticError.message}`);
         }
       }
-
-      throw error;
+    }
+  
+    _generateCacheKey(apiPath, filePath, params) {
+      return JSON.stringify({ apiPath, filePath, params });
+    }
+  
+    _getFromCache(key) {
+      const cached = this.cache.get(key);
+      if (cached && Date.now() - cached.timestamp < this.CACHE_DURATION) {
+        return cached.data;
+      }
+      return null;
+    }
+  
+    _saveToCache(key, data) {
+      this.cache.set(key, {
+        data,
+        timestamp: Date.now()
+      });
+    }
+  
+    clearCache(key = null) {
+      if (key) this.cache.delete(key);
+      else this.cache.clear();
+    }
+  
+    getConfig() {
+      return {
+        apiBaseUrl: this.API_BASE_URL,
+        staticBaseUrl: this.STATIC_BASE_URL,
+        developmentMode: this.DEVELOPMENT_MODE,
+        environment: this.DEVELOPMENT_MODE ? 'development' : 'production'
+      };
     }
   }
-
-  // Clear specific cache entry or entire cache
-  clearCache(key = null) {
-    if (key) {
-      this.cache.delete(key);
-    } else {
-      this.cache.clear();
-    }
-  }
-
-  // Set offline mode
-  setOfflineMode(mode) {
-    this.OFFLINE_MODE = Boolean(mode);
-    console.log(`Offline mode ${this.OFFLINE_MODE ? 'enabled' : 'disabled'}`);
-  }
-
-  // Get current configuration
-  getConfig() {
-    return {
-      apiBaseUrl: this.API_BASE_URL,
-      fileBaseUrl: this.FILE_BASE_URL,
-      cacheDuration: this.CACHE_DURATION,
-      offlineMode: this.OFFLINE_MODE
-    };
-  }
-
-  // Reset to default configuration
-  reset(config = {}) {
-    this.API_BASE_URL = config.apiBaseUrl || 
-      process.env.REACT_APP_API_BASE_URL || 
-      "http://127.0.0.1:8000";
-    
-    this.FILE_BASE_URL = config.fileBaseUrl || 
-      process.env.REACT_APP_FILE_BASE_URL || 
-      "https://raw.githubusercontent.com/insitech-international/code-clarity/gh-pages/static/data";
-    
-    this.CACHE_DURATION = config.cacheDuration || 3600000;
-    this.OFFLINE_MODE = config.offlineMode || false;
-
-    // Recreate axios instance
-    this.api = axios.create({
-      baseURL: this.API_BASE_URL,
-      timeout: 5000,
-    });
-
-    // Clear existing cache
-    this.cache.clear();
-  }
-}
-
-// Singleton instance
-const dataFetcher = new DataFetcher();
-
-export default dataFetcher;
-
-// Utility for creating multiple data fetcher instances
-export const createDataFetcher = (config) => {
-  return new DataFetcher(config);
-};
+  
+  // Create singleton instance
+  const dataFetcher = new DataFetcher();
+  
+  // Export both the instance and the class
+  export { DataFetcher };
+  export default dataFetcher;

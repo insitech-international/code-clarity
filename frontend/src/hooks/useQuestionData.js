@@ -60,82 +60,110 @@ const logDetailedError = (context, error) => {
   });
 };
 
-// Featured Questions Fetch Logic (extracted for reusability)
+// Enhanced fetchFeaturedQuestionsLogic with proper offline fallback
 export const fetchFeaturedQuestionsLogic = async (indexData = null) => {
-  // If no index data, try to load it
-  if (!indexData) {
-    try {
-      indexData = await DataFetcher.fetchData(null, "/index.json");
-      // Debug: Store index data globally for inspection
-      window.__DEBUG_INDEX_DATA = indexData;
-    } catch (loadError) {
-      logDetailedError("Failed to load index data", loadError);
-      throw new Error("Could not load index data for featured questions");
+  console.log("Starting featured questions fetch...");
+
+  try {
+    // First try the API endpoint
+    const apiResponse = await fetch(
+      "http://127.0.0.1:8000/featured_questions/",
+      {
+        signal: AbortSignal.timeout(5000), // 5 second timeout
+      }
+    );
+
+    if (apiResponse.ok) {
+      const data = await apiResponse.json();
+      console.log("Successfully fetched from API");
+      return data;
+    }
+  } catch (apiError) {
+    console.log("API unavailable, falling back to static files");
+  }
+
+  // Fallback to static files
+  try {
+    // If no index data provided, fetch it
+    if (!indexData) {
+      const response = await fetch("/static/data/index.json");
+      if (!response.ok) throw new Error("Failed to fetch index data");
+      indexData = await response.json();
+    }
+
+    // Organize questions by category
+    const questionsByCategory = {};
+
+    // Process each question in parallel
+    const questionPromises = indexData.questions.map(async (questionInfo) => {
+      try {
+        const response = await fetch(`/static/data/${questionInfo.path}`);
+        if (!response.ok) return null;
+
+        const content = await response.text();
+        // Parse markdown content to extract metadata
+        const metadata = parseMarkdownMetadata(content);
+        return {
+          ...questionInfo,
+          ...metadata,
+          content,
+        };
+      } catch (error) {
+        console.error(`Failed to fetch question ${questionInfo.id}:`, error);
+        return null;
+      }
+    });
+
+    const questions = (await Promise.all(questionPromises)).filter(
+      (q) => q !== null
+    );
+
+    // Group questions by category
+    questions.forEach((question) => {
+      if (!question.category) return;
+
+      if (!questionsByCategory[question.category]) {
+        questionsByCategory[question.category] = [];
+      }
+
+      if (questionsByCategory[question.category].length < 6) {
+        questionsByCategory[question.category].push(question);
+      }
+    });
+
+    return questionsByCategory;
+  } catch (error) {
+    console.error("Failed to process static files:", error);
+    throw new Error("Failed to fetch featured questions");
+  }
+};
+
+// Helper function to parse markdown metadata
+const parseMarkdownMetadata = (content) => {
+  const metadata = {};
+  const lines = content.split("\n");
+  let inMetadata = false;
+
+  for (const line of lines) {
+    if (line.trim() === "# Metadata") {
+      inMetadata = true;
+      continue;
+    }
+
+    if (inMetadata) {
+      if (line.trim() === "") {
+        break;
+      }
+
+      const match = line.match(/^\s*-\s*\*\*([\w\s-]+)\*\*:\s*(.+)$/);
+      if (match) {
+        const [, key, value] = match;
+        metadata[key.toLowerCase().replace(/\s+/g, "_")] = value.trim();
+      }
     }
   }
 
-  // Validate index data
-  if (!indexData || !indexData.questions) {
-    logDetailedError("Invalid index data", new Error("No questions in index"));
-    throw new Error("Index data does not contain questions");
-  }
-
-  // Get first 5 questions with non-null IDs
-  const featuredIds = indexData.questions
-    .filter((q) => q.id != null)
-    .slice(0, 5)
-    .map((q) => q.id);
-
-  // No featured questions found
-  if (featuredIds.length === 0) {
-    logDetailedError(
-      "No featured questions",
-      new Error("No questions with IDs found")
-    );
-    return { featured_questions: [] };
-  }
-
-  // Fetch details for each featured question
-  const featuredQuestions = await Promise.all(
-    featuredIds.map(async (id) => {
-      try {
-        const questionInfo = indexData.questions.find((q) => q.id === id);
-
-        if (!questionInfo) {
-          console.warn(`No question info found for ID ${id}`);
-          return null;
-        }
-
-        const questionPath = questionInfo.path.replace(
-          /^.*?\/static\/data/,
-          ""
-        );
-
-        const content = await DataFetcher.fetchData(null, questionPath);
-
-        return FileManager.parseQuestionFile(content, questionInfo.path);
-      } catch (questionFetchError) {
-        logDetailedError(
-          `Error fetching featured question ${id}`,
-          questionFetchError
-        );
-        return null;
-      }
-    })
-  );
-
-  // Filter out null results
-  const validFeaturedQuestions = featuredQuestions.filter((q) => q !== null);
-
-  if (validFeaturedQuestions.length === 0) {
-    logDetailedError(
-      "No valid featured questions",
-      new Error("All question fetches failed")
-    );
-    return { featured_questions: [] };
-  }
-
-  return { featured_questions: validFeaturedQuestions };
+  return metadata;
 };
 
 // Modified hook with improved error handling
