@@ -119,11 +119,11 @@ jobs:
           function walkDir(dir) {
             let results = [];
             const list = fs.readdirSync(dir);
-            
-            list.forEach(file => {
+
+            list.forEach((file) => {
               const filePath = path.join(dir, file);
               const stat = fs.statSync(filePath);
-              
+
               if (stat && stat.isDirectory()) {
                 results = results.concat(walkDir(filePath));
               } else if (path.extname(file) === '.md') {
@@ -131,23 +131,24 @@ jobs:
                 const id = file.split('_')[0];
                 results.push({
                   id: parseInt(id),
-                  path: filePath.replace(/^public\/static\/data\//, '') // Updated path replacement
+                  // Ensure path is relative to 'static/data' for deployment
+                  path: filePath.replace(/^.*\/public\/static\/data\//, 'static/data/')
                 });
               }
             });
-            
+
             return results;
           }
 
           function generateIndex() {
             const questionsDir = path.join(process.cwd(), 'public/static/data/questions');
             const solutionsDir = path.join(process.cwd(), 'public/static/data/solutions');
-            
+
             const index = {
               questions: walkDir(questionsDir),
               solutions: walkDir(solutionsDir)
             };
-            
+
             // Write index file
             fs.writeFileSync(
               path.join(process.cwd(), 'public/static/data/index.json'),

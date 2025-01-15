@@ -75,19 +75,49 @@ const CategoryCard = ({ reverse, children }) => (
   <div
     className={`flex ${
       reverse ? "flex-row-reverse" : "flex-row"
-    } bg-white rounded-lg p-8 h-[400px] items-center justify-center transition-transform duration-300 ease-in-out hover:scale-102`}
+    } bg-white rounded-lg p-8 h-[400px] items-center justify-center transition-transform duration-300 ease-in-out hover:scale-102 shadow-lg`}
   >
     {children}
   </div>
 );
 
-const MindMapImage = ({ src, alt }) => (
-  <img
-    src={src}
-    alt={alt}
-    className="w-full h-full max-w-[50%] max-h-[95%] object-contain rounded-lg"
-  />
+const MindMapImage = ({ category }) => (
+  <div
+    className="w-full h-full max-w-[50%] max-h-[95%] rounded-lg bg-slate-700 flex items-center justify-center p-4"
+    style={{
+      background: "linear-gradient(45deg, #1a365d 0%, #2d3748 100%)",
+    }}
+  >
+    <h3 className="text-white font-bold text-xl text-center break-words p-4">
+      {category.replace(/_/g, " ")}
+    </h3>
+  </div>
 );
+
+const CategoryCarousel = () => {
+  return (
+    <CarouselWrapper>
+      {categories.map((category, index) => (
+        <CategoryCard key={index} reverse={index % 2 !== 0}>
+          <CategoryContent>
+            <CategoryName>{category.name}</CategoryName>
+            <CategoryDescription>
+              {getCategoryDescription(category)}
+            </CategoryDescription>
+            <CTAButton
+              to={`/category/${category.name
+                .toLowerCase()
+                .replace(/\s+/g, "_")}/questions`}
+            >
+              View Questions
+            </CTAButton>
+          </CategoryContent>
+          <MindMapImage category={category.name} />
+        </CategoryCard>
+      ))}
+    </CarouselWrapper>
+  );
+};
 
 const CategoryContent = ({ children }) => (
   <div className="w-3/5 p-4 px-8 flex flex-col justify-center items-center text-center">
@@ -303,29 +333,6 @@ const getCategoryDescription = (category) => {
   return (
     descriptions[category.name] ||
     "Explore advanced concepts and techniques in Python programming."
-  );
-};
-
-const CategoryCarousel = () => {
-  return (
-    <CarouselWrapper>
-      {categories.map((category, index) => (
-        <CategoryCard key={index} reverse={index % 2 !== 0}>
-          <CategoryContent>
-            <CategoryName>{category.name}</CategoryName>
-            <CategoryDescription>
-              {getCategoryDescription(category)}
-            </CategoryDescription>
-          </CategoryContent>
-          <MindMapImage
-            src={`/images/category_diagrams/${category.name
-              .toLowerCase()
-              .replace(/\s+/g, "_")}.png`}
-            alt={`${category.name} mind map`}
-          />
-        </CategoryCard>
-      ))}
-    </CarouselWrapper>
   );
 };
 
