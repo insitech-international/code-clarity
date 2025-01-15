@@ -5,20 +5,22 @@ import FileManager from "../services/fileManager";
 class DataFetcher {
   constructor(config) {
     this.API_BASE_URL = config.apiBaseUrl || "http://127.0.0.1:8000";
-    this.FILE_BASE_URL = config.fileBaseUrl || "https://raw.githubusercontent.com/insitech-international/code-clarity/gh-pages/static/data";
+    this.FILE_BASE_URL =
+      config.fileBaseUrl ||
+      "https://raw.githubusercontent.com/insitech-international/code-clarity/gh-pages/static/data";
     this.CACHE_DURATION = config.cacheDuration || 3600000;
-    
+
     this.api = axios.create({
       baseURL: this.API_BASE_URL,
-      timeout: 5000
+      timeout: 5000,
     });
-    
+
     this.cache = new Map();
   }
 
   async fetchData(apiPath, filePath = null, params = null) {
     const cacheKey = this._generateCacheKey(apiPath, filePath, params);
-    
+
     const cachedData = this._getFromCache(cacheKey);
     if (cachedData) {
       return cachedData;
@@ -29,7 +31,10 @@ class DataFetcher {
       this._saveToCache(cacheKey, apiData);
       return apiData;
     } catch (apiError) {
-      console.warn(`API fetch failed for ${apiPath}, falling back to static files:`, apiError);
+      console.warn(
+        `API fetch failed for ${apiPath}, falling back to static files:`,
+        apiError
+      );
 
       if (!filePath) {
         throw new Error(`No static file fallback path provided for ${apiPath}`);
@@ -41,20 +46,25 @@ class DataFetcher {
         return fileData;
       } catch (fileError) {
         console.error("Static file fetch also failed:", fileError);
-        throw new Error(`Failed to fetch data from both API and static files: ${apiPath}`);
+        throw new Error(
+          `Failed to fetch data from both API and static files: ${apiPath}`
+        );
       }
     }
   }
 
   async _fetchFromAPI(apiPath, params) {
-    const response = await this.api.get(apiPath, params ? { params } : undefined);
+    const response = await this.api.get(
+      apiPath,
+      params ? { params } : undefined
+    );
     return response.data;
   }
 
   async _fetchFromStatic(filePath) {
     const fullPath = `${this.FILE_BASE_URL}${filePath}`;
     const response = await fetch(fullPath);
-    
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -81,7 +91,7 @@ class DataFetcher {
   _saveToCache(key, data) {
     this.cache.set(key, {
       data,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -104,7 +114,7 @@ class DataFetcher {
 const dataFetcher = new DataFetcher({
   apiBaseUrl: process.env.REACT_APP_API_BASE_URL,
   fileBaseUrl: process.env.REACT_APP_FILE_BASE_URL,
-  cacheDuration: 3600000
+  cacheDuration: 3600000,
 });
 
 export const useCategories = () => {
@@ -204,7 +214,9 @@ export const useQuestionData = () => {
           const questionDetails = await Promise.all(
             paginatedQuestions.map(async (q) => {
               const questionPath = q.path.replace(/^.*?\/static\/data/, "");
-              const content = await fetch(`${dataFetcher.FILE_BASE_URL}${questionPath}`);
+              const content = await fetch(
+                `${dataFetcher.FILE_BASE_URL}${questionPath}`
+              );
               const text = await content.text();
               return FileManager.parseQuestionFile(text, q.path);
             })
@@ -245,8 +257,13 @@ export const useQuestionData = () => {
           throw new Error(`Question with ID ${questionId} not found`);
         }
 
-        const questionPath = questionInfo.path.replace(/^.*?\/static\/data/, "");
-        const response = await fetch(`${dataFetcher.FILE_BASE_URL}${questionPath}`);
+        const questionPath = questionInfo.path.replace(
+          /^.*?\/static\/data/,
+          ""
+        );
+        const response = await fetch(
+          `${dataFetcher.FILE_BASE_URL}${questionPath}`
+        );
         const content = await response.text();
         return FileManager.parseQuestionFile(content, questionInfo.path);
       }
@@ -270,8 +287,13 @@ export const useQuestionData = () => {
           throw new Error(`Solution for question ID ${questionId} not found`);
         }
 
-        const solutionPath = solutionInfo.path.replace(/^.*?\/static\/data/, "");
-        const response = await fetch(`${dataFetcher.FILE_BASE_URL}${solutionPath}`);
+        const solutionPath = solutionInfo.path.replace(
+          /^.*?\/static\/data/,
+          ""
+        );
+        const response = await fetch(
+          `${dataFetcher.FILE_BASE_URL}${solutionPath}`
+        );
         const content = await response.text();
         return FileManager.parseSolutionFile(content, solutionInfo.path);
       }
@@ -282,18 +304,19 @@ export const useQuestionData = () => {
   const fetchFeaturedQuestions = useCallback(async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       // First attempt: Try to get featured questions from API
       const apiResponse = await dataFetcher.fetchData(
-        "/featured_questions/", 
+        "/featured_questions/",
         "/index.json"
       );
-      
-      if (apiResponse && apiResponse.featured_questions) {
+      console.log(`API Response: ${JSON.stringify(apiResponse)}`);
+      if (apiResponse) {
+        // && apiResponse.featured_questions
         return apiResponse;
       }
-      
+
       // Load or use existing index data
       let workingIndexData = indexData;
       if (!workingIndexData) {
@@ -303,32 +326,42 @@ export const useQuestionData = () => {
         }
         setIndexData(workingIndexData);
       }
-      
+
+      // Check if workingIndexData.questions exists before accessing it
+      if (!workingIndexData.questions) {
+        throw new Error("Index data does not contain questions");
+      }
+
       // Get the first 5 questions from index data
       const featuredIds = workingIndexData.questions
-        .filter(q => q.id != null)
+        .filter((q) => q.id != null)
         .slice(0, 5)
-        .map(q => q.id);
-      
+        .map((q) => q.id);
+
       // Fetch full details for each featured question
       const featuredQuestions = await Promise.all(
         featuredIds.map(async (id) => {
           try {
-            const questionInfo = workingIndexData.questions.find(q => q.id === id);
+            const questionInfo = workingIndexData.questions.find(
+              (q) => q.id === id
+            );
             if (!questionInfo) {
               throw new Error(`Question with ID ${id} not found`);
             }
-            
-            const questionPath = questionInfo.path.replace(/^.*?\/static\/data/, "");
+
+            const questionPath = questionInfo.path.replace(
+              /^.*?\/static\/data/,
+              ""
+            );
             const content = await dataFetcher.fetchData(
               `/questions/${id}/`,
               questionPath
             );
-            
-            if (typeof content === 'string') {
+
+            if (typeof content === "string") {
               return FileManager.parseQuestionFile(content, questionInfo.path);
             }
-            
+
             return content;
           } catch (err) {
             console.error(`Error fetching featured question ${id}:`, err);
@@ -336,15 +369,16 @@ export const useQuestionData = () => {
           }
         })
       );
-      
-      const validFeaturedQuestions = featuredQuestions.filter(q => q !== null);
-      
+
+      const validFeaturedQuestions = featuredQuestions.filter(
+        (q) => q !== null
+      );
+
       if (validFeaturedQuestions.length === 0) {
         throw new Error("No featured questions could be loaded");
       }
-      
+
       return { featured_questions: validFeaturedQuestions };
-      
     } catch (err) {
       console.error("Error fetching featured questions:", err);
       setError("Failed to fetch featured questions. Please try again later.");
@@ -353,7 +387,7 @@ export const useQuestionData = () => {
       setLoading(false);
     }
   }, [indexData, dataFetcher]);
-  
+
   const testDbConnection = useCallback(async () => {
     try {
       return await dataFetcher.fetchData("/test-db-connection");
