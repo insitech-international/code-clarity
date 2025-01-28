@@ -10,12 +10,16 @@ class DataFetcher {
     // Initialize properties
     this.API_BASE_URL = "http://127.0.0.1:8000";
     this.STATIC_BASE_URL = isProduction
-      ? GITHUB_BASE_URL // Removed trailing slash
+      ? GITHUB_BASE_URL
       : '';
     this.DEVELOPMENT_MODE = !isProduction;
     this.CACHE_DURATION = config.cacheDuration || 3600000;
     this.API_TIMEOUT = 5000;
     this.cache = new Map();
+
+    // Store mapped paths
+    this.questionPaths = new Map();
+    this.solutionPaths = new Map();
 
     console.log('DataFetcher initialized:', {
       environment: isProduction ? 'production' : 'development',
@@ -23,6 +27,33 @@ class DataFetcher {
       STATIC_BASE_URL: this.STATIC_BASE_URL,
       DEVELOPMENT_MODE: this.DEVELOPMENT_MODE,
     });
+  }
+
+  async loadIndex() {
+    try {
+      const response = await this.fetchData('/api/index', '/static/data/index.json');
+
+      if (response.questions) {
+        response.questions.forEach(item => {
+          if (item.id && item.path) {
+            this.questionPaths.set(item.id.toString(), item.path);
+          }
+        });
+      }
+
+      if (response.solutions) {
+        response.solutions.forEach(item => {
+          if (item.id && item.path) {
+            this.solutionPaths.set(item.id.toString(), item.path);
+          }
+        });
+      }
+
+      return response;
+    } catch (error) {
+      console.error('Error loading index:', error);
+      throw error;
+    }
   }
 
   // Core data fetching method
@@ -86,35 +117,63 @@ class DataFetcher {
     }
 
     try {
-      // Ensure clean path joining
-      const normalizedPath = staticPath.startsWith('/') ? staticPath : `/${staticPath}`;
-      const staticURL = `${this.STATIC_BASE_URL}${normalizedPath}`;
+      // Clean up the static path
+      const cleanPath = staticPath.startsWith('/') ? staticPath.slice(1) : staticPath;
+      const staticURL = `${this.STATIC_BASE_URL}/${cleanPath}`;
       console.log('Fetching static file:', staticURL);
 
-      // Add no-cors mode to handle CORS issues
-      const response = await fetch(staticURL, {
-        mode: 'no-cors'
-      });
+      const response = await fetch(staticURL);
 
       if (!response.ok) {
         throw new Error(`Static file fetch failed: ${response.status}`);
       }
 
-      const contentType = response.headers.get('content-type');
-      let data;
-
-      // Try JSON first, fallback to text
-      if (contentType && contentType.includes('application/json')) {
-        data = await response.json();
-      } else {
-        data = await response.text();
+      // Handle Markdown files
+      if (staticPath.endsWith('.md')) {
+        return await response.text();
       }
 
-      return data;
+      // Handle JSON files
+      try {
+        const data = await response.json();
+        return data;
+      } catch {
+        return await response.text();
+      }
     } catch (staticError) {
       console.error('Static file error:', staticError);
       throw staticError;
     }
+  }
+
+  // Get content by ID
+  async getContent(id, type = 'question') {
+    // Load index if paths aren't loaded
+    if (this.questionPaths.size === 0) {
+      await this.loadIndex();
+    }
+
+    const pathMap = type === 'question' ? this.questionPaths : this.solutionPaths;
+    const path = pathMap.get(id.toString());
+
+    if (!path) {
+      throw new Error(`Invalid ${type} ID: ${id}`);
+    }
+
+    return this.fetchData(
+      `/api/${type}s/${id}`,
+      path
+    );
+  }
+
+  // Get categories
+  async getCategories() {
+    return this.fetchData('/categories/', 'static/data/categories.json');
+  }
+
+  // Get featured questions
+  async getFeaturedQuestions() {
+    return this.fetchData('/featured_questions/', 'static/data/featured.json');
   }
 
   // Helper method for testing API connection
