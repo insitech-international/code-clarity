@@ -1,5 +1,5 @@
 // Define the correct base URL for production
-const GITHUB_BASE_URL = 'https://insitech-international.github.io/code-clarity/';
+const GITHUB_BASE_URL = 'https://insitech-international.github.io/code-clarity';
 
 class DataFetcher {
   constructor(config = {}) {
@@ -10,16 +10,12 @@ class DataFetcher {
     // Initialize properties
     this.API_BASE_URL = "http://127.0.0.1:8000";
     this.STATIC_BASE_URL = isProduction
-      ? GITHUB_BASE_URL
-      : ''; // Use local static data in development
+      ? GITHUB_BASE_URL // Removed trailing slash
+      : '';
     this.DEVELOPMENT_MODE = !isProduction;
-    this.CACHE_DURATION = config.cacheDuration || 3600000; // Cache for 1 hour by default
-    this.API_TIMEOUT = 5000; // Timeout for API requests
+    this.CACHE_DURATION = config.cacheDuration || 3600000;
+    this.API_TIMEOUT = 5000;
     this.cache = new Map();
-
-    // Store valid question/solution mappings
-    this.questionPaths = new Map();
-    this.solutionPaths = new Map();
 
     console.log('DataFetcher initialized:', {
       environment: isProduction ? 'production' : 'development',
@@ -27,43 +23,6 @@ class DataFetcher {
       STATIC_BASE_URL: this.STATIC_BASE_URL,
       DEVELOPMENT_MODE: this.DEVELOPMENT_MODE,
     });
-  }
-
-  // Initialize paths from index data
-  async initializeIndex() {
-    try {
-      const indexData = await this.fetchData('/api/index', 'static/data/index.json');
-
-      // Clear existing mappings
-      this.questionPaths.clear();
-      this.solutionPaths.clear();
-
-      // Store question paths
-      if (indexData.questions) {
-        indexData.questions.forEach(item => {
-          if (item.id && item.path) {
-            this.questionPaths.set(item.id.toString(), item.path);
-          }
-        });
-      }
-
-      // Store solution paths (assuming similar structure)
-      if (indexData.solutions) {
-        indexData.solutions.forEach(item => {
-          if (item.id && item.path) {
-            this.solutionPaths.set(item.id.toString(), item.path);
-          }
-        });
-      }
-
-      console.log('Index initialized:', {
-        questions: this.questionPaths.size,
-        solutions: this.solutionPaths.size
-      });
-    } catch (error) {
-      console.error('Failed to initialize index:', error);
-      throw error;
-    }
   }
 
   // Core data fetching method
@@ -127,10 +86,15 @@ class DataFetcher {
     }
 
     try {
-      const staticURL = `${this.STATIC_BASE_URL}${staticPath}`;
+      // Ensure clean path joining
+      const normalizedPath = staticPath.startsWith('/') ? staticPath : `/${staticPath}`;
+      const staticURL = `${this.STATIC_BASE_URL}${normalizedPath}`;
       console.log('Fetching static file:', staticURL);
 
-      const response = await fetch(staticURL);
+      // Add no-cors mode to handle CORS issues
+      const response = await fetch(staticURL, {
+        mode: 'no-cors'
+      });
 
       if (!response.ok) {
         throw new Error(`Static file fetch failed: ${response.status}`);
@@ -151,44 +115,6 @@ class DataFetcher {
       console.error('Static file error:', staticError);
       throw staticError;
     }
-  }
-
-  // Get question by ID
-  async getQuestion(id) {
-    if (!this.questionPaths.size) {
-      await this.initializeIndex();
-    }
-
-    const path = this.questionPaths.get(id.toString());
-    if (!path) {
-      throw new Error(`Invalid question ID: ${id}`);
-    }
-
-    return this.fetchData(`/api/questions/${id}`, path);
-  }
-
-  // Get solution by ID
-  async getSolution(id) {
-    if (!this.solutionPaths.size) {
-      await this.initializeIndex();
-    }
-
-    const path = this.solutionPaths.get(id.toString());
-    if (!path) {
-      throw new Error(`Invalid solution ID: ${id}`);
-    }
-
-    return this.fetchData(`/api/solutions/${id}`, path);
-  }
-
-  // Get all valid question IDs
-  getValidQuestionIds() {
-    return Array.from(this.questionPaths.keys());
-  }
-
-  // Get all valid solution IDs
-  getValidSolutionIds() {
-    return Array.from(this.solutionPaths.keys());
   }
 
   // Helper method for testing API connection
