@@ -1,5 +1,5 @@
 // Define the correct base URL for production
-const GITHUB_BASE_URL = 'https://insitech-international.github.io/code-clarity';
+const GITHUB_BASE_URL = 'https://raw.githubusercontent.com/insitech-international/code-clarity/gh-pages';
 
 class DataFetcher {
   constructor(config = {}) {
@@ -25,35 +25,6 @@ class DataFetcher {
     });
   }
 
-  // Main fetchData method for backward compatibility
-  async fetchData(apiPath, staticPath = null, params = null) {
-    if (!apiPath && !staticPath) return null;
-
-    if (this.DEVELOPMENT_MODE) {
-      try {
-        return await this.fetchFromAPI(apiPath, params);
-      } catch (error) {
-        console.error('API fetch failed in development mode:', error);
-        throw error;
-      }
-    }
-
-    // Production mode: try API first, then fallback to static
-    try {
-      const apiResult = await this.fetchFromAPI(apiPath, params);
-      if (apiResult) return apiResult;
-    } catch (error) {
-      console.warn('API fetch failed, falling back to static file');
-    }
-
-    if (!staticPath) {
-      console.warn('No static path provided for fallback');
-      return null;
-    }
-
-    return this.fetchFromGitHub(staticPath);
-  }
-
   async fetchFromGitHub(path) {
     if (!path) return null;
 
@@ -67,7 +38,8 @@ class DataFetcher {
       throw new Error(`GitHub fetch failed: ${response.status}`);
     }
 
-    return path.endsWith('.json') ? response.json() : response.text();
+    const content = await response.text();
+    return path.endsWith('.json') ? JSON.parse(content) : content;
   }
 
   async fetchFromAPI(path, params = null) {
@@ -97,9 +69,40 @@ class DataFetcher {
     }
   }
 
+  async fetchData(apiPath, staticPath = null, params = null) {
+    if (!apiPath && !staticPath) return null;
+
+    if (this.DEVELOPMENT_MODE) {
+      try {
+        return await this.fetchFromAPI(apiPath, params);
+      } catch (error) {
+        console.error('API fetch failed in development mode:', error);
+        throw error;
+      }
+    }
+
+    // Production mode: try API first, then fallback to static
+    try {
+      const apiResult = await this.fetchFromAPI(apiPath, params);
+      if (apiResult) return apiResult;
+    } catch (error) {
+      console.warn('API fetch failed, falling back to static file');
+    }
+
+    if (!staticPath) {
+      console.warn('No static path provided for fallback');
+      return null;
+    }
+
+    return this.fetchFromGitHub(staticPath);
+  }
+
   async loadIndex() {
     try {
-      let indexData = await this.fetchData('/api/index', 'static/data/index.json');
+      let indexData = await this.fetchData(
+        '/api/index',
+        'static/data/index.json'
+      );
 
       // Map the paths
       this.questions.clear();
