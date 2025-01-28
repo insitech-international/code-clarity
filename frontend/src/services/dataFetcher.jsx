@@ -166,7 +166,7 @@ class DataFetcher {
       console.warn(`No ${type} found for ID: ${id}`);
       return null;
     }
-
+    console.log(`Static File Path: ${path}`)
     return this.fetchFromGitHub(path);
   }
 
