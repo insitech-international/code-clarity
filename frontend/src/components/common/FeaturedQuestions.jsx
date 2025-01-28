@@ -47,7 +47,7 @@ const QuestionCard = ({ question }) => {
           boxShadow: 6,
           transform: 'translateY(-5px)',
         },
-        p: 2, // Add padding to create a well-defined margin inside the card
+        // Add padding to create a well-defined margin inside the card
       }}
     >
       <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>

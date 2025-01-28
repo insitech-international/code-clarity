@@ -79,7 +79,7 @@ class DataFetcher {
       }
   
       try {
-        console.log('Fetching static file:', `${this.STATIC_BASE_URL}${staticPath}`);
+        console.log('Fetching static file:', `${window.location.origin}${this.STATIC_BASE_URL}${staticPath}`);
         const response = await fetch(`${this.STATIC_BASE_URL}${staticPath}`);
   
         if (!response.ok) {
