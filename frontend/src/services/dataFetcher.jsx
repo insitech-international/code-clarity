@@ -25,6 +25,35 @@ class DataFetcher {
     });
   }
 
+  // Main fetchData method for backward compatibility
+  async fetchData(apiPath, staticPath = null, params = null) {
+    if (!apiPath && !staticPath) return null;
+
+    if (this.DEVELOPMENT_MODE) {
+      try {
+        return await this.fetchFromAPI(apiPath, params);
+      } catch (error) {
+        console.error('API fetch failed in development mode:', error);
+        throw error;
+      }
+    }
+
+    // Production mode: try API first, then fallback to static
+    try {
+      const apiResult = await this.fetchFromAPI(apiPath, params);
+      if (apiResult) return apiResult;
+    } catch (error) {
+      console.warn('API fetch failed, falling back to static file');
+    }
+
+    if (!staticPath) {
+      console.warn('No static path provided for fallback');
+      return null;
+    }
+
+    return this.fetchFromGitHub(staticPath);
+  }
+
   async fetchFromGitHub(path) {
     if (!path) return null;
 
@@ -70,17 +99,7 @@ class DataFetcher {
 
   async loadIndex() {
     try {
-      let indexData;
-
-      if (this.DEVELOPMENT_MODE) {
-        indexData = await this.fetchFromAPI('/api/index');
-      } else {
-        try {
-          indexData = await this.fetchFromAPI('/api/index');
-        } catch {
-          indexData = await this.fetchFromGitHub('static/data/index.json');
-        }
-      }
+      let indexData = await this.fetchData('/api/index', 'static/data/index.json');
 
       // Map the paths
       this.questions.clear();
@@ -110,10 +129,8 @@ class DataFetcher {
   }
 
   async getContent(id, type = 'question') {
-    // Return null for invalid/null IDs
     if (!id) return null;
 
-    // Load index if not already loaded
     if (this.questions.size === 0) {
       await this.loadIndex();
     }
@@ -121,49 +138,20 @@ class DataFetcher {
     const pathMap = type === 'question' ? this.questions : this.solutions;
     const path = pathMap.get(id.toString());
 
-    // Return null if no path found for the ID
     if (!path) {
       console.warn(`No ${type} found for ID: ${id}`);
       return null;
     }
 
-    if (this.DEVELOPMENT_MODE) {
-      return this.fetchFromAPI(`/api/${type}s/${id}`);
-    }
-
-    // Production: try API first, then GitHub
-    try {
-      const apiResult = await this.fetchFromAPI(`/api/${type}s/${id}`);
-      if (apiResult) return apiResult;
-    } catch {
-      return this.fetchFromGitHub(path);
-    }
+    return this.fetchData(`/api/${type}s/${id}`, path);
   }
 
   async getCategories() {
-    if (this.DEVELOPMENT_MODE) {
-      return this.fetchFromAPI('/categories');
-    }
-
-    try {
-      const apiResult = await this.fetchFromAPI('/categories');
-      if (apiResult) return apiResult;
-    } catch {
-      return this.fetchFromGitHub('static/data/categories.json');
-    }
+    return this.fetchData('/categories', 'static/data/categories.json');
   }
 
   async getFeaturedQuestions() {
-    if (this.DEVELOPMENT_MODE) {
-      return this.fetchFromAPI('/featured_questions');
-    }
-
-    try {
-      const apiResult = await this.fetchFromAPI('/featured_questions');
-      if (apiResult) return apiResult;
-    } catch {
-      return this.fetchFromGitHub('static/data/featured.json');
-    }
+    return this.fetchData('/featured_questions', 'static/data/featured.json');
   }
 }
 
