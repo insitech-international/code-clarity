@@ -1,138 +1,210 @@
-// DataFetcher.js
-const GITHUB_BASE_URL = 'https://insitech-international.github.io/code-clarity';
+// Define the correct base URL for production
+const GITHUB_BASE_URL = 'https://insitech-international.github.io/code-clarity/';
 
 class DataFetcher {
   constructor(config = {}) {
-    // Environment detection
+    // Determine if the environment is production
     const isProduction = !window.location.hostname.includes('localhost') &&
                         !window.location.hostname.includes('127.0.0.1');
 
-    // Core configuration
-    this.API_BASE_URL = config.API_BASE_URL || "http://127.0.0.1:8000";
-    this.STATIC_BASE_URL = isProduction ? GITHUB_BASE_URL : '';
+    // Initialize properties
+    this.API_BASE_URL = "http://127.0.0.1:8000";
+    this.STATIC_BASE_URL = isProduction
+      ? GITHUB_BASE_URL
+      : ''; // Use local static data in development
     this.DEVELOPMENT_MODE = !isProduction;
-    this.CACHE_DURATION = config.cacheDuration || 3600000;
-    this.API_TIMEOUT = config.apiTimeout || 5000;
-    this.RETRY_ATTEMPTS = config.retryAttempts || 3;
-    this.RETRY_DELAY = config.retryDelay || 1000;
-
-    // Content paths
-    this.QUESTIONS_PATH = '/static/data/questions';
-    this.SOLUTIONS_PATH = '/static/data/solutions';
-    this.INDEX_PATH = '/static/data/index.json';
-    this.CATEGORIES_PATH = '/static/data/categories.json';
-
-    // Initialize cache
+    this.CACHE_DURATION = config.cacheDuration || 3600000; // Cache for 1 hour by default
+    this.API_TIMEOUT = 5000; // Timeout for API requests
     this.cache = new Map();
 
-    // Debug logging
-    this.DEBUG = config.debug || false;
-    this._logInit();
+    // Store valid question/solution mappings
+    this.questionPaths = new Map();
+    this.solutionPaths = new Map();
+
+    console.log('DataFetcher initialized:', {
+      environment: isProduction ? 'production' : 'development',
+      API_BASE_URL: this.API_BASE_URL,
+      STATIC_BASE_URL: this.STATIC_BASE_URL,
+      DEVELOPMENT_MODE: this.DEVELOPMENT_MODE,
+    });
   }
 
-  // Core fetch method with retries
-  async fetchData(path, options = {}) {
-    let url = path;
-    if (!path.startsWith('http')) {
-      url = `${this.STATIC_BASE_URL}${path.startsWith('/') ? path : '/' + path}`;
+  // Initialize paths from index data
+  async initializeIndex() {
+    try {
+      const indexData = await this.fetchData('/api/index', 'static/data/index.json');
+
+      // Clear existing mappings
+      this.questionPaths.clear();
+      this.solutionPaths.clear();
+
+      // Store question paths
+      if (indexData.questions) {
+        indexData.questions.forEach(item => {
+          if (item.id && item.path) {
+            this.questionPaths.set(item.id.toString(), item.path);
+          }
+        });
+      }
+
+      // Store solution paths (assuming similar structure)
+      if (indexData.solutions) {
+        indexData.solutions.forEach(item => {
+          if (item.id && item.path) {
+            this.solutionPaths.set(item.id.toString(), item.path);
+          }
+        });
+      }
+
+      console.log('Index initialized:', {
+        questions: this.questionPaths.size,
+        solutions: this.solutionPaths.size
+      });
+    } catch (error) {
+      console.error('Failed to initialize index:', error);
+      throw error;
+    }
+  }
+
+  // Core data fetching method
+  async fetchData(apiPath, staticPath = null, params = null) {
+    // Development mode: Fetch from API only
+    if (this.DEVELOPMENT_MODE) {
+      if (!apiPath) {
+        throw new Error('API path is required in development mode');
+      }
+
+      try {
+        console.log('Attempting API fetch:', `${this.API_BASE_URL}${apiPath}`);
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), this.API_TIMEOUT);
+
+        const response = await fetch(`${this.API_BASE_URL}${apiPath}`, {
+          signal: controller.signal,
+          ...(params && { params }),
+        });
+
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          throw new Error('API request failed');
+        }
+
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error('API request failed:', error);
+        throw new Error('API is required in development mode');
+      }
     }
 
-    this._log('Fetching:', url);
+    // Production mode: Try API first, then fallback to static files
+    try {
+      if (apiPath) {
+        console.log('Attempting API fetch:', `${this.API_BASE_URL}${apiPath}`);
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), this.API_TIMEOUT);
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), this.API_TIMEOUT);
+        const response = await fetch(`${this.API_BASE_URL}${apiPath}`, {
+          signal: controller.signal,
+          ...(params && { params }),
+        });
+
+        clearTimeout(timeoutId);
+
+        if (response.ok) {
+          const data = await response.json();
+          return data;
+        }
+      }
+    } catch (apiError) {
+      console.warn('API fetch failed, falling back to static files');
+    }
+
+    // Static file fallback (production only)
+    if (!staticPath) {
+      throw new Error('No static path provided for fallback');
+    }
 
     try {
-      const response = await fetch(url, {
-        ...options,
-        signal: controller.signal
-      });
+      const staticURL = `${this.STATIC_BASE_URL}${staticPath}`;
+      console.log('Fetching static file:', staticURL);
 
-      clearTimeout(timeoutId);
+      const response = await fetch(staticURL);
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`Static file fetch failed: ${response.status}`);
       }
 
       const contentType = response.headers.get('content-type');
+      let data;
+
+      // Try JSON first, fallback to text
       if (contentType && contentType.includes('application/json')) {
-        return await response.json();
+        data = await response.json();
+      } else {
+        data = await response.text();
       }
-      return await response.text();
-    } catch (error) {
-      this._log('Fetch error:', error);
-      throw error;
+
+      return data;
+    } catch (staticError) {
+      console.error('Static file error:', staticError);
+      throw staticError;
     }
   }
 
-  // Specific methods for different content types
-  async getIndex() {
+  // Get question by ID
+  async getQuestion(id) {
+    if (!this.questionPaths.size) {
+      await this.initializeIndex();
+    }
+
+    const path = this.questionPaths.get(id.toString());
+    if (!path) {
+      throw new Error(`Invalid question ID: ${id}`);
+    }
+
+    return this.fetchData(`/api/questions/${id}`, path);
+  }
+
+  // Get solution by ID
+  async getSolution(id) {
+    if (!this.solutionPaths.size) {
+      await this.initializeIndex();
+    }
+
+    const path = this.solutionPaths.get(id.toString());
+    if (!path) {
+      throw new Error(`Invalid solution ID: ${id}`);
+    }
+
+    return this.fetchData(`/api/solutions/${id}`, path);
+  }
+
+  // Get all valid question IDs
+  getValidQuestionIds() {
+    return Array.from(this.questionPaths.keys());
+  }
+
+  // Get all valid solution IDs
+  getValidSolutionIds() {
+    return Array.from(this.solutionPaths.keys());
+  }
+
+  // Helper method for testing API connection
+  async testConnection() {
     try {
-      return await this.fetchData(this.INDEX_PATH);
-    } catch (error) {
-      this._log('Error fetching index:', error);
-      throw error;
+      const response = await fetch(`${this.API_BASE_URL}/test-connection`);
+      return response.ok;
+    } catch {
+      return false;
     }
-  }
-
-  async getCategories() {
-    try {
-      return await this.fetchData(this.CATEGORIES_PATH);
-    } catch (error) {
-      this._log('Error fetching categories:', error);
-      throw error;
-    }
-  }
-
-  async getQuestions(category) {
-    try {
-      const path = category
-        ? `${this.QUESTIONS_PATH}/${category}.json`
-        : this.QUESTIONS_PATH + '/index.json';
-      return await this.fetchData(path);
-    } catch (error) {
-      this._log('Error fetching questions:', error);
-      throw error;
-    }
-  }
-
-  async getSolutions(category) {
-    try {
-      const path = category
-        ? `${this.SOLUTIONS_PATH}/${category}.json`
-        : this.SOLUTIONS_PATH + '/index.json';
-      return await this.fetchData(path);
-    } catch (error) {
-      this._log('Error fetching solutions:', error);
-      throw error;
-    }
-  }
-
-  _log(...args) {
-    if (this.DEBUG) {
-      console.log('[DataFetcher]', ...args);
-    }
-  }
-
-  _logInit() {
-    if (this.DEBUG) {
-      console.log('DataFetcher initialized:', {
-        environment: this.DEVELOPMENT_MODE ? 'development' : 'production',
-        API_BASE_URL: this.API_BASE_URL,
-        STATIC_BASE_URL: this.STATIC_BASE_URL,
-        DEVELOPMENT_MODE: this.DEVELOPMENT_MODE
-      });
-    }
-  }
-
-  clearCache() {
-    this.cache.clear();
-    this._log('Cache cleared');
   }
 }
 
-// Create and export singleton instance
-const dataFetcher = new DataFetcher({ debug: true });
+// Create a singleton instance of the DataFetcher class
+const dataFetcher = new DataFetcher();
 
-export { DataFetcher };  // Export class
-export default dataFetcher;  // Export singleton instance
+// Export both the instance and the class
+export { DataFetcher };
+export default dataFetcher;
