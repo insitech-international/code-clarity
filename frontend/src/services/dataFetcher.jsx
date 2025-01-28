@@ -1,131 +1,65 @@
-// Define the correct base URL for production
-const GITHUB_BASE_URL = 'https://insitech-international.github.io/code-clarity/';
+export default class DataFetcher {
+  constructor(config) {
+    this.API_BASE_URL = config.API_BASE_URL || "http://127.0.0.1:8000";
+    this.STATIC_BASE_URL = config.STATIC_BASE_URL || "https://insitech-international.github.io/code-clarity/static/data";
+    this.DEVELOPMENT_MODE = config.DEVELOPMENT_MODE || false;
 
-class DataFetcher {
-  constructor(config = {}) {
-    // Determine if the environment is production
-    const isProduction = !window.location.hostname.includes('localhost') &&
-                         !window.location.hostname.includes('127.0.0.1');
-
-    // Initialize properties
-    this.API_BASE_URL = "http://127.0.0.1:8000";
-    this.STATIC_BASE_URL = isProduction
-      ? GITHUB_BASE_URL + 'static/data'
-      : '/static/data'; // Use local static data in development
-    this.DEVELOPMENT_MODE = !isProduction;
-    this.CACHE_DURATION = config.cacheDuration || 3600000; // Cache for 1 hour by default
-    this.API_TIMEOUT = 5000; // Timeout for API requests
-    this.cache = new Map();
-
-    console.log('DataFetcher initialized:', {
-      environment: isProduction ? 'production' : 'development',
+    console.log("DataFetcher initialized:", {
       API_BASE_URL: this.API_BASE_URL,
       STATIC_BASE_URL: this.STATIC_BASE_URL,
       DEVELOPMENT_MODE: this.DEVELOPMENT_MODE,
+      environment: this.DEVELOPMENT_MODE ? "development" : "production",
     });
   }
 
-  // Core data fetching method
-  async fetchData(apiPath, staticPath = null, params = null) {
-    // Development mode: Fetch from API only
+  async fetchData(apiPath, staticPath = null, type = null, params = null) {
+    // Determine the appropriate static folder based on the type
+    const staticFolder = type === "questions" ? "questions" : type === "solutions" ? "solutions" : "";
+
+    // Validate the path and type
+    if (staticPath && !staticFolder) {
+      throw new Error("Invalid static type provided. Must be 'questions' or 'solutions'.");
+    }
+
     if (this.DEVELOPMENT_MODE) {
-      if (!apiPath) {
-        throw new Error('API path is required in development mode');
-      }
+      // Development mode: API fetch only
+      if (!apiPath) throw new Error("API path is required in development mode");
 
       try {
-        console.log('Attempting API fetch:', `${this.API_BASE_URL}${apiPath}`);
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), this.API_TIMEOUT);
-
-        const response = await fetch(`${this.API_BASE_URL}${apiPath}`, {
-          signal: controller.signal,
-          ...(params && { params }),
-        });
-
-        clearTimeout(timeoutId);
-
-        if (!response.ok) {
-          throw new Error('API request failed');
-        }
-
-        const data = await response.json();
-        return data;
+        const response = await fetch(`${this.API_BASE_URL}${apiPath}`, { ...(params && { params }) });
+        if (!response.ok) throw new Error("API request failed");
+        return await response.json();
       } catch (error) {
-        console.error('API request failed:', error);
-        throw new Error('API is required in development mode');
+        console.error("API request failed:", error);
+        throw error;
       }
     }
 
-    // Production mode: Try API first, then fallback to static files
+    // Production mode: API or Static fallback
     try {
       if (apiPath) {
-        console.log('Attempting API fetch:', `${this.API_BASE_URL}${apiPath}`);
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), this.API_TIMEOUT);
-
-        const response = await fetch(`${this.API_BASE_URL}${apiPath}`, {
-          signal: controller.signal,
-          ...(params && { params }),
-        });
-
-        clearTimeout(timeoutId);
-
-        if (response.ok) {
-          const data = await response.json();
-          return data;
-        }
+        const response = await fetch(`${this.API_BASE_URL}${apiPath}`, { ...(params && { params }) });
+        if (response.ok) return await response.json();
       }
     } catch (apiError) {
-      console.warn('API fetch failed, falling back to static files');
+      console.warn("API fetch failed, falling back to static files:", apiError);
     }
 
-    // Static file fallback (production only)
-    if (!staticPath) {
-      throw new Error('No static path provided for fallback');
-    }
-
-    try {
-      const staticURL = `${this.STATIC_BASE_URL}${staticPath.startsWith('/') ? staticPath.slice(1) : staticPath}`;
-      console.log('Fetching static file:', staticURL);
-
-      const response = await fetch(staticURL);
-
-      if (!response.ok) {
-        throw new Error(`Static file fetch failed: ${response.status}`);
+    // Fallback to static
+    if (staticPath) {
+      const staticURL = `${this.STATIC_BASE_URL}/${staticFolder}/${staticPath}`;
+      try {
+        const response = await fetch(staticURL);
+        if (!response.ok) throw new Error(`Static file fetch failed: ${response.status}`);
+        return response.headers.get("content-type")?.includes("application/json")
+          ? await response.json()
+          : await response.text();
+      } catch (staticError) {
+        console.error("Static file error:", staticError);
+        throw new Error(`Unable to load static data from ${staticURL}`);
       }
-
-      const contentType = response.headers.get('content-type');
-      let data;
-
-      // Try JSON first, fallback to text
-      if (contentType && contentType.includes('application/json')) {
-        data = await response.json();
-      } else {
-        data = await response.text();
-      }
-
-      return data;
-    } catch (staticError) {
-      console.error('Static file error:', staticError);
-      throw staticError;
     }
-  }
 
-  // Helper method for testing API connection
-  async testConnection() {
-    try {
-      const response = await fetch(`${this.API_BASE_URL}/test-connection`);
-      return response.ok;
-    } catch {
-      return false;
-    }
+    throw new Error("No valid path provided");
   }
 }
-
-// Create a singleton instance of the DataFetcher class
-const dataFetcher = new DataFetcher();
-
-// Export both the instance and the class
-export { DataFetcher };
-export default dataFetcher;
