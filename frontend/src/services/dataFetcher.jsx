@@ -167,7 +167,8 @@ class DataFetcher {
       return null;
     }
     console.log(`Static File Path: ${path}`)
-    return this.fetchFromGitHub(path);
+//     return this.fetchFromGitHub(path);
+    return this.fetchFromGitHub("https://raw.githubusercontent.com/insitech-international/code-clarity/gh-pages/static/data/questions/Advanced_Python_Concepts/Context_Managers/111_Contextlib_Module.md")
   }
 
   async getCategories() {
