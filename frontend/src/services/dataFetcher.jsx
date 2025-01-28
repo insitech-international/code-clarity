@@ -67,6 +67,34 @@ class DataFetcher {
     }
   }
 
+  async fetchData(apiPath, staticPath = null, params = null) {
+    if (!apiPath && !staticPath) return null;
+
+    if (this.DEVELOPMENT_MODE) {
+      try {
+        return await this.fetchFromAPI(apiPath, params);
+      } catch (error) {
+        console.error('API fetch failed in development mode:', error);
+        throw error;
+      }
+    }
+
+    // Production mode: try API first, then fallback to static
+    try {
+      const apiResult = await this.fetchFromAPI(apiPath, params);
+      if (apiResult) return apiResult;
+    } catch (error) {
+      console.warn('API fetch failed, falling back to static file');
+    }
+
+    if (!staticPath) {
+      console.warn('No static path provided for fallback');
+      return null;
+    }
+
+    return this.fetchFromGitHub(staticPath);
+  }
+
   async loadIndex() {
     try {
       // In development, get data from API. In production, from static files
@@ -105,6 +133,11 @@ class DataFetcher {
         });
       }
 
+      console.log('Loaded paths:', {
+        questions: this.questions.size,
+        solutions: this.solutions.size
+      });
+
       return indexData;
     } catch (error) {
       console.error('Error loading index:', error);
@@ -133,16 +166,25 @@ class DataFetcher {
       console.warn(`No ${type} found for ID: ${id}`);
       return null;
     }
-    console.log(`Path: ${path}`)
+
     return this.fetchFromGitHub(path);
   }
 
   async getCategories() {
-    return this.DEVELOPMENT_MODE
-      ? this.fetchFromAPI('/categories')
-      : this.questions.size === 0
-        ? this.loadIndex().then(() => Array.from(new Set(Array.from(this.questions.values()).map(path => path.split('/')[3]))))
-        : Array.from(new Set(Array.from(this.questions.values()).map(path => path.split('/')[3])));
+    if (this.DEVELOPMENT_MODE) {
+      return this.fetchFromAPI('/categories');
+    }
+
+    // In production, derive categories from paths
+    if (this.questions.size === 0) {
+      await this.loadIndex();
+    }
+
+    return Array.from(new Set(
+      Array.from(this.questions.values())
+        .map(path => path.split('/')[3])
+        .filter(Boolean)
+    ));
   }
 
   async getFeaturedQuestions() {
@@ -167,6 +209,23 @@ class DataFetcher {
     });
 
     return questionsByCategory;
+  }
+
+  // Additional helper methods
+  async testConnection() {
+    try {
+      const response = await this.fetchFromAPI('/test-connection');
+      return response?.status === 'success';
+    } catch (error) {
+      console.error('Connection test failed:', error);
+      return false;
+    }
+  }
+
+  clearCache() {
+    this.questions.clear();
+    this.solutions.clear();
+    console.log('Cache cleared');
   }
 }
 
