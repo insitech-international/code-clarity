@@ -28,9 +28,7 @@ class DataFetcher {
   async fetchFromGitHub(path) {
     if (!path) return null;
 
-    const cleanPath = path.startsWith('/') ? path.slice(1) : path;
-    const url = `${this.STATIC_BASE_URL}/${cleanPath}`;
-
+    const url = `${this.STATIC_BASE_URL}/${path}`;
     console.log('Fetching from GitHub:', url);
 
     const response = await fetch(url);
@@ -69,40 +67,23 @@ class DataFetcher {
     }
   }
 
-  async fetchData(apiPath, staticPath = null, params = null) {
-    if (!apiPath && !staticPath) return null;
-
-    if (this.DEVELOPMENT_MODE) {
-      try {
-        return await this.fetchFromAPI(apiPath, params);
-      } catch (error) {
-        console.error('API fetch failed in development mode:', error);
-        throw error;
-      }
-    }
-
-    // Production mode: try API first, then fallback to static
-    try {
-      const apiResult = await this.fetchFromAPI(apiPath, params);
-      if (apiResult) return apiResult;
-    } catch (error) {
-      console.warn('API fetch failed, falling back to static file');
-    }
-
-    if (!staticPath) {
-      console.warn('No static path provided for fallback');
-      return null;
-    }
-
-    return this.fetchFromGitHub(staticPath);
-  }
-
   async loadIndex() {
     try {
-      let indexData = await this.fetchData(
-        '/api/index',
-        'static/data/index.json'
-      );
+      // In development, get data from API. In production, from static files
+      let indexData;
+      if (this.DEVELOPMENT_MODE) {
+        // In development, construct index from API questions list
+        const response = await this.fetchFromAPI('/questions/');
+        indexData = {
+          questions: response.questions.map(q => ({
+            id: q.question_id,
+            path: `static/data/questions/${q.question_id}_${q.title.replace(/\s+/g, '_')}.md`
+          }))
+        };
+      } else {
+        // In production, get from static index.json
+        indexData = await this.fetchFromGitHub('static/data/index.json');
+      }
 
       // Map the paths
       this.questions.clear();
@@ -110,7 +91,7 @@ class DataFetcher {
 
       if (indexData?.questions) {
         indexData.questions.forEach(item => {
-          if (item?.id && item?.path) {
+          if (item?.id) {
             this.questions.set(item.id.toString(), item.path);
           }
         });
@@ -118,7 +99,7 @@ class DataFetcher {
 
       if (indexData?.solutions) {
         indexData.solutions.forEach(item => {
-          if (item?.id && item?.path) {
+          if (item?.id) {
             this.solutions.set(item.id.toString(), item.path);
           }
         });
@@ -134,10 +115,17 @@ class DataFetcher {
   async getContent(id, type = 'question') {
     if (!id) return null;
 
+    // Load index if paths aren't loaded
     if (this.questions.size === 0) {
       await this.loadIndex();
     }
 
+    if (this.DEVELOPMENT_MODE) {
+      // In development, use API directly
+      return this.fetchFromAPI(`/${type}s/${id}`);
+    }
+
+    // In production, get path from index and fetch static file
     const pathMap = type === 'question' ? this.questions : this.solutions;
     const path = pathMap.get(id.toString());
 
@@ -145,16 +133,40 @@ class DataFetcher {
       console.warn(`No ${type} found for ID: ${id}`);
       return null;
     }
-
-    return this.fetchData(`/api/${type}s/${id}`, path);
+    console.log(`Path: ${path}`)
+    return this.fetchFromGitHub(path);
   }
 
   async getCategories() {
-    return this.fetchData('/categories', 'static/data/categories.json');
+    return this.DEVELOPMENT_MODE
+      ? this.fetchFromAPI('/categories')
+      : this.questions.size === 0
+        ? this.loadIndex().then(() => Array.from(new Set(Array.from(this.questions.values()).map(path => path.split('/')[3]))))
+        : Array.from(new Set(Array.from(this.questions.values()).map(path => path.split('/')[3])));
   }
 
   async getFeaturedQuestions() {
-    return this.fetchData('/featured_questions', 'static/data/featured.json');
+    if (this.DEVELOPMENT_MODE) {
+      return this.fetchFromAPI('/featured_questions');
+    }
+
+    // In production, get first 6 questions from each category
+    if (this.questions.size === 0) {
+      await this.loadIndex();
+    }
+
+    const questionsByCategory = {};
+    Array.from(this.questions.entries()).forEach(([id, path]) => {
+      const category = path.split('/')[3];
+      if (!questionsByCategory[category]) {
+        questionsByCategory[category] = [];
+      }
+      if (questionsByCategory[category].length < 6) {
+        questionsByCategory[category].push(parseInt(id));
+      }
+    });
+
+    return questionsByCategory;
   }
 }
 
