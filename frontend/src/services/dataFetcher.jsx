@@ -9,17 +9,13 @@ class DataFetcher {
 
     // Initialize properties
     this.API_BASE_URL = "http://127.0.0.1:8000";
-    this.STATIC_BASE_URL = isProduction
-      ? GITHUB_BASE_URL
-      : '';
+    this.STATIC_BASE_URL = isProduction ? GITHUB_BASE_URL : '';
     this.DEVELOPMENT_MODE = !isProduction;
-    this.CACHE_DURATION = config.cacheDuration || 3600000;
     this.API_TIMEOUT = 5000;
-    this.cache = new Map();
 
-    // Store mapped paths
-    this.questionPaths = new Map();
-    this.solutionPaths = new Map();
+    // Content mappings
+    this.questions = new Map();
+    this.solutions = new Map();
 
     console.log('DataFetcher initialized:', {
       environment: isProduction ? 'production' : 'development',
@@ -29,167 +25,150 @@ class DataFetcher {
     });
   }
 
+  async fetchFromGitHub(path) {
+    if (!path) return null;
+
+    const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+    const url = `${this.STATIC_BASE_URL}/${cleanPath}`;
+
+    console.log('Fetching from GitHub:', url);
+
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`GitHub fetch failed: ${response.status}`);
+    }
+
+    return path.endsWith('.json') ? response.json() : response.text();
+  }
+
+  async fetchFromAPI(path, params = null) {
+    if (!path) return null;
+
+    console.log('Attempting API fetch:', `${this.API_BASE_URL}${path}`);
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), this.API_TIMEOUT);
+
+    try {
+      const response = await fetch(`${this.API_BASE_URL}${path}`, {
+        signal: controller.signal,
+        ...(params && { params }),
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        throw new Error('API request failed');
+      }
+
+      return response.json();
+    } catch (error) {
+      console.error('API request failed:', error);
+      throw error;
+    }
+  }
+
   async loadIndex() {
     try {
-      const response = await this.fetchData('/api/index', '/static/data/index.json');
+      let indexData;
 
-      if (response.questions) {
-        response.questions.forEach(item => {
-          if (item.id && item.path) {
-            this.questionPaths.set(item.id.toString(), item.path);
+      if (this.DEVELOPMENT_MODE) {
+        indexData = await this.fetchFromAPI('/api/index');
+      } else {
+        try {
+          indexData = await this.fetchFromAPI('/api/index');
+        } catch {
+          indexData = await this.fetchFromGitHub('static/data/index.json');
+        }
+      }
+
+      // Map the paths
+      this.questions.clear();
+      this.solutions.clear();
+
+      if (indexData?.questions) {
+        indexData.questions.forEach(item => {
+          if (item?.id && item?.path) {
+            this.questions.set(item.id.toString(), item.path);
           }
         });
       }
 
-      if (response.solutions) {
-        response.solutions.forEach(item => {
-          if (item.id && item.path) {
-            this.solutionPaths.set(item.id.toString(), item.path);
+      if (indexData?.solutions) {
+        indexData.solutions.forEach(item => {
+          if (item?.id && item?.path) {
+            this.solutions.set(item.id.toString(), item.path);
           }
         });
       }
 
-      return response;
+      return indexData;
     } catch (error) {
       console.error('Error loading index:', error);
       throw error;
     }
   }
 
-  // Core data fetching method
-  async fetchData(apiPath, staticPath = null, params = null) {
-    // Development mode: Fetch from API only
-    if (this.DEVELOPMENT_MODE) {
-      if (!apiPath) {
-        throw new Error('API path is required in development mode');
-      }
-
-      try {
-        console.log('Attempting API fetch:', `${this.API_BASE_URL}${apiPath}`);
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), this.API_TIMEOUT);
-
-        const response = await fetch(`${this.API_BASE_URL}${apiPath}`, {
-          signal: controller.signal,
-          ...(params && { params }),
-        });
-
-        clearTimeout(timeoutId);
-
-        if (!response.ok) {
-          throw new Error('API request failed');
-        }
-
-        const data = await response.json();
-        return data;
-      } catch (error) {
-        console.error('API request failed:', error);
-        throw new Error('API is required in development mode');
-      }
-    }
-
-    // Production mode: Try API first, then fallback to static files
-    try {
-      if (apiPath) {
-        console.log('Attempting API fetch:', `${this.API_BASE_URL}${apiPath}`);
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), this.API_TIMEOUT);
-
-        const response = await fetch(`${this.API_BASE_URL}${apiPath}`, {
-          signal: controller.signal,
-          ...(params && { params }),
-        });
-
-        clearTimeout(timeoutId);
-
-        if (response.ok) {
-          const data = await response.json();
-          return data;
-        }
-      }
-    } catch (apiError) {
-      console.warn('API fetch failed, falling back to static files');
-    }
-
-    // Static file fallback (production only)
-    if (!staticPath) {
-      throw new Error('No static path provided for fallback');
-    }
-
-    try {
-      // Clean up the static path
-      const cleanPath = staticPath.startsWith('/') ? staticPath.slice(1) : staticPath;
-      const staticURL = `${this.STATIC_BASE_URL}/${cleanPath}`;
-      console.log('Fetching static file:', staticURL);
-
-      const response = await fetch(staticURL);
-
-      if (!response.ok) {
-        throw new Error(`Static file fetch failed: ${response.status}`);
-      }
-
-      // Handle Markdown files
-      if (staticPath.endsWith('.md')) {
-        return await response.text();
-      }
-
-      // Handle JSON files
-      try {
-        const data = await response.json();
-        return data;
-      } catch {
-        return await response.text();
-      }
-    } catch (staticError) {
-      console.error('Static file error:', staticError);
-      throw staticError;
-    }
-  }
-
-  // Get content by ID
   async getContent(id, type = 'question') {
-    // Load index if paths aren't loaded
-    if (this.questionPaths.size === 0) {
+    // Return null for invalid/null IDs
+    if (!id) return null;
+
+    // Load index if not already loaded
+    if (this.questions.size === 0) {
       await this.loadIndex();
     }
 
-    const pathMap = type === 'question' ? this.questionPaths : this.solutionPaths;
+    const pathMap = type === 'question' ? this.questions : this.solutions;
     const path = pathMap.get(id.toString());
 
+    // Return null if no path found for the ID
     if (!path) {
-      throw new Error(`Invalid ${type} ID: ${id}`);
+      console.warn(`No ${type} found for ID: ${id}`);
+      return null;
     }
 
-    return this.fetchData(
-      `/api/${type}s/${id}`,
-      path
-    );
-  }
+    if (this.DEVELOPMENT_MODE) {
+      return this.fetchFromAPI(`/api/${type}s/${id}`);
+    }
 
-  // Get categories
-  async getCategories() {
-    return this.fetchData('/categories/', 'static/data/categories.json');
-  }
-
-  // Get featured questions
-  async getFeaturedQuestions() {
-    return this.fetchData('/featured_questions/', 'static/data/featured.json');
-  }
-
-  // Helper method for testing API connection
-  async testConnection() {
+    // Production: try API first, then GitHub
     try {
-      const response = await fetch(`${this.API_BASE_URL}/test-connection`);
-      return response.ok;
+      const apiResult = await this.fetchFromAPI(`/api/${type}s/${id}`);
+      if (apiResult) return apiResult;
     } catch {
-      return false;
+      return this.fetchFromGitHub(path);
+    }
+  }
+
+  async getCategories() {
+    if (this.DEVELOPMENT_MODE) {
+      return this.fetchFromAPI('/categories');
+    }
+
+    try {
+      const apiResult = await this.fetchFromAPI('/categories');
+      if (apiResult) return apiResult;
+    } catch {
+      return this.fetchFromGitHub('static/data/categories.json');
+    }
+  }
+
+  async getFeaturedQuestions() {
+    if (this.DEVELOPMENT_MODE) {
+      return this.fetchFromAPI('/featured_questions');
+    }
+
+    try {
+      const apiResult = await this.fetchFromAPI('/featured_questions');
+      if (apiResult) return apiResult;
+    } catch {
+      return this.fetchFromGitHub('static/data/featured.json');
     }
   }
 }
 
-// Create a singleton instance of the DataFetcher class
+// Create a singleton instance
 const dataFetcher = new DataFetcher();
 
-// Export both the instance and the class
 export { DataFetcher };
 export default dataFetcher;
