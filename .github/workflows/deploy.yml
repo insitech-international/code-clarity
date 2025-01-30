@@ -64,7 +64,10 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-          cache: 'pip'
+          cache: "pip"
+
+      - name: Ensure pip cache directory exists
+        run: mkdir -p ~/.cache/pip
 
       # Data Directory Population
       - name: Create and Populate Data Directories
@@ -105,10 +108,10 @@ jobs:
           echo "Current working directory: $(pwd)"
           echo "Repository structure:"
           find . -type d -maxdepth 3
-          
+
           # Execute the generate_categories.py script with explicit paths
           python ./backend/code_clarity_fastapi/scripts/generate_categories.py
-          
+
           # Verify the file was created
           echo "Checking generated categories.json..."
           ls -l ./frontend/public/static/data/categories.json
