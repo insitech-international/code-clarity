@@ -1,4 +1,4 @@
-name: Deploy Frontend & Extract Categories
+name: Deploy Frontend & Generate Categories
 
 on:
   push:
@@ -55,165 +55,16 @@ jobs:
               --silent || echo "Failed to cancel deployment $deployment"
           done
 
-
       # Repository Checkout
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # Python Setup with Comprehensive Dependency Management
-      - name: Setup Python and Verify Environment
+      # Python Setup
+      - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: 'pip'
-
-      - name: Install and Verify Backend Dependencies
-        run: |
-          # Upgrade pip and setuptools
-          python -m pip install --upgrade pip setuptools wheel
-
-          # Debug: Print Python and pip versions
-          python --version
-          pip --version
-
-          # Change to backend directory
-          cd ${{ env.BACKEND_DIRECTORY }}
-
-          # Explicitly list and install all required packages
-          echo "Installing backend dependencies..."
-          pip install \
-            uvicorn \
-            fastapi \
-            pymongo \
-            python-bsonjs \
-            pydantic \
-            requests
-
-          # If requirements.txt exists, install from it as well
-          if [ -f "requirements.txt" ]; then
-            pip install -r requirements.txt
-          fi
-
-          # Verify installations
-          echo "Installed Packages:"
-          pip list
-
-          # Comprehensive module import check
-          python -c "
-          import uvicorn
-          import fastapi
-          import pymongo
-          import bson
-          import pydantic
-          print('All critical modules imported successfully')
-          "
-
-      # Comprehensive Backend Server Startup with Extensive Logging
-      - name: Diagnose Backend Server Startup
-        run: |
-          # Change to backend directory
-          cd ${{ env.BACKEND_DIRECTORY }}
-
-          # Debug: List directory contents and Python path
-          echo "Backend Directory Structure:"
-          pwd
-          find . -type d
-
-          # Print Python path for debugging
-          python -c "import sys; print('\n'.join(sys.path))"
-
-          # Verify main application file exists
-          MAIN_APP_PATH="code_clarity_fastapi/app/main.py"
-          if [ ! -f "$MAIN_APP_PATH" ]; then
-            echo "ERROR: main.py not found in $MAIN_APP_PATH"
-            echo "Directory contents:"
-            find . -name "main.py"
-            exit 1
-          fi
-
-          # Detailed import path debugging
-          echo "Checking import paths..."
-          python -c "
-          import sys
-          import os
-
-          print('Current Working Directory:', os.getcwd())
-          print('Sys Path:')
-          for path in sys.path:
-              print(path)
-
-          try:
-              import code_clarity_fastapi
-              print('code_clarity_fastapi imported successfully')
-              print('Location:', code_clarity_fastapi.__file__)
-          except ImportError as e:
-              print('Failed to import code_clarity_fastapi:', e)
-
-          try:
-              from code_clarity_fastapi.app import main
-              print('main module imported successfully')
-          except ImportError as e:
-              print('Failed to import main module:', e)
-          "
-
-          # Attempt to run server with full verbosity and explicit Python path
-          PYTHONPATH=. python -m uvicorn code_clarity_fastapi.app.main:app --host 0.0.0.0 --port 8000 --log-level debug &
-          SERVER_PID=$!
-
-          # Wait and check server availability with more verbose checks
-          for i in {1..30}; do
-            echo "Checking server availability (attempt $i/30)..."
-
-            # Verbose curl with timeout
-            RESPONSE=$(curl -v -m 5 http://127.0.0.1:8000/questions/ 2>&1)
-
-            if echo "$RESPONSE" | grep -q "200 OK"; then
-              echo "FastAPI server is up and running!"
-              break
-            fi
-
-            # Print out connection details if failed
-            echo "Connection attempt details:"
-            echo "$RESPONSE"
-
-            sleep 2
-          done
-
-          # Check if server process is still running
-          if kill -0 $SERVER_PID 2>/dev/null; then
-            echo "Server process is running"
-          else
-            echo "Server process terminated unexpectedly"
-            exit 1
-          fi
-
-          # Final availability check
-          if ! curl -s http://127.0.0.1:8000/questions/ > /dev/null; then
-            echo "Failed to reach server endpoint"
-            exit 1
-          fi
-
-      # Setup Node.js
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: "npm"
-          cache-dependency-path: ${{ env.WORKING_DIRECTORY }}/package-lock.json
-
-
-      # Frontend Environment Preparation
-      - name: Prepare Frontend Environment
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: |
-          cat > .env << EOF
-          REACT_APP_API_URL=${{ env.REACT_APP_API_URL }}
-          REACT_APP_STATIC_URL=${{ env.REACT_APP_STATIC_URL }}
-          PUBLIC_URL=${{ env.PUBLIC_URL }}
-          NODE_ENV=production
-          EOF
-
-          cat .env
 
       # Data Directory Population
       - name: Create and Populate Data Directories
@@ -248,7 +99,17 @@ jobs:
           echo "Questions: $(find public/static/data/questions -type f -name "*.md" | wc -l)"
           echo "Solutions: $(find public/static/data/solutions -type f -name "*.md" | wc -l)"
 
-      # Index and Category Generation
+      # Generate Categories
+      - name: Generate Categories JSON
+        run: |
+          # Execute the generate_categories.py script
+          python ${{ env.BACKEND_DIRECTORY }}/code_clarity_fastapi/scripts/generate_categories.py
+
+          # Verify the file was created
+          ls -l ${{ env.WORKING_DIRECTORY }}/public/static/data/categories.json
+          cat ${{ env.WORKING_DIRECTORY }}/public/static/data/categories.json
+
+      # Index Generation
       - name: Generate Index Files
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: |
@@ -303,53 +164,26 @@ jobs:
           echo "Checking generated files..."
           ls -l public/static/data/index.json
 
-      - name: Extract Categories and Subcategories
+      # Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+          cache-dependency-path: ${{ env.WORKING_DIRECTORY }}/package-lock.json
+
+      # Frontend Environment Preparation
+      - name: Prepare Frontend Environment
         working-directory: ${{ env.WORKING_DIRECTORY }}
-        env:
-          DEV_API_URL: ${{ secrets.API_URL }}
         run: |
-          mkdir -p public/static/data
-
-          python3 - << EOF
-          import json
-          import requests
-          import os
-          import sys
-
-          def extract_categories(questions):
-              categories = {}
-              for question in questions:
-                  category = question.get('category', '')
-                  subcategory = question.get('subcategory', '')
-                  
-                  if category:
-                      categories.setdefault(category, set()).add(subcategory or 'Uncategorized')
-
-              return {
-                  cat: sorted(list(subs)) 
-                  for cat, subs in categories.items()
-              }
-
-          try:
-              api_url = os.environ.get('DEV_API_URL', 'http://127.0.0.1:8000/questions/')
-              response = requests.get(api_url, timeout=10)
-              response.raise_for_status()
-              
-              questions = response.json()
-              categories_dict = extract_categories(questions)
-
-              with open('public/static/data/categories.json', 'w') as f:
-                  json.dump(categories_dict, f, indent=2)
-
-              print("Categories extracted and saved to public/static/data/categories.json")
-              print("Categories found:", list(categories_dict.keys()))
-          except Exception as e:
-              print(f"Error extracting categories: {e}")
-              sys.exit(1)
+          cat > .env << EOF
+          REACT_APP_API_URL=${{ env.REACT_APP_API_URL }}
+          REACT_APP_STATIC_URL=${{ env.REACT_APP_STATIC_URL }}
+          PUBLIC_URL=${{ env.PUBLIC_URL }}
+          NODE_ENV=production
           EOF
 
-          ls -l public/static/data/categories.json
-          cat public/static/data/categories.json
+          cat .env
 
       # Frontend Dependencies and Build
       - name: Install Frontend Dependencies
