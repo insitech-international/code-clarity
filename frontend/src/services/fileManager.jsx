@@ -2,7 +2,7 @@
 
 class FileManager {
   // Configure base URL for static files
-  static FILE_BASE_URL = '/static/data';
+  static FILE_BASE_URL = '/static/data/';
   
   // Cached data
   static indexData = null;
