@@ -1,15 +1,19 @@
-// frontend\src\services\fileManager.jsx
-
 class FileManager {
   // Configure base URL for GitHub Pages
   static BASE_URL = 'https://code-clarity.insitechinternational.com';
   static DATA_PATH = '/static/data';
 
-  // Cached data
+  // Cached data with proper typing
   static indexData = null;
   static questionCache = new Map();
   static solutionCache = new Map();
 
+  /**
+   * Constructs URL for file access with validation
+   * @param {string} type - Type of resource (questions/solutions)
+   * @param {string} relativePath - Path relative to data directory
+   * @returns {string|null} Constructed URL or null if invalid
+   */
   static constructUrl(type, relativePath) {
     if (!type || !relativePath) {
       console.error('Invalid parameters for constructUrl:', { type, relativePath });
@@ -18,16 +22,20 @@ class FileManager {
     return `${this.BASE_URL}${this.DATA_PATH}/${type}/${relativePath}`;
   }
 
+  /**
+   * Loads and validates index data
+   * @returns {Promise<Object>} Processed index data
+   */
   static async loadIndexData() {
     if (this.indexData) return this.indexData;
-    
+
     try {
       const indexUrl = `${this.BASE_URL}${this.DATA_PATH}/index.json`;
       console.log('Fetching index from:', indexUrl);
 
       const response = await fetch(indexUrl);
       if (!response.ok) throw new Error(`Failed to load index.json: ${response.status}`);
-      
+
       const rawData = await response.json();
       console.log('Raw index data:', rawData);
 
@@ -47,12 +55,18 @@ class FileManager {
     return this.indexData;
   }
 
+  /**
+   * Reads file content with error handling
+   * @param {string} type - Resource type
+   * @param {string} relativePath - File path
+   * @returns {Promise<string>} File content
+   */
   static async readFile(type, relativePath) {
     if (!type || !relativePath) {
       console.error(`readFile received invalid parameters: type=${type}, relativePath=${relativePath}`);
       return "";
     }
-    
+
     try {
       const url = this.constructUrl(type, relativePath);
       console.log('Reading file:', { type, relativePath, url });
@@ -65,6 +79,11 @@ class FileManager {
     }
   }
 
+  /**
+   * Fetches all questions with optional filtering
+   * @param {Object} filters - Filter criteria
+   * @returns {Promise<Array>} Filtered questions
+   */
   static async getAllQuestions(filters = {}) {
     const index = await this.loadIndexData();
     let questions = index.questions;
@@ -72,17 +91,22 @@ class FileManager {
     if (filters.category) {
       questions = questions.filter(q => q.path.includes(`${filters.category}/`));
     }
-    
+
     return Promise.all(questions.map(q => this.parseQuestionFile(q.path)));
   }
 
+  /**
+   * Parses a question file with caching
+   * @param {string} filePath - Path to question file
+   * @returns {Promise<Object|null>} Parsed question data
+   */
   static async parseQuestionFile(filePath) {
     if (this.questionCache.has(filePath)) return this.questionCache.get(filePath);
-    
+
     try {
       const content = await this.readFile('questions', filePath);
       if (!content) return null;
-      
+
       const questionData = this.extractQuestionData(content, filePath);
       this.questionCache.set(filePath, questionData);
       return questionData;
@@ -92,6 +116,12 @@ class FileManager {
     }
   }
 
+  /**
+   * Extracts metadata from question content
+   * @param {string} content - File content
+   * @param {string} filePath - File path
+   * @returns {Object} Extracted question data
+   */
   static extractQuestionData(content, filePath) {
     const metadata = this.parseMetadata(content);
     return {
@@ -105,6 +135,11 @@ class FileManager {
     };
   }
 
+  /**
+   * Parses metadata from file content
+   * @param {string} content - File content
+   * @returns {Object} Parsed metadata
+   */
   static parseMetadata(content) {
     const metadata = {};
     content.split('\n').forEach(line => {
@@ -116,20 +151,31 @@ class FileManager {
     return metadata;
   }
 
+  /**
+   * Finds a question by ID
+   * @param {number} questionId - Question identifier
+   * @returns {Promise<Object|null>} Question data
+   */
   static async findQuestionById(questionId) {
     const index = await this.loadIndexData();
     const questionInfo = index.questions.find(q => q.id === questionId);
     return questionInfo ? this.parseQuestionFile(questionInfo.path) : null;
   }
 
+  /**
+   * Clears all caches
+   */
   static clearCache() {
     this.indexData = null;
     this.questionCache.clear();
     this.solutionCache.clear();
   }
 
-
-  // Advanced markdown parsing with improved section detection
+  /**
+   * Parses markdown file into sections
+   * @param {string} content - Markdown content
+   * @returns {Object} Parsed sections
+   */
   static parseMarkdownFile(content) {
     const sections = {};
     let currentSection = null;
@@ -140,7 +186,7 @@ class FileManager {
 
     for (const line of lines) {
       const match = line.match(sectionRegex);
-      
+
       if (match) {
         // Save previous section if it exists
         if (currentSection && sectionContent.trim()) {
@@ -150,7 +196,7 @@ class FileManager {
         // Determine section level and name
         const level = match[1].length;
         const sectionName = match[2].toLowerCase().replace(/[^\w\s]/g, '').replace(/\s+/g, '_');
-        
+
         // Only capture top-level sections
         if (level === 1) {
           currentSection = sectionName;
@@ -169,18 +215,23 @@ class FileManager {
     return sections;
   }
 
-  // Comprehensive solution file parsing
+  /**
+   * Parses a solution file with caching
+   * @param {string} filePath - Path to solution file
+   * @returns {Promise<Object|null>} Parsed solution data
+   */
   static async parseSolutionFile(filePath) {
-    // Check cache first
     if (this.solutionCache.has(filePath)) {
       return this.solutionCache.get(filePath);
     }
 
     try {
-      const content = await this.readFile(filePath);
+      const content = await this.readFile('solutions', filePath);
+      if (!content) return null;
+
       const sections = this.parseMarkdownFile(content);
       const metadata = this.parseMetadata(sections.metadata || '');
-      
+
       const solutionData = {
         question_id: metadata.id ? parseInt(metadata.id) : null,
         category: metadata.category || '',
@@ -198,9 +249,7 @@ class FileManager {
         file_path: filePath
       };
 
-      // Cache the result
       this.solutionCache.set(filePath, solutionData);
-
       return solutionData;
     } catch (error) {
       console.error(`Error parsing solution file ${filePath}:`, error);
@@ -208,18 +257,24 @@ class FileManager {
     }
   }
 
-  // Helper method to parse problem versions
+  /**
+   * Parses problem versions from content
+   * @param {string} versionsContent - Content containing versions
+   * @returns {Array<string>} Array of version blocks
+   */
   static parseProblemVersions(versionsContent) {
-    const problemVersions = [];
     const versionPattern = /##\s*Version\s*\d+:.+?(?=\n##\s*Version|\Z)/gs;
     const versionBlocks = versionsContent.match(versionPattern) || [];
-
     return versionBlocks.map(block => block.trim());
   }
 
-  // Helper method to parse list-based sections
+  /**
+   * Parses a section containing a list
+   * @param {string} sectionContent - Section content
+   * @returns {Array<string>} Parsed list items
+   */
   static parseListSection(sectionContent) {
-    return sectionContent ? 
+    return sectionContent ?
       sectionContent
         .split('\n')
         .map(item => item.replace(/^[-*]\s*/, '').trim())
@@ -227,34 +282,36 @@ class FileManager {
       : [];
   }
 
-  // Get all solutions with optional filtering
+  /**
+   * Fetches all solutions with optional filtering
+   * @param {Object} filters - Filter criteria
+   * @returns {Promise<Array>} Filtered solutions
+   */
   static async getAllSolutions(filters = {}) {
     const index = await this.loadIndexData();
     let solutions = index.solutions;
 
-    // Apply filters
     if (filters.category) {
-      solutions = solutions.filter(s => 
+      solutions = solutions.filter(s =>
         s.path.includes(`/solutions/${filters.category}/`)
       );
     }
 
-    // Fetch full details for each solution
     return Promise.all(
       solutions.map(s => this.parseSolutionFile(s.path))
+        .filter(Boolean)
     );
   }
 
-  // Find a specific solution by ID
+  /**
+   * Finds a solution by question ID
+   * @param {number} questionId - Question identifier
+   * @returns {Promise<Object|null>} Solution data
+   */
   static async findSolutionById(questionId) {
     const index = await this.loadIndexData();
     const solutionInfo = index.solutions.find(s => s.id === questionId);
-    
-    if (!solutionInfo) {
-      return null;
-    }
-
-    return await this.parseSolutionFile(solutionInfo.path);
+    return solutionInfo ? this.parseSolutionFile(solutionInfo.path) : null;
   }
 }
 
