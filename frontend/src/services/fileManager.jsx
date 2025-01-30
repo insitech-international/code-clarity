@@ -11,9 +11,11 @@ class FileManager {
   static solutionCache = new Map();
 
   static constructUrl(type, relativePath) {
-    if (!type || !relativePath) return null;
-    
-    // Construct full URL using the base URL and data path
+    if (!type || !relativePath) {
+      console.error('Invalid parameters for constructUrl:', { type, relativePath });
+      return null;
+    }
+  
     const fullUrl = `${this.BASE_URL}${this.DATA_PATH}/${type}/${relativePath}`;
     console.log('Constructed URL:', fullUrl);
     return fullUrl;
@@ -132,75 +134,6 @@ class FileManager {
     });
 
     return (await Promise.all(promises)).filter(Boolean);
-  }
-
-  // Advanced markdown parsing with improved section detection
-  static parseMarkdownFile(content) {
-    const sections = {};
-    let currentSection = null;
-    let sectionContent = "";
-
-    const lines = content.split('\n');
-    const sectionRegex = /^(#{1,3})\s*(.+)/;
-
-    for (const line of lines) {
-      const match = line.match(sectionRegex);
-      
-      if (match) {
-        // Save previous section if it exists
-        if (currentSection && sectionContent.trim()) {
-          sections[currentSection] = sectionContent.trim();
-        }
-
-        // Determine section level and name
-        const level = match[1].length;
-        const sectionName = match[2].toLowerCase().replace(/[^\w\s]/g, '').replace(/\s+/g, '_');
-        
-        // Only capture top-level sections
-        if (level === 1) {
-          currentSection = sectionName;
-          sectionContent = "";
-        }
-      } else if (currentSection) {
-        sectionContent += line + '\n';
-      }
-    }
-
-    // Save last section
-    if (currentSection && sectionContent.trim()) {
-      sections[currentSection] = sectionContent.trim();
-    }
-
-    return sections;
-  }
-
-  // Read file from GitHub raw content URL with robust error handling
-  static async readFile(filePath) {
-    try {
-      // Construct full URL using the base URL
-      const cleanPath = filePath.replace(/^.*?\/static\/data/, '');
-      const fullUrl = `${this.FILE_BASE_URL}${cleanPath}`;
-      
-      console.log('Fetching file from:', fullUrl);
-      const response = await fetch(fullUrl, {
-        headers: {
-          'Accept': 'text/plain, application/json',
-          'Cache-Control': 'no-cache'
-        }
-      });
-      
-      if (!response.ok) {
-        console.error(`File not found: ${fullUrl}`);
-        return "";
-      }
-      
-      const content = await response.text();
-      console.log(`Content retrieved from ${fullUrl}:`, content.substring(0, 100) + '...');
-      return content;
-    } catch (error) {
-      console.error(`IO error reading file ${filePath}: ${error.message}`);
-      return "";
-    }
   }
 
   // Advanced markdown parsing with improved section detection
