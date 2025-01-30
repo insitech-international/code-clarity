@@ -56,100 +56,142 @@ jobs:
           done
 
 
-      # Repository Checkout
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+        # Repository Checkout
+  - name: Checkout Repository
+    uses: actions/checkout@v4
 
-      # Python Setup with Comprehensive Debugging
-      - name: Setup Python and Verify Environment
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-          cache: 'pip'
+  # Python Setup with Comprehensive Dependency Management
+  - name: Setup Python and Verify Environment
+    uses: actions/setup-python@v4
+    with:
+      python-version: ${{ env.PYTHON_VERSION }}
+      cache: 'pip'
 
-      - name: Install and Verify Backend Dependencies
-        run: |
-          # Upgrade pip and setuptools
-          python -m pip install --upgrade pip setuptools wheel
+  - name: Install and Verify Backend Dependencies
+    run: |
+      # Upgrade pip and setuptools
+      python -m pip install --upgrade pip setuptools wheel
+      
+      # Debug: Print Python and pip versions
+      python --version
+      pip --version
 
-          # Debug: Print Python and pip versions
-          python --version
-          pip --version
+      # Change to backend directory
+      cd ${{ env.BACKEND_DIRECTORY }}
+      
+      # Explicitly list and install all required packages
+      echo "Installing backend dependencies..."
+      pip install \
+        uvicorn \
+        fastapi \
+        pymongo \
+        python-bsonjs \
+        pydantic \
+        requests
+      
+      # If requirements.txt exists, install from it as well
+      if [ -f "requirements.txt" ]; then
+        pip install -r requirements.txt
+      fi
+      
+      # Verify installations
+      echo "Installed Packages:"
+      pip list
+      
+      # Comprehensive module import check
+      python -c "
+      import uvicorn
+      import fastapi
+      import pymongo
+      import bson
+      import pydantic
+      print('All critical modules imported successfully')
+      "
 
-          # Install required packages
-          pip install uvicorn fastapi
-
-          # Install backend requirements
-          pip install -r ${{ env.BACKEND_DIRECTORY }}/requirements.txt
-
-          # Verify installations
-          echo "Installed Packages:"
-          pip list
-
-          # Check module availability
-          python -c "import uvicorn; import fastapi; print('Modules imported successfully')"
-
-      # Comprehensive Backend Server Startup with Extensive Logging
-      - name: Diagnose Backend Server Startup
-        run: |
-          # Change to backend directory
-          cd ${{ env.BACKEND_DIRECTORY }}
-
-          # Debug: List directory contents
-          echo "Backend Directory Structure:"
-          pwd
-          find . -type d
-
-          # Verify main application file exists
-          MAIN_APP_PATH="code_clarity_fastapi/app/main.py"
-          if [ ! -f "$MAIN_APP_PATH" ]; then
-            echo "ERROR: main.py not found in $MAIN_APP_PATH"
-            echo "Directory contents:"
-            find . -name "main.py"
-            exit 1
-          fi
-
-          # Print contents of main.py for debugging
-          echo "Contents of main.py:"
-          cat "$MAIN_APP_PATH"
-
-          # Attempt to run server with full verbosity
-          # Note the updated import path to match the actual file location
-          PYTHONPATH=. python -m uvicorn code_clarity_fastapi.app.main:app --host 0.0.0.0 --port 8000 --log-level debug &
-          SERVER_PID=$!
-
-          # Wait and check server availability with more verbose checks
-          for i in {1..30}; do
-            echo "Checking server availability (attempt $i/30)..."
-
-            # Verbose curl with timeout
-            RESPONSE=$(curl -v -m 5 http://127.0.0.1:8000/questions/ 2>&1)
-
-            if echo "$RESPONSE" | grep -q "200 OK"; then
-              echo "FastAPI server is up and running!"
-              break
-            fi
-
-            # Print out connection details if failed
-            echo "Connection attempt details:"
-            echo "$RESPONSE"
-
-            sleep 2
-          done
-
-          # Check if server process is still running
-          if kill -0 $SERVER_PID 2>/dev/null; then
-            echo "Server process is running"
-          else
-            echo "Server process terminated unexpectedly"
-            exit 1
-          fi
-
-          # Final availability check
-          if ! curl -s http://127.0.0.1:8000/questions/ > /dev/null; then
-            echo "Failed to reach server endpoint"
-            exit 1
-          fi
+  # Comprehensive Backend Server Startup with Extensive Logging
+  - name: Diagnose Backend Server Startup
+    run: |
+      # Change to backend directory
+      cd ${{ env.BACKEND_DIRECTORY }}
+      
+      # Debug: List directory contents and Python path
+      echo "Backend Directory Structure:"
+      pwd
+      find . -type d
+      
+      # Print Python path for debugging
+      python -c "import sys; print('\n'.join(sys.path))"
+      
+      # Verify main application file exists
+      MAIN_APP_PATH="code_clarity_fastapi/app/main.py"
+      if [ ! -f "$MAIN_APP_PATH" ]; then
+        echo "ERROR: main.py not found in $MAIN_APP_PATH"
+        echo "Directory contents:"
+        find . -name "main.py"
+        exit 1
+      fi
+      
+      # Detailed import path debugging
+      echo "Checking import paths..."
+      python -c "
+      import sys
+      import os
+      
+      print('Current Working Directory:', os.getcwd())
+      print('Sys Path:')
+      for path in sys.path:
+          print(path)
+      
+      try:
+          import code_clarity_fastapi
+          print('code_clarity_fastapi imported successfully')
+          print('Location:', code_clarity_fastapi.__file__)
+      except ImportError as e:
+          print('Failed to import code_clarity_fastapi:', e)
+      
+      try:
+          from code_clarity_fastapi.app import main
+          print('main module imported successfully')
+      except ImportError as e:
+          print('Failed to import main module:', e)
+      "
+      
+      # Attempt to run server with full verbosity and explicit Python path
+      PYTHONPATH=. python -m uvicorn code_clarity_fastapi.app.main:app --host 0.0.0.0 --port 8000 --log-level debug &
+      SERVER_PID=$!
+      
+      # Wait and check server availability with more verbose checks
+      for i in {1..30}; do
+        echo "Checking server availability (attempt $i/30)..."
+        
+        # Verbose curl with timeout
+        RESPONSE=$(curl -v -m 5 http://127.0.0.1:8000/questions/ 2>&1)
+        
+        if echo "$RESPONSE" | grep -q "200 OK"; then
+          echo "FastAPI server is up and running!"
+          break
+        fi
+        
+        # Print out connection details if failed
+        echo "Connection attempt details:"
+        echo "$RESPONSE"
+        
+        sleep 2
+      done
+      
+      # Check if server process is still running
+      if kill -0 $SERVER_PID 2>/dev/null; then
+        echo "Server process is running"
+      else
+        echo "Server process terminated unexpectedly"
+        exit 1
+      fi
+      
+      # Final availability check
+      if ! curl -s http://127.0.0.1:8000/questions/ > /dev/null; then
+        echo "Failed to reach server endpoint"
+        exit 1
+      fi
 
       # Setup Node.js
       - name: Setup Node.js
