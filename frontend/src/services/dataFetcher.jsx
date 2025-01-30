@@ -60,6 +60,33 @@ class DataFetcher {
     }
   }
 
+  async fetchData(apiPath, staticPath = null, params = null) {
+    if (!apiPath && !staticPath) return null;
+
+    try {
+      // Development mode: API only
+      if (this.config.isDevelopment) {
+        return await this.fetchApi(apiPath, params);
+      }
+
+      // Production mode: Static first, then API fallback
+      if (staticPath) {
+        try {
+          const staticResult = await this.fetchStatic(staticPath);
+          if (staticResult) return staticResult;
+        } catch (error) {
+          console.warn('Static fetch failed, trying API:', error);
+        }
+      }
+
+      // API fallback
+      return await this.fetchApi(apiPath, params);
+    } catch (error) {
+      console.error('fetchData failed:', error);
+      return null;
+    }
+  }
+  
   async fetchStatic(path) {
     if (!path) return null;
     const url = this.constructGitHubUrl(path);
