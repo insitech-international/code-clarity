@@ -1,7 +1,7 @@
 // frontend\src\services\fileManager.jsx
 
 class FileManager {
-  // Configure base URL to use the same domain as the deployed site
+  // Configure base URL for static files
   static FILE_BASE_URL = '/static/data';
   
   // Cached data
@@ -9,19 +9,37 @@ class FileManager {
   static questionCache = new Map();
   static solutionCache = new Map();
 
+  // Clean file path to avoid duplications
+  static cleanPath(filePath) {
+    // Remove any instances of /static/data from the path
+    let cleanedPath = filePath.replace(/^.*?static\/data\/?/, '');
+    // Ensure path starts with a forward slash
+    if (!cleanedPath.startsWith('/')) {
+      cleanedPath = '/' + cleanedPath;
+    }
+    return cleanedPath;
+  }
+
+  static constructUrl(filePath) {
+    const cleanedPath = this.cleanPath(filePath);
+    const url = `${this.FILE_BASE_URL}${cleanedPath}`;
+    console.log('Constructed URL:', url);
+    return url;
+  }
+
   // Method to load index data with caching and error handling
   static async loadIndexData() {
     if (!this.indexData) {
       try {
-        console.log('Fetching index from:', `${this.FILE_BASE_URL}/index.json`);
-        const response = await fetch(`${this.FILE_BASE_URL}/index.json`);
+        const indexUrl = this.constructUrl('/index.json');
+        console.log('Fetching index from:', indexUrl);
         
+        const response = await fetch(indexUrl);
         if (!response.ok) {
           throw new Error(`Failed to load index.json: ${response.status}`);
         }
         
         this.indexData = await response.json();
-        console.log('Index data loaded:', this.indexData);
         
         // Filter out items with null ids and ensure unique entries
         this.indexData.questions = Array.from(new Set(
@@ -37,7 +55,9 @@ class FileManager {
         )).map(s => JSON.parse(s));
 
         console.log('Processed questions count:', this.indexData.questions.length);
-        console.log('Processed solutions count:', this.indexData.solutions.length);
+        console.log('Sample question paths:', 
+          this.indexData.questions.slice(0, 3).map(q => q.path)
+        );
       } catch (error) {
         console.error('Error loading index.json:', error);
         this.indexData = { 
@@ -50,14 +70,12 @@ class FileManager {
     return this.indexData;
   }
 
-  // Read file from the same origin with robust error handling
+  // Read file with proper path handling
   static async readFile(filePath) {
     try {
-      // Construct path relative to the current domain
-      const cleanPath = filePath.replace(/^.*?\/static\/data/, '');
-      const fullUrl = `${this.FILE_BASE_URL}${cleanPath}`;
-      
+      const fullUrl = this.constructUrl(filePath);
       console.log('Fetching file from:', fullUrl);
+      
       const response = await fetch(fullUrl);
       
       if (!response.ok) {
@@ -66,14 +84,19 @@ class FileManager {
       }
       
       const content = await response.text();
-      console.log(`Content retrieved from ${fullUrl}:`, content.substring(0, 100) + '...');
+      if (content) {
+        console.log(`Content retrieved from ${fullUrl} (first 100 chars):`, 
+          content.substring(0, 100) + '...'
+        );
+      } else {
+        console.warn(`Empty content received from ${fullUrl}`);
+      }
       return content;
     } catch (error) {
       console.error(`IO error reading file ${filePath}: ${error.message}`);
       return "";
     }
   }
-
   // Advanced markdown parsing with improved section detection
   static parseMarkdownFile(content) {
     const sections = {};
