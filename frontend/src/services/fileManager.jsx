@@ -1,37 +1,28 @@
 // frontend\src\services\fileManager.jsx
 
 class FileManager {
-  // Configure base URL for static files
-  static FILE_BASE_URL = '/static/data/';
+  // Configure base URL for GitHub Pages
+  static BASE_URL = 'https://code-clarity.insitechinternational.com';
+  static DATA_PATH = '/static/data';
   
   // Cached data
   static indexData = null;
   static questionCache = new Map();
   static solutionCache = new Map();
 
-  // Clean file path to avoid duplications
-  static cleanPath(filePath) {
-    // Remove any instances of /static/data from the path
-    let cleanedPath = filePath.replace(/^.*?static\/data\/?/, '');
-    // Ensure path starts with a forward slash
-    if (!cleanedPath.startsWith('/')) {
-      cleanedPath = '/' + cleanedPath;
-    }
-    return cleanedPath;
+  static constructUrl(type, relativePath) {
+    if (!type || !relativePath) return null;
+    
+    // Construct full URL using the base URL and data path
+    const fullUrl = `${this.BASE_URL}${this.DATA_PATH}/${type}/${relativePath}`;
+    console.log('Constructed URL:', fullUrl);
+    return fullUrl;
   }
 
-  static constructUrl(filePath) {
-    const cleanedPath = this.cleanPath(filePath);
-    const url = `${this.FILE_BASE_URL}${cleanedPath}`;
-    console.log('Constructed URL:', url);
-    return url;
-  }
-
-  // Method to load index data with caching and error handling
   static async loadIndexData() {
     if (!this.indexData) {
       try {
-        const indexUrl = this.constructUrl('/index.json');
+        const indexUrl = `${this.BASE_URL}${this.DATA_PATH}/index.json`;
         console.log('Fetching index from:', indexUrl);
         
         const response = await fetch(indexUrl);
@@ -40,24 +31,31 @@ class FileManager {
         }
         
         this.indexData = await response.json();
+        console.log('Raw index data:', this.indexData);
         
-        // Filter out items with null ids and ensure unique entries
-        this.indexData.questions = Array.from(new Set(
-          this.indexData.questions
-            .filter(q => q.id != null && q.path)
-            .map(q => JSON.stringify(q))
-        )).map(q => JSON.parse(q));
+        // Process and validate paths
+        this.indexData.questions = this.indexData.questions
+          .filter(q => q.id != null && q.path)
+          .map(q => ({
+            id: q.id,
+            path: q.path.replace(/^static\/data\/(questions|solutions)\//, '') // Remove prefix if present
+          }));
 
-        this.indexData.solutions = Array.from(new Set(
-          this.indexData.solutions
-            .filter(s => s.id != null && s.path)
-            .map(s => JSON.stringify(s))
-        )).map(s => JSON.parse(s));
+        this.indexData.solutions = this.indexData.solutions
+          .filter(s => s.id != null && s.path)
+          .map(s => ({
+            id: s.id,
+            path: s.path.replace(/^static\/data\/(questions|solutions)\//, '') // Remove prefix if present
+          }));
 
-        console.log('Processed questions count:', this.indexData.questions.length);
-        console.log('Sample question paths:', 
-          this.indexData.questions.slice(0, 3).map(q => q.path)
-        );
+        console.log('Processed questions:', {
+          count: this.indexData.questions.length,
+          samplePaths: this.indexData.questions.slice(0, 3).map(q => ({
+            id: q.id,
+            path: q.path,
+            fullUrl: this.constructUrl('questions', q.path)
+          }))
+        });
       } catch (error) {
         console.error('Error loading index.json:', error);
         this.indexData = { 
@@ -70,33 +68,72 @@ class FileManager {
     return this.indexData;
   }
 
-  // Read file with proper path handling
-  static async readFile(filePath) {
+  static async readFile(type, relativePath) {
     try {
-      const fullUrl = this.constructUrl(filePath);
-      console.log('Fetching file from:', fullUrl);
+      const url = this.constructUrl(type, relativePath);
+      console.log('Reading file:', {
+        type,
+        relativePath,
+        url
+      });
       
-      const response = await fetch(fullUrl);
-      
+      const response = await fetch(url);
       if (!response.ok) {
-        console.error(`File not found: ${fullUrl}`);
+        console.error(`File not found: ${url} (Status: ${response.status})`);
         return "";
       }
       
       const content = await response.text();
       if (content) {
-        console.log(`Content retrieved from ${fullUrl} (first 100 chars):`, 
+        console.log(`Content retrieved from ${url} (first 100 chars):`, 
           content.substring(0, 100) + '...'
         );
       } else {
-        console.warn(`Empty content received from ${fullUrl}`);
+        console.warn(`Empty content received from ${url}`);
       }
       return content;
     } catch (error) {
-      console.error(`IO error reading file ${filePath}: ${error.message}`);
+      console.error(`IO error reading file ${relativePath}:`, error);
       return "";
     }
   }
+
+  static async getAllQuestions(filters = {}) {
+    const index = await this.loadIndexData();
+    let questions = index.questions;
+
+    // Apply filters
+    if (filters.category) {
+      questions = questions.filter(q => 
+        q.path.includes(`${filters.category}/`)
+      );
+    }
+
+    // Fetch full details for each question
+    const promises = questions.map(async q => {
+      // Check cache first
+      if (this.questionCache.has(q.path)) {
+        return this.questionCache.get(q.path);
+      }
+
+      // Fetch and parse question
+      const content = await this.readFile('questions', q.path);
+      if (!content) return null;
+
+      const questionData = {
+        ...this.parseMarkdownFile(content),
+        id: q.id,
+        path: q.path
+      };
+
+      // Cache the result
+      this.questionCache.set(q.path, questionData);
+      return questionData;
+    });
+
+    return (await Promise.all(promises)).filter(Boolean);
+  }
+
   // Advanced markdown parsing with improved section detection
   static parseMarkdownFile(content) {
     const sections = {};
