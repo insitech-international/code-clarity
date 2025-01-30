@@ -96,21 +96,26 @@ jobs:
           cd ${{ env.BACKEND_DIRECTORY }}
 
           # Debug: List directory contents
+          echo "Backend Directory Structure:"
           pwd
-          ls -R
+          find . -type d
 
           # Verify main application file exists
-          if [ ! -f "code_clarity_fastapi/main.py" ]; then
-            echo "ERROR: main.py not found in expected location"
+          MAIN_APP_PATH="code_clarity_fastapi/app/main.py"
+          if [ ! -f "$MAIN_APP_PATH" ]; then
+            echo "ERROR: main.py not found in $MAIN_APP_PATH"
+            echo "Directory contents:"
+            find . -name "main.py"
             exit 1
           fi
 
           # Print contents of main.py for debugging
           echo "Contents of main.py:"
-          cat code_clarity_fastapi/main.py
+          cat "$MAIN_APP_PATH"
 
           # Attempt to run server with full verbosity
-          python -m uvicorn code_clarity_fastapi.main:app --host 0.0.0.0 --port 8000 --log-level debug &
+          # Note the updated import path to match the actual file location
+          PYTHONPATH=. python -m uvicorn code_clarity_fastapi.app.main:app --host 0.0.0.0 --port 8000 --log-level debug &
           SERVER_PID=$!
 
           # Wait and check server availability with more verbose checks
