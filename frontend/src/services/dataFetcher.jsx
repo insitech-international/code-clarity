@@ -37,6 +37,35 @@ class DataFetcher {
     return path.endsWith('.json') ? JSON.parse(content) : content;
   }
 
+  async fetchData(apiPath, staticPath = null, params = null) {
+    if (!apiPath && !staticPath) return null;
+
+    // Development mode: use API only
+    if (this.DEVELOPMENT_MODE) {
+      try {
+        return await this.fetchFromAPI(apiPath, params);
+      } catch (error) {
+        console.error('API fetch failed in development mode:', error);
+        throw error;
+      }
+    }
+
+    // Production mode: try API first, then fallback to static
+    try {
+      const apiResult = await this.fetchFromAPI(apiPath, params);
+      if (apiResult) return apiResult;
+    } catch (error) {
+      console.warn('API fetch failed, falling back to static file');
+    }
+
+    if (!staticPath) {
+      console.warn('No static path provided for fallback');
+      return null;
+    }
+
+    return this.fetchFromGitHub(staticPath);
+  }
+
   async fetchFromAPI(path, params = null) {
     if (!path) return null;
 
@@ -133,16 +162,19 @@ class DataFetcher {
   }
 
   async getCategories() {
-    if (this.DEVELOPMENT_MODE) {
-      return this.fetchFromAPI('/categories');
+    try {
+      // Try fetchData first (this handles both dev and prod modes)
+      const result = await this.fetchData('/categories', 'static/data/categories.json');
+      if (result) return result;
+    } catch (error) {
+      console.warn('Failed to fetch categories directly, falling back to path extraction');
     }
 
-    // Load paths if not loaded
+    // Fallback: extract from paths
     if (this.contentPaths.questions.size === 0) {
       await this.loadContentPaths();
     }
 
-    // Extract unique categories from paths
     return Array.from(new Set(
       Array.from(this.contentPaths.questions.values())
         .map(path => path.split('/')[3])
