@@ -1,8 +1,8 @@
 // frontend\src\services\fileManager.jsx
 
 class FileManager {
-  // Configure base URL to use raw GitHub content
-  static FILE_BASE_URL = 'https://raw.githubusercontent.com/insitech-international/code-clarity/gh-pages/static/data';
+  // Configure base URL to use the same domain as the deployed site
+  static FILE_BASE_URL = '/static/data';
   
   // Cached data
   static indexData = null;
@@ -14,12 +14,7 @@ class FileManager {
     if (!this.indexData) {
       try {
         console.log('Fetching index from:', `${this.FILE_BASE_URL}/index.json`);
-        const response = await fetch(`${this.FILE_BASE_URL}/index.json`, {
-          headers: {
-            'Accept': 'application/json',
-            'Cache-Control': 'no-cache'
-          }
-        });
+        const response = await fetch(`${this.FILE_BASE_URL}/index.json`);
         
         if (!response.ok) {
           throw new Error(`Failed to load index.json: ${response.status}`);
@@ -40,6 +35,9 @@ class FileManager {
             .filter(s => s.id != null && s.path)
             .map(s => JSON.stringify(s))
         )).map(s => JSON.parse(s));
+
+        console.log('Processed questions count:', this.indexData.questions.length);
+        console.log('Processed solutions count:', this.indexData.solutions.length);
       } catch (error) {
         console.error('Error loading index.json:', error);
         this.indexData = { 
@@ -50,6 +48,70 @@ class FileManager {
       }
     }
     return this.indexData;
+  }
+
+  // Read file from the same origin with robust error handling
+  static async readFile(filePath) {
+    try {
+      // Construct path relative to the current domain
+      const cleanPath = filePath.replace(/^.*?\/static\/data/, '');
+      const fullUrl = `${this.FILE_BASE_URL}${cleanPath}`;
+      
+      console.log('Fetching file from:', fullUrl);
+      const response = await fetch(fullUrl);
+      
+      if (!response.ok) {
+        console.error(`File not found: ${fullUrl}`);
+        return "";
+      }
+      
+      const content = await response.text();
+      console.log(`Content retrieved from ${fullUrl}:`, content.substring(0, 100) + '...');
+      return content;
+    } catch (error) {
+      console.error(`IO error reading file ${filePath}: ${error.message}`);
+      return "";
+    }
+  }
+
+  // Advanced markdown parsing with improved section detection
+  static parseMarkdownFile(content) {
+    const sections = {};
+    let currentSection = null;
+    let sectionContent = "";
+
+    const lines = content.split('\n');
+    const sectionRegex = /^(#{1,3})\s*(.+)/;
+
+    for (const line of lines) {
+      const match = line.match(sectionRegex);
+      
+      if (match) {
+        // Save previous section if it exists
+        if (currentSection && sectionContent.trim()) {
+          sections[currentSection] = sectionContent.trim();
+        }
+
+        // Determine section level and name
+        const level = match[1].length;
+        const sectionName = match[2].toLowerCase().replace(/[^\w\s]/g, '').replace(/\s+/g, '_');
+        
+        // Only capture top-level sections
+        if (level === 1) {
+          currentSection = sectionName;
+          sectionContent = "";
+        }
+      } else if (currentSection) {
+        sectionContent += line + '\n';
+      }
+    }
+
+    // Save last section
+    if (currentSection && sectionContent.trim()) {
+      sections[currentSection] = sectionContent.trim();
+    }
+
+    return sections;
   }
 
   // Read file from GitHub raw content URL with robust error handling
