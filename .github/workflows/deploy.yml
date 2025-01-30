@@ -127,44 +127,55 @@ jobs:
           cat > scripts/generateIndex.js << 'EOF'
           const fs = require('fs');
           const path = require('path');
-
-          function walkDir(dir) {
+          
+          function walkDir(dir, baseDir) {
             let results = [];
             const list = fs.readdirSync(dir);
-
+          
             list.forEach((file) => {
               const filePath = path.join(dir, file);
               const stat = fs.statSync(filePath);
-
+          
               if (stat && stat.isDirectory()) {
-                results = results.concat(walkDir(filePath));
+                results = results.concat(walkDir(filePath, baseDir));
               } else if (path.extname(file) === '.md') {
                 const id = file.split('_')[0];
+                // Get path relative to the questions/solutions directory
+                const relativePath = path.relative(baseDir, filePath);
                 results.push({
                   id: parseInt(id),
-                  path: filePath.replace(/^.*\/public\/static\/data\//, 'static/data/')
+                  path: relativePath // This will be like 'Advanced_Python_Concepts/Context_Managers/111_Contextlib_Module.md'
                 });
               }
             });
-
+          
             return results;
           }
-
+          
           function generateIndex() {
-            const questionsDir = path.join(process.cwd(), 'public/static/data/questions');
-            const solutionsDir = path.join(process.cwd(), 'public/static/data/solutions');
-
+            const baseDir = process.cwd();
+            const questionsDir = path.join(baseDir, 'public/static/data/questions');
+            const solutionsDir = path.join(baseDir, 'public/static/data/solutions');
+          
+            console.log('Processing directories:', {
+              questionsDir,
+              solutionsDir
+            });
+          
             const index = {
-              questions: walkDir(questionsDir),
-              solutions: walkDir(solutionsDir)
+              questions: walkDir(questionsDir, questionsDir),
+              solutions: walkDir(solutionsDir, solutionsDir)
             };
-
-            fs.writeFileSync(
-              path.join(process.cwd(), 'public/static/data/index.json'),
-              JSON.stringify(index, null, 2)
-            );
+          
+            // Log some sample paths for verification
+            console.log('Sample question paths:', index.questions.slice(0, 3));
+            console.log('Sample solution paths:', index.solutions.slice(0, 3));
+          
+            const outputPath = path.join(baseDir, 'public/static/data/index.json');
+            fs.writeFileSync(outputPath, JSON.stringify(index, null, 2));
+            console.log(`Index file generated at: ${outputPath}`);
           }
-
+          
           generateIndex();
           EOF
 
