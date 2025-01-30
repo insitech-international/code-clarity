@@ -1,4 +1,4 @@
-name: Deploy Frontend
+name: Deploy Frontend & Extract Categories
 
 on:
   push:
@@ -7,7 +7,9 @@ on:
 
 env:
   NODE_VERSION: "20"
+  PYTHON_VERSION: "3.11"
   WORKING_DIRECTORY: "./frontend"
+  BACKEND_DIRECTORY: "./backend"
   PUBLIC_URL: ${{ secrets.PUBLIC_URL }}
   REACT_APP_API_URL: ${{ secrets.API_URL }}
   REACT_APP_STATIC_URL: ${{ secrets.STATIC_URL }}
@@ -22,6 +24,7 @@ jobs:
       deployments: write
 
     steps:
+      # GitHub CLI and Deployment Management
       - name: Install GitHub CLI
         run: sudo apt-get install -y gh
 
@@ -52,8 +55,14 @@ jobs:
               --silent || echo "Failed to cancel deployment $deployment"
           done
 
-      - name: Checkout repository
+      # Repository and Environment Setup
+      - name: Checkout Repository
         uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -62,7 +71,19 @@ jobs:
           cache: "npm"
           cache-dependency-path: ${{ env.WORKING_DIRECTORY }}/package-lock.json
 
-      - name: Setup environment
+      # Backend Environment and API Setup
+      - name: Setup Backend Environment
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r ${{ env.BACKEND_DIRECTORY }}/requirements.txt
+
+      - name: Start FastAPI Server
+        run: |
+          uvicorn backend.code_clarity_fastapi.main:app --host 0.0.0.0 --port 8000 &
+          timeout 10s bash -c 'until curl -s http://127.0.0.1:8000/questions/; do sleep 1; done' || exit 1
+
+      # Frontend Environment Preparation
+      - name: Prepare Frontend Environment
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: |
           cat > .env << EOF
@@ -74,7 +95,8 @@ jobs:
 
           cat .env
 
-      - name: Create and populate data directories
+      # Data Directory Population
+      - name: Create and Populate Data Directories
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: |
           mkdir -p public/static/data/{questions,solutions}
@@ -91,6 +113,7 @@ jobs:
             exit 1
           fi
 
+          # Generate directory listings
           find public/static/data/questions -type d | while read dir; do
             (cd "$dir" && ls -1 > directory_listing.txt)
           done
@@ -105,13 +128,12 @@ jobs:
           echo "Questions: $(find public/static/data/questions -type f -name "*.md" | wc -l)"
           echo "Solutions: $(find public/static/data/solutions -type f -name "*.md" | wc -l)"
 
-      - name: Generate index files
+      # Index and Category Generation
+      - name: Generate Index Files
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: |
-          # Create scripts directory if it doesn't exist
           mkdir -p scripts
 
-          # Create the Node.js script file
           cat > scripts/generateIndex.js << 'EOF'
           const fs = require('fs');
           const path = require('path');
@@ -127,11 +149,9 @@ jobs:
               if (stat && stat.isDirectory()) {
                 results = results.concat(walkDir(filePath));
               } else if (path.extname(file) === '.md') {
-                // Extract question ID from filename (assumes format: 111_Something.md)
                 const id = file.split('_')[0];
                 results.push({
                   id: parseInt(id),
-                  // Ensure path is relative to 'static/data' for deployment
                   path: filePath.replace(/^.*\/public\/static\/data\//, 'static/data/')
                 });
               }
@@ -149,7 +169,6 @@ jobs:
               solutions: walkDir(solutionsDir)
             };
 
-            // Write index file
             fs.writeFileSync(
               path.join(process.cwd(), 'public/static/data/index.json'),
               JSON.stringify(index, null, 2)
@@ -159,65 +178,61 @@ jobs:
           generateIndex();
           EOF
 
-          # Execute the script
           node scripts/generateIndex.js
 
-          # Verify the generated files
           echo "Checking generated files..."
           ls -l public/static/data/index.json
-
 
       - name: Extract Categories and Subcategories
         working-directory: ${{ env.WORKING_DIRECTORY }}
         env:
           DEV_API_URL: ${{ secrets.API_URL }}
         run: |
-          # Ensure the directory exists
           mkdir -p public/static/data
 
-          # Python script to extract categories
           python3 - << EOF
           import json
           import requests
           import os
+          import sys
 
-          # Fetch questions from the API
-          api_url = os.environ.get('DEV_API_URL', 'http://127.0.0.1:8000/questions/')
-          response = requests.get(api_url)
-          questions = response.json()
-
-          # Extract unique categories and subcategories
-          categories = {}
-          for question in questions:
-              category = question.get('category', '')
-              subcategory = question.get('subcategory', '')
-              
-              if category:
-                  if category not in categories:
-                      categories[category] = set()
+          def extract_categories(questions):
+              categories = {}
+              for question in questions:
+                  category = question.get('category', '')
+                  subcategory = question.get('subcategory', '')
                   
-                  if subcategory:
-                      categories[category].add(subcategory)
+                  if category:
+                      categories.setdefault(category, set()).add(subcategory or 'Uncategorized')
 
-          # Convert sets to lists for JSON serialization
-          categories_dict = {
-              cat: sorted(list(subcat)) for cat, subcat in categories.items()
-          }
+              return {
+                  cat: sorted(list(subs)) 
+                  for cat, subs in categories.items()
+              }
 
-          # Write categories to JSON file
-          with open('public/static/data/categories.json', 'w') as f:
-              json.dump(categories_dict, f, indent=2)
+          try:
+              api_url = os.environ.get('DEV_API_URL', 'http://127.0.0.1:8000/questions/')
+              response = requests.get(api_url, timeout=10)
+              response.raise_for_status()
+              
+              questions = response.json()
+              categories_dict = extract_categories(questions)
 
-          print("Categories extracted and saved to public/static/data/categories.json")
-          print("Categories found:", list(categories_dict.keys()))
+              with open('public/static/data/categories.json', 'w') as f:
+                  json.dump(categories_dict, f, indent=2)
+
+              print("Categories extracted and saved to public/static/data/categories.json")
+              print("Categories found:", list(categories_dict.keys()))
+          except Exception as e:
+              print(f"Error extracting categories: {e}")
+              sys.exit(1)
           EOF
 
-          # Verify the file was created
           ls -l public/static/data/categories.json
           cat public/static/data/categories.json
 
-
-      - name: Install dependencies
+      # Frontend Dependencies and Build
+      - name: Install Frontend Dependencies
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: |
           rm -rf node_modules package-lock.json
@@ -232,7 +247,7 @@ jobs:
 
           npm list --depth=0
 
-      - name: Setup environment
+      - name: Setup Frontend Base Environment
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: |
           cat > .env << EOF
@@ -242,7 +257,7 @@ jobs:
 
           cat .env
 
-      - name: Build application
+      - name: Build Frontend Application
         working-directory: ${{ env.WORKING_DIRECTORY }}
         env:
           CI: false
@@ -255,7 +270,8 @@ jobs:
           fi
           echo "Build size: $(du -sh build)"
 
-      - name: Prepare deployment artifacts
+      # Deployment Preparation
+      - name: Prepare Deployment Artifacts
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: |
           cd build
@@ -266,6 +282,7 @@ jobs:
           ls -la
           cat CNAME
 
+      # GitHub Pages Deployment
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
@@ -281,12 +298,14 @@ jobs:
             Deployed from commit: ${{ github.sha }}
             Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
+      # GitHub Pages Configuration
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v4
         with:
           enablement: true
 
-      - name: Verify deployment branch
+      # Deployment Verification
+      - name: Verify Deployment Branch
         run: |
           MAX_ATTEMPTS=10
           ATTEMPT=1
