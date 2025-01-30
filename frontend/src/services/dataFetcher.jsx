@@ -22,10 +22,17 @@ class DataFetcher {
     });
   }
 
+  constructGitHubUrl(relativePath) {
+    if (!relativePath) return null;
+    // Remove any leading slashes and combine with base URL
+    const cleanPath = relativePath.replace(/^\/+/, '');
+    return `${this.GITHUB_BASE_URL}/${cleanPath}`;
+  }
+
   async fetchFromGitHub(path) {
     if (!path) return null;
 
-    const url = `${this.GITHUB_BASE_URL}/${path}`;
+    const url = this.constructGitHubUrl(path);
     console.log('Fetching from GitHub:', url);
 
     const response = await fetch(url);
@@ -37,10 +44,104 @@ class DataFetcher {
     return path.endsWith('.json') ? JSON.parse(content) : content;
   }
 
+  async fetchFromAPI(path, params = null) {
+    if (!path) return null;
+
+    console.log('Attempting API fetch:', `${this.API_BASE_URL}${path}`);
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), this.API_TIMEOUT);
+
+    try {
+      const response = await fetch(`${this.API_BASE_URL}${path}`, {
+        signal: controller.signal,
+        ...(params && { params }),
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        throw new Error('API request failed');
+      }
+
+      return response.json();
+    } catch (error) {
+      console.error('API request failed:', error);
+      throw error;
+    }
+  }
+
+  async loadContentPaths() {
+    try {
+      if (this.DEVELOPMENT_MODE) return;
+
+      // First, fetch the index.json which contains relative paths
+      const indexData = await this.fetchFromGitHub('static/data/index.json');
+
+      // Clear existing paths
+      this.contentPaths.questions.clear();
+      this.contentPaths.solutions.clear();
+
+      // Store paths with their IDs
+      indexData?.questions?.forEach(item => {
+        if (item?.id && item?.path) {
+          // Store the relative path - we'll construct full URL when needed
+          this.contentPaths.questions.set(item.id.toString(), item.path);
+        }
+      });
+
+      indexData?.solutions?.forEach(item => {
+        if (item?.id && item?.path) {
+          // Store the relative path - we'll construct full URL when needed
+          this.contentPaths.solutions.set(item.id.toString(), item.path);
+        }
+      });
+
+      console.log('Loaded content paths:', {
+        questions: this.contentPaths.questions.size,
+        solutions: this.contentPaths.solutions.size
+      });
+    } catch (error) {
+      console.error('Error loading content paths:', error);
+      throw error;
+    }
+  }
+
+  async getContent(id, type = 'question') {
+    if (!id) return null;
+
+    // Development mode: use API only
+    if (this.DEVELOPMENT_MODE) {
+      return this.fetchFromAPI(`/${type}s/${id}`);
+    }
+
+    // Production mode: try API first
+    try {
+      const apiResult = await this.fetchFromAPI(`/${type}s/${id}`);
+      if (apiResult) return apiResult;
+    } catch (error) {
+      console.log('API fetch failed, falling back to static content');
+    }
+
+    // Load paths if not loaded
+    if (this.contentPaths[type + 's'].size === 0) {
+      await this.loadContentPaths();
+    }
+
+    // Get relative path from contentPaths
+    const relativePath = this.contentPaths[type + 's'].get(id.toString());
+    if (!relativePath) {
+      console.warn(`No ${type} found for ID: ${id}`);
+      return null;
+    }
+
+    // Fetch the actual content using the constructed GitHub URL
+    return this.fetchFromGitHub(relativePath);
+  }
+
   async fetchData(apiPath, staticPath = null, params = null) {
     if (!apiPath && !staticPath) return null;
 
-    // Development mode: use API only
     if (this.DEVELOPMENT_MODE) {
       try {
         return await this.fetchFromAPI(apiPath, params);
