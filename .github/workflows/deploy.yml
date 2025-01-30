@@ -166,6 +166,57 @@ jobs:
           echo "Checking generated files..."
           ls -l public/static/data/index.json
 
+
+      - name: Extract Categories and Subcategories
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        env:
+          DEV_API_URL: ${{ secrets.API_URL }}
+        run: |
+          # Ensure the directory exists
+          mkdir -p public/static/data
+
+          # Python script to extract categories
+          python3 - << EOF
+          import json
+          import requests
+          import os
+
+          # Fetch questions from the API
+          api_url = os.environ.get('DEV_API_URL', 'http://127.0.0.1:8000/questions/')
+          response = requests.get(api_url)
+          questions = response.json()
+
+          # Extract unique categories and subcategories
+          categories = {}
+          for question in questions:
+              category = question.get('category', '')
+              subcategory = question.get('subcategory', '')
+              
+              if category:
+                  if category not in categories:
+                      categories[category] = set()
+                  
+                  if subcategory:
+                      categories[category].add(subcategory)
+
+          # Convert sets to lists for JSON serialization
+          categories_dict = {
+              cat: sorted(list(subcat)) for cat, subcat in categories.items()
+          }
+
+          # Write categories to JSON file
+          with open('public/static/data/categories.json', 'w') as f:
+              json.dump(categories_dict, f, indent=2)
+
+          print("Categories extracted and saved to public/static/data/categories.json")
+          print("Categories found:", list(categories_dict.keys()))
+          EOF
+
+          # Verify the file was created
+          ls -l public/static/data/categories.json
+          cat public/static/data/categories.json
+
+
       - name: Install dependencies
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: |
