@@ -9,10 +9,10 @@ class DataFetcher {
       isDevelopment: !isProduction,
       apiTimeout: 5000,
       staticPaths: {
-        index: 'static/data/index.json',
-        categories: 'static/data/categories.json',
-        questions: 'static/data/questions',
-        solutions: 'static/data/solutions'
+        index: '/static/data/index.json',
+        categories: '/static/data/categories.json',
+        questions: '/static/data/questions',
+        solutions: '/static/data/solutions'
       }
     };
 
@@ -32,8 +32,11 @@ class DataFetcher {
 
   constructGitHubUrl(relativePath) {
     if (!relativePath) return null;
-    const cleanPath = relativePath.replace(/^\/+/, '');
-    return `${this.config.githubBaseUrl}/${cleanPath}`;
+    // Remove leading and trailing slashes
+    const cleanPath = relativePath.replace(/^\/+|\/+$/g, '');
+    const url = `${this.config.githubBaseUrl}/${cleanPath}`;
+    console.log('Constructed URL:', url);
+    return url;
   }
 
   async fetchWithTimeout(url, options = {}) {
@@ -49,14 +52,48 @@ class DataFetcher {
       clearTimeout(timeoutId);
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`HTTP error! status: ${response.status} for URL: ${url}`);
       }
 
-      const isJson = response.headers.get('content-type')?.includes('application/json');
-      return isJson ? response.json() : response.text();
+      const contentType = response.headers.get('content-type');
+      const isJson = contentType?.includes('application/json');
+      const isText = contentType?.includes('text/plain') || url.endsWith('.md');
+      
+      if (isJson) {
+        return response.json();
+      } else if (isText) {
+        return response.text();
+      }
+      
+      // Default to text if content type is ambiguous
+      return response.text();
     } catch (error) {
       clearTimeout(timeoutId);
       throw error;
+    }
+  }
+
+  async fetchStatic(path) {
+    if (!path) return null;
+    const url = this.constructGitHubUrl(path);
+    console.log('Fetching static content:', url);
+    return this.fetchWithTimeout(url);
+  }
+
+  async fetchApi(path, params = null) {
+    if (!path) return null;
+    // Remove trailing slash if present in path
+    const cleanPath = path.replace(/\/$/, '');
+    const url = `${this.config.apiBaseUrl}${cleanPath}`;
+    console.log('Fetching from API:', url);
+    
+    try {
+      return await this.fetchWithTimeout(url, {
+        ...(params && { params })
+      });
+    } catch (error) {
+      console.warn('API fetch failed:', error);
+      return null;
     }
   }
 
@@ -86,44 +123,28 @@ class DataFetcher {
       return null;
     }
   }
-  
-  async fetchStatic(path) {
-    if (!path) return null;
-    const url = this.constructGitHubUrl(path);
-    console.log('Fetching static content:', url);
-    return this.fetchWithTimeout(url);
-  }
-
-  async fetchApi(path, params = null) {
-    if (!path) return null;
-    const url = `${this.config.apiBaseUrl}${path}`;
-    console.log('Fetching from API:', url);
-    
-    try {
-      return await this.fetchWithTimeout(url, {
-        ...(params && { params })
-      });
-    } catch (error) {
-      console.warn('API fetch failed:', error);
-      return null;
-    }
-  }
 
   async loadContentPaths() {
     if (this.contentPaths.questions.size > 0) return;
 
     try {
+      console.log('Loading content paths from:', this.config.staticPaths.index);
       const indexData = await this.fetchStatic(this.config.staticPaths.index);
       
+      if (!indexData) {
+        console.error('No index data found');
+        return;
+      }
+
       // Process questions
-      indexData?.questions?.forEach(item => {
+      indexData.questions?.forEach(item => {
         if (item?.id && item?.path) {
           this.contentPaths.questions.set(item.id.toString(), item.path);
         }
       });
 
       // Process solutions
-      indexData?.solutions?.forEach(item => {
+      indexData.solutions?.forEach(item => {
         if (item?.id && item?.path) {
           this.contentPaths.solutions.set(item.id.toString(), item.path);
         }
