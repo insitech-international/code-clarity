@@ -8,11 +8,13 @@ import json
 import os
 from pathlib import Path
 from typing import Dict, List, Set
+import re
 
 
 def read_question_metadata(file_path: Path) -> dict:
     """
     Extract category metadata from a question markdown file.
+    Handles markdown-style metadata format with headers and lists.
     
     Args:
         file_path: Path to the markdown file
@@ -22,34 +24,26 @@ def read_question_metadata(file_path: Path) -> dict:
     """
     metadata = {"category": "", "subcategory": ""}
     
-    print(f"\nProcessing file: {file_path}")
     try:
         with open(file_path, 'r', encoding='utf-8') as file:
             content = file.read()
-            print(f"File content preview: {content[:200]}...")  # Print first 200 chars
             
-            parts = content.split('---')
-            print(f"Number of parts after splitting by '---': {len(parts)}")
+            # Look for Category and Subcategory in markdown list items
+            category_match = re.search(r'\*\*Category\*\*:\s*([^\n]+)', content)
+            subcategory_match = re.search(r'\*\*Subcategory\*\*:\s*([^\n]+)', content)
             
-            if len(parts) >= 3:  # Valid frontmatter
-                frontmatter = parts[1].strip()
-                print(f"Frontmatter found: \n{frontmatter}")
-                
-                for line in frontmatter.split('\n'):
-                    if ':' in line:
-                        key, value = line.split(':', 1)
-                        key = key.strip().lower()
-                        value = value.strip().strip('"\'')
-                        if key in metadata:
-                            metadata[key] = value
-                            print(f"Found metadata - {key}: {value}")
-            else:
-                print("No valid frontmatter found (not enough '---' separators)")
-                
+            if category_match:
+                metadata["category"] = category_match.group(1).strip()
+            if subcategory_match:
+                metadata["subcategory"] = subcategory_match.group(1).strip()
+            
+            print(f"\nProcessing {file_path}")
+            print(f"Found Category: {metadata['category']}")
+            print(f"Found Subcategory: {metadata['subcategory']}")
+            
     except Exception as e:
         print(f"Error reading {file_path}: {e}")
     
-    print(f"Final metadata for file: {metadata}")
     return metadata
 
 
@@ -68,29 +62,16 @@ def extract_categories(questions_dir: Path) -> Dict[str, List[str]]:
     if not questions_dir.exists():
         raise FileNotFoundError(f"Questions directory not found: {questions_dir}")
     
-    print(f"\nScanning directory: {questions_dir}")
-    print("Directory contents:")
-    for item in questions_dir.rglob('*'):
-        print(f"Found: {item}")
-    
     # Walk through all markdown files in questions directory
-    md_files = list(questions_dir.rglob('*.md'))
-    print(f"\nFound {len(md_files)} markdown files")
-    
-    for file_path in md_files:
+    for file_path in questions_dir.rglob('*.md'):
         metadata = read_question_metadata(file_path)
         category = metadata.get('category')
         subcategory = metadata.get('subcategory') or 'Uncategorized'
-        
-        print(f"\nProcessing metadata from {file_path}")
-        print(f"Category: {category}")
-        print(f"Subcategory: {subcategory}")
         
         if category:
             if category not in categories:
                 categories[category] = set()
             categories[category].add(subcategory)
-            print(f"Added to categories dict. Current state for {category}: {categories[category]}")
     
     # Convert sets to sorted lists for JSON serialization
     result = {
@@ -98,9 +79,7 @@ def extract_categories(questions_dir: Path) -> Dict[str, List[str]]:
         for category, subcategories in categories.items()
     }
     
-    print("\nFinal categories dictionary:")
-    print(json.dumps(result, indent=2))
-    
+    print("\nExtracted categories:", result)
     return result
 
 
@@ -113,25 +92,13 @@ def main():
     questions_dir = repo_root / 'frontend' / 'public' / 'static' / 'data' / 'questions'
     output_dir = repo_root / 'frontend' / 'public' / 'static' / 'data'
     
-    print("\n=== Starting Category Generation ===")
-    print(f"Repository root: {repo_root}")
+    print(f"\nRepository root: {repo_root}")
     print(f"Questions directory: {questions_dir}")
     print(f"Output directory: {output_dir}")
     
     try:
         # Create output directory if it doesn't exist
         output_dir.mkdir(parents=True, exist_ok=True)
-        
-        # Verify questions directory exists and show contents
-        if questions_dir.exists():
-            print("\nListing contents of questions directory:")
-            for item in questions_dir.iterdir():
-                print(f"- {item}")
-        else:
-            print(f"\nWARNING: Questions directory not found at {questions_dir}")
-            print("Current directory contents:")
-            for item in repo_root.iterdir():
-                print(f"- {item}")
         
         # Extract categories and subcategories
         categories_dict = extract_categories(questions_dir)
@@ -141,20 +108,11 @@ def main():
         with open(output_file, 'w', encoding='utf-8') as f:
             json.dump(categories_dict, f, indent=2)
         
-        print(f"\nCategories successfully extracted and saved to {output_file}")
+        print(f"\nCategories successfully saved to {output_file}")
         print("Categories found:", list(categories_dict.keys()))
         
-        # Verify the output
-        print("\nVerifying output file:")
-        if output_file.exists():
-            with open(output_file, 'r') as f:
-                content = f.read()
-                print(f"Output file content: {content}")
-        else:
-            print("WARNING: Output file was not created!")
-        
     except Exception as e:
-        print(f"\nError generating categories: {e}")
+        print(f"Error generating categories: {e}")
         raise
 
 
