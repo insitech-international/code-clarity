@@ -1,10 +1,8 @@
 // frontend\src\services\fileManager.jsx
 
 class FileManager {
-  // Configure base URL for static files on GitHub Pages
-  static FILE_BASE_URL = 'https://insitech-international.github.io/code-clarity/static/data';
-  // Alternative if raw content is needed:
-  // static FILE_BASE_URL = 'https://raw.githubusercontent.com/insitech-international/code-clarity/gh-pages/static/data';
+  // Configure base URL to use raw GitHub content
+  static FILE_BASE_URL = 'https://raw.githubusercontent.com/insitech-international/code-clarity/gh-pages/static/data';
   
   // Cached data
   static indexData = null;
@@ -15,11 +13,20 @@ class FileManager {
   static async loadIndexData() {
     if (!this.indexData) {
       try {
-        const response = await fetch(`${this.FILE_BASE_URL}/index.json`);
+        console.log('Fetching index from:', `${this.FILE_BASE_URL}/index.json`);
+        const response = await fetch(`${this.FILE_BASE_URL}/index.json`, {
+          headers: {
+            'Accept': 'application/json',
+            'Cache-Control': 'no-cache'
+          }
+        });
+        
         if (!response.ok) {
-          throw new Error('Failed to load index.json');
+          throw new Error(`Failed to load index.json: ${response.status}`);
         }
+        
         this.indexData = await response.json();
+        console.log('Index data loaded:', this.indexData);
         
         // Filter out items with null ids and ensure unique entries
         this.indexData.questions = Array.from(new Set(
@@ -45,7 +52,7 @@ class FileManager {
     return this.indexData;
   }
 
-  // Read file from GitHub content URL with robust error handling
+  // Read file from GitHub raw content URL with robust error handling
   static async readFile(filePath) {
     try {
       // Construct full URL using the base URL
@@ -53,7 +60,12 @@ class FileManager {
       const fullUrl = `${this.FILE_BASE_URL}${cleanPath}`;
       
       console.log('Fetching file from:', fullUrl);
-      const response = await fetch(fullUrl);
+      const response = await fetch(fullUrl, {
+        headers: {
+          'Accept': 'text/plain, application/json',
+          'Cache-Control': 'no-cache'
+        }
+      });
       
       if (!response.ok) {
         console.error(`File not found: ${fullUrl}`);
@@ -61,7 +73,7 @@ class FileManager {
       }
       
       const content = await response.text();
-      console.log('Content retrieved:', content.substring(0, 100) + '...');
+      console.log(`Content retrieved from ${fullUrl}:`, content.substring(0, 100) + '...');
       return content;
     } catch (error) {
       console.error(`IO error reading file ${filePath}: ${error.message}`);
