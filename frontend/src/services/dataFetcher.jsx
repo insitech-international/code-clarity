@@ -1,26 +1,23 @@
-// Define the correct base URL for production
-const GITHUB_BASE_URL = 'https://raw.githubusercontent.com/insitech-international/code-clarity/gh-pages';
-
 class DataFetcher {
   constructor(config = {}) {
-    // Determine if the environment is production
     const isProduction = !window.location.hostname.includes('localhost') &&
                         !window.location.hostname.includes('127.0.0.1');
 
-    // Initialize properties
     this.API_BASE_URL = "http://127.0.0.1:8000";
-    this.STATIC_BASE_URL = isProduction ? GITHUB_BASE_URL : '';
+    this.GITHUB_BASE_URL = 'https://raw.githubusercontent.com/insitech-international/code-clarity/gh-pages';
     this.DEVELOPMENT_MODE = !isProduction;
     this.API_TIMEOUT = 5000;
 
-    // Content mappings
-    this.questions = new Map();
-    this.solutions = new Map();
+    // Store content paths for production mode
+    this.contentPaths = {
+      questions: new Map(),
+      solutions: new Map()
+    };
 
     console.log('DataFetcher initialized:', {
       environment: isProduction ? 'production' : 'development',
       API_BASE_URL: this.API_BASE_URL,
-      STATIC_BASE_URL: this.STATIC_BASE_URL,
+      GITHUB_BASE_URL: this.GITHUB_BASE_URL,
       DEVELOPMENT_MODE: this.DEVELOPMENT_MODE,
     });
   }
@@ -28,7 +25,7 @@ class DataFetcher {
   async fetchFromGitHub(path) {
     if (!path) return null;
 
-    const url = `${this.STATIC_BASE_URL}/${path}`;
+    const url = `${this.GITHUB_BASE_URL}/${path}`;
     console.log('Fetching from GitHub:', url);
 
     const response = await fetch(url);
@@ -67,80 +64,38 @@ class DataFetcher {
     }
   }
 
-  async fetchData(apiPath, staticPath = null, params = null) {
-    if (!apiPath && !staticPath) return null;
-
-    if (this.DEVELOPMENT_MODE) {
-      try {
-        return await this.fetchFromAPI(apiPath, params);
-      } catch (error) {
-        console.error('API fetch failed in development mode:', error);
-        throw error;
-      }
-    }
-
-    // Production mode: try API first, then fallback to static
+  async loadContentPaths() {
     try {
-      const apiResult = await this.fetchFromAPI(apiPath, params);
-      if (apiResult) return apiResult;
-    } catch (error) {
-      console.warn('API fetch failed, falling back to static file');
-    }
+      // Only load paths in production mode
+      if (this.DEVELOPMENT_MODE) return;
 
-    if (!staticPath) {
-      console.warn('No static path provided for fallback');
-      return null;
-    }
+      // Fetch and parse index.json
+      const indexData = await this.fetchFromGitHub('static/data/index.json');
 
-    return this.fetchFromGitHub(staticPath);
-  }
+      // Clear existing paths
+      this.contentPaths.questions.clear();
+      this.contentPaths.solutions.clear();
 
-  async loadIndex() {
-    try {
-      // In development, get data from API. In production, from static files
-      let indexData;
-      if (this.DEVELOPMENT_MODE) {
-        // In development, construct index from API questions list
-        const response = await this.fetchFromAPI('/questions/');
-        indexData = {
-          questions: response.questions.map(q => ({
-            id: q.question_id,
-            path: `static/data/questions/${q.question_id}_${q.title.replace(/\s+/g, '_')}.md`
-          }))
-        };
-      } else {
-        // In production, get from static index.json
-        indexData = await this.fetchFromGitHub('static/data/index.json');
-      }
-
-      // Map the paths
-      this.questions.clear();
-      this.solutions.clear();
-
-      if (indexData?.questions) {
-        indexData.questions.forEach(item => {
-          if (item?.id) {
-            this.questions.set(item.id.toString(), item.path);
-          }
-        });
-      }
-
-      if (indexData?.solutions) {
-        indexData.solutions.forEach(item => {
-          if (item?.id) {
-            this.solutions.set(item.id.toString(), item.path);
-          }
-        });
-      }
-
-      console.log('Loaded paths:', {
-        questions: this.questions.size,
-        solutions: this.solutions.size
+      // Store question paths
+      indexData?.questions?.forEach(item => {
+        if (item?.id && item?.path) {
+          this.contentPaths.questions.set(item.id.toString(), item.path);
+        }
       });
 
-      return indexData;
+      // Store solution paths
+      indexData?.solutions?.forEach(item => {
+        if (item?.id && item?.path) {
+          this.contentPaths.solutions.set(item.id.toString(), item.path);
+        }
+      });
+
+      console.log('Loaded content paths:', {
+        questions: this.contentPaths.questions.size,
+        solutions: this.contentPaths.solutions.size
+      });
     } catch (error) {
-      console.error('Error loading index:', error);
+      console.error('Error loading content paths:', error);
       throw error;
     }
   }
@@ -148,27 +103,33 @@ class DataFetcher {
   async getContent(id, type = 'question') {
     if (!id) return null;
 
-    // Load index if paths aren't loaded
-    if (this.questions.size === 0) {
-      await this.loadIndex();
-    }
-
+    // Development mode: use API only
     if (this.DEVELOPMENT_MODE) {
-      // In development, use API directly
       return this.fetchFromAPI(`/${type}s/${id}`);
     }
 
-    // In production, get path from index and fetch static file
-    const pathMap = type === 'question' ? this.questions : this.solutions;
-    const path = pathMap.get(id.toString());
+    // Production mode: try API first
+    try {
+      const apiResult = await this.fetchFromAPI(`/${type}s/${id}`);
+      if (apiResult) return apiResult;
+    } catch (error) {
+      console.log('API fetch failed, falling back to static content');
+    }
 
-    if (!path) {
+    // Load paths if not loaded
+    if (this.contentPaths[type + 's'].size === 0) {
+      await this.loadContentPaths();
+    }
+
+    // Get content path
+    const contentPath = this.contentPaths[type + 's'].get(id.toString());
+    if (!contentPath) {
       console.warn(`No ${type} found for ID: ${id}`);
       return null;
     }
-    console.log(`Static File Path: ${path}`)
-//     return this.fetchFromGitHub(path);
-    return this.fetchFromGitHub("https://raw.githubusercontent.com/insitech-international/code-clarity/gh-pages/static/data/questions/Advanced_Python_Concepts/Context_Managers/111_Contextlib_Module.md")
+
+    // Fetch the actual content using the path from index.json
+    return this.fetchFromGitHub(contentPath);
   }
 
   async getCategories() {
@@ -176,13 +137,14 @@ class DataFetcher {
       return this.fetchFromAPI('/categories');
     }
 
-    // In production, derive categories from paths
-    if (this.questions.size === 0) {
-      await this.loadIndex();
+    // Load paths if not loaded
+    if (this.contentPaths.questions.size === 0) {
+      await this.loadContentPaths();
     }
 
+    // Extract unique categories from paths
     return Array.from(new Set(
-      Array.from(this.questions.values())
+      Array.from(this.contentPaths.questions.values())
         .map(path => path.split('/')[3])
         .filter(Boolean)
     ));
@@ -193,13 +155,14 @@ class DataFetcher {
       return this.fetchFromAPI('/featured_questions');
     }
 
-    // In production, get first 6 questions from each category
-    if (this.questions.size === 0) {
-      await this.loadIndex();
+    // Load paths if not loaded
+    if (this.contentPaths.questions.size === 0) {
+      await this.loadContentPaths();
     }
 
+    // Get first 6 questions from each category
     const questionsByCategory = {};
-    Array.from(this.questions.entries()).forEach(([id, path]) => {
+    Array.from(this.contentPaths.questions.entries()).forEach(([id, path]) => {
       const category = path.split('/')[3];
       if (!questionsByCategory[category]) {
         questionsByCategory[category] = [];
@@ -212,25 +175,14 @@ class DataFetcher {
     return questionsByCategory;
   }
 
-  // Additional helper methods
-  async testConnection() {
-    try {
-      const response = await this.fetchFromAPI('/test-connection');
-      return response?.status === 'success';
-    } catch (error) {
-      console.error('Connection test failed:', error);
-      return false;
-    }
-  }
-
   clearCache() {
-    this.questions.clear();
-    this.solutions.clear();
+    this.contentPaths.questions.clear();
+    this.contentPaths.solutions.clear();
     console.log('Cache cleared');
   }
 }
 
-// Create a singleton instance
+// Create singleton instance
 const dataFetcher = new DataFetcher();
 
 export { DataFetcher };
