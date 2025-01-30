@@ -4,7 +4,7 @@ class FileManager {
   // Configure base URL for GitHub Pages
   static BASE_URL = 'https://code-clarity.insitechinternational.com';
   static DATA_PATH = '/static/data';
-  
+
   // Cached data
   static indexData = null;
   static questionCache = new Map();
@@ -15,57 +15,34 @@ class FileManager {
       console.error('Invalid parameters for constructUrl:', { type, relativePath });
       return null;
     }
-  
-    const fullUrl = `${this.BASE_URL}${this.DATA_PATH}/${type}/${relativePath}`;
-    console.log('Constructed URL:', fullUrl);
-    return fullUrl;
+    return `${this.BASE_URL}${this.DATA_PATH}/${type}/${relativePath}`;
   }
 
   static async loadIndexData() {
-    if (!this.indexData) {
-      try {
-        const indexUrl = `${this.BASE_URL}${this.DATA_PATH}/index.json`;
-        console.log('Fetching index from:', indexUrl);
-        
-        const response = await fetch(indexUrl);
-        if (!response.ok) {
-          throw new Error(`Failed to load index.json: ${response.status}`);
-        }
-        
-        this.indexData = await response.json();
-        console.log('Raw index data:', this.indexData);
-        
-        // Process and validate paths
-        this.indexData.questions = this.indexData.questions
-          .filter(q => q.id != null && q.path)
-          .map(q => ({
-            id: q.id,
-            path: q.path
-          }));
+    if (this.indexData) return this.indexData;
+    
+    try {
+      const indexUrl = `${this.BASE_URL}${this.DATA_PATH}/index.json`;
+      console.log('Fetching index from:', indexUrl);
 
-        this.indexData.solutions = this.indexData.solutions
-          .filter(s => s.id != null && s.path)
-          .map(s => ({
-            id: s.id,
-            path: s.path.replace(/^static\/data\/(questions|solutions)\//, '') // Remove prefix if present
-          }));
+      const response = await fetch(indexUrl);
+      if (!response.ok) throw new Error(`Failed to load index.json: ${response.status}`);
+      
+      const rawData = await response.json();
+      console.log('Raw index data:', rawData);
 
-        console.log('Processed questions:', {
-          count: this.indexData.questions.length,
-          samplePaths: this.indexData.questions.slice(0, 3).map(q => ({
-            id: q.id,
-            path: q.path,
-            fullUrl: this.constructUrl('questions', q.path)
-          }))
-        });
-      } catch (error) {
-        console.error('Error loading index.json:', error);
-        this.indexData = { 
-          questions: [], 
-          solutions: [],
-          lastUpdated: null 
-        };
-      }
+      // Validate and process paths
+      this.indexData = {
+        questions: rawData.questions?.filter(q => q.id != null && q.path) || [],
+        solutions: rawData.solutions?.filter(s => s.id != null && s.path).map(s => ({
+          id: s.id,
+          path: s.path.replace(/^static\/data\/(questions|solutions)\//, '')
+        })) || [],
+        lastUpdated: rawData.lastUpdated || null
+      };
+    } catch (error) {
+      console.error('Error loading index.json:', error);
+      this.indexData = { questions: [], solutions: [], lastUpdated: null };
     }
     return this.indexData;
   }
@@ -75,22 +52,15 @@ class FileManager {
       console.error(`readFile received invalid parameters: type=${type}, relativePath=${relativePath}`);
       return "";
     }
-  
-    const url = this.constructUrl(type, relativePath);
-    console.log('Reading file:', { type, relativePath, url });
-  
+    
     try {
+      const url = this.constructUrl(type, relativePath);
+      console.log('Reading file:', { type, relativePath, url });
       const response = await fetch(url);
-      if (!response.ok) {
-        console.error(`File not found: ${url} (Status: ${response.status})`);
-        return "";
-      }
-  
-      const content = await response.text();
-      console.log(`Content retrieved from ${url} (first 100 chars):`, content.substring(0, 100) + '...');
-      return content;
+      if (!response.ok) throw new Error(`File not found: ${url} (Status: ${response.status})`);
+      return await response.text();
     } catch (error) {
-      console.error(`IO error reading file ${relativePath}:`, error);
+      console.error(`Error reading file ${relativePath}:`, error);
       return "";
     }
   }
@@ -99,37 +69,65 @@ class FileManager {
     const index = await this.loadIndexData();
     let questions = index.questions;
 
-    // Apply filters
     if (filters.category) {
-      questions = questions.filter(q => 
-        q.path.includes(`${filters.category}/`)
-      );
+      questions = questions.filter(q => q.path.includes(`${filters.category}/`));
     }
-
-    // Fetch full details for each question
-    const promises = questions.map(async q => {
-      // Check cache first
-      if (this.questionCache.has(q.path)) {
-        return this.questionCache.get(q.path);
-      }
-
-      // Fetch and parse question
-      const content = await this.readFile('questions', q.path);
-      if (!content) return null;
-
-      const questionData = {
-        ...this.parseMarkdownFile(content),
-        id: q.id,
-        path: q.path
-      };
-
-      // Cache the result
-      this.questionCache.set(q.path, questionData);
-      return questionData;
-    });
-
-    return (await Promise.all(promises)).filter(Boolean);
+    
+    return Promise.all(questions.map(q => this.parseQuestionFile(q.path)));
   }
+
+  static async parseQuestionFile(filePath) {
+    if (this.questionCache.has(filePath)) return this.questionCache.get(filePath);
+    
+    try {
+      const content = await this.readFile('questions', filePath);
+      if (!content) return null;
+      
+      const questionData = this.extractQuestionData(content, filePath);
+      this.questionCache.set(filePath, questionData);
+      return questionData;
+    } catch (error) {
+      console.error(`Error parsing question file ${filePath}:`, error);
+      return null;
+    }
+  }
+
+  static extractQuestionData(content, filePath) {
+    const metadata = this.parseMetadata(content);
+    return {
+      question_id: metadata.id ? parseInt(metadata.id) : null,
+      title: metadata.title || '',
+      difficulty: metadata.difficulty || '',
+      category: metadata.category || '',
+      tags: metadata.tags || [],
+      content,
+      file_path: filePath
+    };
+  }
+
+  static parseMetadata(content) {
+    const metadata = {};
+    content.split('\n').forEach(line => {
+      const match = line.match(/^-(\s*[^:]+):\s*(.+)$/);
+      if (match) {
+        metadata[match[1].trim().toLowerCase().replace(/\s+/g, '_')] = match[2].trim();
+      }
+    });
+    return metadata;
+  }
+
+  static async findQuestionById(questionId) {
+    const index = await this.loadIndexData();
+    const questionInfo = index.questions.find(q => q.id === questionId);
+    return questionInfo ? this.parseQuestionFile(questionInfo.path) : null;
+  }
+
+  static clearCache() {
+    this.indexData = null;
+    this.questionCache.clear();
+    this.solutionCache.clear();
+  }
+
 
   // Advanced markdown parsing with improved section detection
   static parseMarkdownFile(content) {
@@ -169,78 +167,6 @@ class FileManager {
     }
 
     return sections;
-  }
-
-  // Enhanced metadata parsing with more robust extraction
-  static parseMetadata(content) {
-    const metadata = {};
-    const lines = content.split('\n');
-    const metadataRegex = /^-\s*([^:]+):\s*(.+)$/;
-
-    for (const line of lines) {
-      const match = line.match(metadataRegex);
-      
-      if (match) {
-        let key = match[1]
-          .replace(/\*\*/g, '')  // Remove bold markers
-          .toLowerCase()
-          .trim()
-          .replace(/\s+/g, '_');
-        
-        let value = match[2].trim();
-
-        // Special handling for list-type fields
-        if (['similar_questions', 'real_life_domains', 'tags'].includes(key)) {
-          metadata[key] = value
-            .split(',')
-            .map(item => item.trim())
-            .filter(Boolean);
-        } else {
-          metadata[key] = value;
-        }
-      }
-    }
-
-    return metadata;
-  }
-
-  // Comprehensive question file parsing
-  static async parseQuestionFile(filePath) {
-    // Check cache first
-    if (this.questionCache.has(filePath)) {
-      return this.questionCache.get(filePath);
-    }
-
-    try {
-      const content = await this.readFile(filePath);
-      const sections = this.parseMarkdownFile(content);
-      const metadata = this.parseMetadata(sections.metadata || '');
-
-      const questionData = {
-        question_id: metadata.id ? parseInt(metadata.id) : null,
-        title: metadata.title || '',
-        difficulty: metadata.difficulty || '',
-        category: metadata.category || '',
-        subcategory: metadata.subcategory || '',
-        similar_questions: metadata.similar_questions || [],
-        real_life_domains: metadata.real_life_domains || [],
-        problem_description: sections.problem_description || sections.description || '',
-        problem_versions: this.parseProblemVersions(sections.versions || ''),
-        constraints: this.parseListSection(sections.constraints),
-        notes: this.parseListSection(sections.notes),
-        tags: metadata.tags || [],
-        content: content,
-        file_path: filePath
-      };
-
-      // Cache the result
-      this.questionCache.set(filePath, questionData);
-
-      return questionData;
-    } catch (error) {
-      console.error(`Error parsing question file ${filePath}:`, error);
-      return null;
-    }
   }
 
   // Comprehensive solution file parsing
@@ -301,24 +227,6 @@ class FileManager {
       : [];
   }
 
-  // Get all questions with optional filtering
-  static async getAllQuestions(filters = {}) {
-    const index = await this.loadIndexData();
-    let questions = index.questions;
-
-    // Apply filters
-    if (filters.category) {
-      questions = questions.filter(q => 
-        q.path.includes(`/questions/${filters.category}/`)
-      );
-    }
-
-    // Fetch full details for each question
-    return Promise.all(
-      questions.map(q => this.parseQuestionFile(q.path))
-    );
-  }
-
   // Get all solutions with optional filtering
   static async getAllSolutions(filters = {}) {
     const index = await this.loadIndexData();
@@ -337,18 +245,6 @@ class FileManager {
     );
   }
 
-  // Find a specific question by ID
-  static async findQuestionById(questionId) {
-    const index = await this.loadIndexData();
-    const questionInfo = index.questions.find(q => q.id === questionId);
-    
-    if (!questionInfo) {
-      return null;
-    }
-
-    return await this.parseQuestionFile(questionInfo.path);
-  }
-
   // Find a specific solution by ID
   static async findSolutionById(questionId) {
     const index = await this.loadIndexData();
@@ -359,13 +255,6 @@ class FileManager {
     }
 
     return await this.parseSolutionFile(solutionInfo.path);
-  }
-
-  // Clear all caches
-  static clearCache() {
-    this.indexData = null;
-    this.questionCache.clear();
-    this.solutionCache.clear();
   }
 }
 
