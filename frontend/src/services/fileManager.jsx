@@ -40,7 +40,7 @@ class FileManager {
           .filter(q => q.id != null && q.path)
           .map(q => ({
             id: q.id,
-            path: q.path.replace(/^static\/data\/(questions|solutions)\//, '') // Remove prefix if present
+            path: q.path
           }));
 
         this.indexData.solutions = this.indexData.solutions
@@ -71,28 +71,23 @@ class FileManager {
   }
 
   static async readFile(type, relativePath) {
+    if (!type || !relativePath) {
+      console.error(`readFile received invalid parameters: type=${type}, relativePath=${relativePath}`);
+      return "";
+    }
+  
+    const url = this.constructUrl(type, relativePath);
+    console.log('Reading file:', { type, relativePath, url });
+  
     try {
-      const url = this.constructUrl(type, relativePath);
-      console.log('Reading file:', {
-        type,
-        relativePath,
-        url
-      });
-      
       const response = await fetch(url);
       if (!response.ok) {
         console.error(`File not found: ${url} (Status: ${response.status})`);
         return "";
       }
-      
+  
       const content = await response.text();
-      if (content) {
-        console.log(`Content retrieved from ${url} (first 100 chars):`, 
-          content.substring(0, 100) + '...'
-        );
-      } else {
-        console.warn(`Empty content received from ${url}`);
-      }
+      console.log(`Content retrieved from ${url} (first 100 chars):`, content.substring(0, 100) + '...');
       return content;
     } catch (error) {
       console.error(`IO error reading file ${relativePath}:`, error);
