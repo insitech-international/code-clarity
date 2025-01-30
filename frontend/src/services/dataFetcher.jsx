@@ -8,6 +8,13 @@ class DataFetcher {
     this.DEVELOPMENT_MODE = !isProduction;
     this.API_TIMEOUT = 5000;
 
+    // Constants for static content paths
+    this.STATIC_PATHS = {
+      INDEX: 'static/data/index.json',
+      QUESTIONS_DIR: 'static/data/questions',
+      SOLUTIONS_DIR: 'static/data/solutions'
+    };
+
     // Store content paths for production mode
     this.contentPaths = {
       questions: new Map(),
@@ -37,7 +44,7 @@ class DataFetcher {
 
     const response = await fetch(url);
     if (!response.ok) {
-      throw new Error(`GitHub fetch failed: ${response.status}`);
+      throw new Error(`GitHub fetch failed: ${response.status} for ${url}`);
     }
 
     const content = await response.text();
@@ -76,7 +83,8 @@ class DataFetcher {
       if (this.DEVELOPMENT_MODE) return;
 
       // First, fetch the index.json which contains relative paths
-      const indexData = await this.fetchFromGitHub('static/data/index.json');
+      console.log('Loading index from:', this.STATIC_PATHS.INDEX);
+      const indexData = await this.fetchFromGitHub(this.STATIC_PATHS.INDEX);
 
       // Clear existing paths
       this.contentPaths.questions.clear();
@@ -85,21 +93,19 @@ class DataFetcher {
       // Store paths with their IDs
       indexData?.questions?.forEach(item => {
         if (item?.id && item?.path) {
-          // Store the relative path - we'll construct full URL when needed
           this.contentPaths.questions.set(item.id.toString(), item.path);
         }
       });
 
       indexData?.solutions?.forEach(item => {
         if (item?.id && item?.path) {
-          // Store the relative path - we'll construct full URL when needed
           this.contentPaths.solutions.set(item.id.toString(), item.path);
         }
       });
 
-      console.log('Loaded content paths:', {
-        questions: this.contentPaths.questions.size,
-        solutions: this.contentPaths.solutions.size
+      console.log('Loaded paths:', {
+        questions: Array.from(this.contentPaths.questions.entries()),
+        solutions: Array.from(this.contentPaths.solutions.entries())
       });
     } catch (error) {
       console.error('Error loading content paths:', error);
@@ -135,7 +141,7 @@ class DataFetcher {
       return null;
     }
 
-    // Fetch the actual content using the constructed GitHub URL
+    console.log(`Fetching ${type} content from:`, relativePath);
     return this.fetchFromGitHub(relativePath);
   }
 
