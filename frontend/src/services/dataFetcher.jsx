@@ -39,6 +39,50 @@ class DataFetcher {
     }
   }
 
+  // Add back fetchData method for backward compatibility
+  async fetchData(apiPath, staticPath = null, params = null) {
+    if (!apiPath && !staticPath) return null;
+
+    try {
+      // Development mode: API only
+      if (this.config.isDevelopment) {
+        return await this.fetchApi(apiPath, params);
+      }
+
+      // Production mode: Try static first, then API fallback
+      if (staticPath) {
+        try {
+          // Use FileManager to get static content
+          if (staticPath.includes('questions/')) {
+            const questionId = this.extractIdFromPath(staticPath);
+            if (questionId) {
+              const result = await FileManager.findQuestionById(questionId);
+              if (result) return result;
+            }
+          } else if (staticPath.includes('categories')) {
+            const questions = await FileManager.getAllQuestions();
+            const categories = new Set(questions.map(q => q.category).filter(Boolean));
+            return Array.from(categories).sort();
+          }
+        } catch (error) {
+          console.warn('Static content fetch failed, trying API:', error);
+        }
+      }
+
+      // API fallback
+      return await this.fetchApi(apiPath, params);
+    } catch (error) {
+      console.error('fetchData failed:', error);
+      return null;
+    }
+  }
+
+  // Helper method to extract ID from path
+  extractIdFromPath(path) {
+    const match = path.match(/\/(\d+)_/);
+    return match ? parseInt(match[1]) : null;
+  }
+
   async getContent(id, type = 'question') {
     try {
       if (this.config.isDevelopment) {
