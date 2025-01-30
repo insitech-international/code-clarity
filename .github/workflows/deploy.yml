@@ -102,12 +102,18 @@ jobs:
       # Generate Categories
       - name: Generate Categories JSON
         run: |
-          # Execute the generate_categories.py script
-          python ${{ env.BACKEND_DIRECTORY }}/code_clarity_fastapi/scripts/generate_categories.py
-
+          echo "Current working directory: $(pwd)"
+          echo "Repository structure:"
+          find . -type d -maxdepth 3
+          
+          # Execute the generate_categories.py script with explicit paths
+          python ./backend/code_clarity_fastapi/scripts/generate_categories.py
+          
           # Verify the file was created
-          ls -l ${{ env.WORKING_DIRECTORY }}/public/static/data/categories.json
-          cat ${{ env.WORKING_DIRECTORY }}/public/static/data/categories.json
+          echo "Checking generated categories.json..."
+          ls -l ./frontend/public/static/data/categories.json
+          echo "Categories content:"
+          cat ./frontend/public/static/data/categories.json
 
       # Index Generation
       - name: Generate Index Files

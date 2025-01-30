@@ -75,10 +75,16 @@ def extract_categories(questions_dir: Path) -> Dict[str, List[str]]:
 
 def main():
     """Main function to generate categories.json file."""
-    # Setup paths
-    script_dir = Path(__file__).parent
-    questions_dir = script_dir / 'code_clarity_fastapi' / 'data' / 'question_bank'
-    output_dir = script_dir / 'frontend' / 'public' / 'static' / 'data'
+    # Get repository root (2 levels up from the script location)
+    repo_root = Path(__file__).resolve().parent.parent.parent.parent
+
+    # Setup paths relative to repository root
+    questions_dir = repo_root / 'backend' / 'code_clarity_fastapi' / 'data' / 'question_bank'
+    output_dir = repo_root / 'frontend' / 'public' / 'static' / 'data'
+
+    print(f"Repository root: {repo_root}")
+    print(f"Questions directory: {questions_dir}")
+    print(f"Output directory: {output_dir}")
 
     try:
         # Create output directory if it doesn't exist
