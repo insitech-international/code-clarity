@@ -1,4 +1,4 @@
-import FileManager from './FileManager';
+import FileManager from './fileManager';
 
 class DataFetcher {
   constructor(config = {}) {
