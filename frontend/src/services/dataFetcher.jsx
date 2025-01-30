@@ -1,3 +1,5 @@
+import FileManager from './FileManager';
+
 class DataFetcher {
   constructor(config = {}) {
     const isProduction = !window.location.hostname.includes('localhost') &&
@@ -5,185 +7,55 @@ class DataFetcher {
 
     this.config = {
       apiBaseUrl: "http://127.0.0.1:8000",
-      githubBaseUrl: 'https://raw.githubusercontent.com/insitech-international/code-clarity/gh-pages',
       isDevelopment: !isProduction,
-      apiTimeout: 5000,
-      staticPaths: {
-        index: '/static/data/index.json',
-        categories: '/static/data/categories.json',
-        questions: '/static/data/questions',
-        solutions: '/static/data/solutions'
-      }
-    };
-
-    // Cache for content paths
-    this.contentPaths = {
-      questions: new Map(),
-      solutions: new Map()
+      apiTimeout: 5000
     };
 
     console.log('DataFetcher initialized:', {
       environment: isProduction ? 'production' : 'development',
       apiBaseUrl: this.config.apiBaseUrl,
-      githubBaseUrl: this.config.githubBaseUrl,
       isDevelopment: this.config.isDevelopment,
     });
   }
 
-  constructGitHubUrl(relativePath) {
-    if (!relativePath) return null;
-    // Remove leading and trailing slashes
-    const cleanPath = relativePath.replace(/^\/+|\/+$/g, '');
-    const url = `${this.config.githubBaseUrl}/${cleanPath}`;
-    console.log('Constructed URL:', url);
-    return url;
-  }
-
-  async fetchWithTimeout(url, options = {}) {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), this.config.apiTimeout);
-
-    try {
-      const response = await fetch(url, {
-        ...options,
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status} for URL: ${url}`);
-      }
-
-      const contentType = response.headers.get('content-type');
-      const isJson = contentType?.includes('application/json');
-      const isText = contentType?.includes('text/plain') || url.endsWith('.md');
-      
-      if (isJson) {
-        return response.json();
-      } else if (isText) {
-        return response.text();
-      }
-      
-      // Default to text if content type is ambiguous
-      return response.text();
-    } catch (error) {
-      clearTimeout(timeoutId);
-      throw error;
-    }
-  }
-
-  async fetchStatic(path) {
-    if (!path) return null;
-    const url = this.constructGitHubUrl(path);
-    console.log('Fetching static content:', url);
-    return this.fetchWithTimeout(url);
-  }
-
   async fetchApi(path, params = null) {
     if (!path) return null;
-    // Remove trailing slash if present in path
     const cleanPath = path.replace(/\/$/, '');
     const url = `${this.config.apiBaseUrl}${cleanPath}`;
-    console.log('Fetching from API:', url);
     
     try {
-      return await this.fetchWithTimeout(url, {
-        ...(params && { params })
+      const response = await fetch(url, {
+        signal: AbortSignal.timeout(this.config.apiTimeout)
       });
+
+      if (!response.ok) {
+        throw new Error(`API request failed: ${response.status}`);
+      }
+
+      return response.json();
     } catch (error) {
       console.warn('API fetch failed:', error);
       return null;
     }
   }
 
-  async fetchData(apiPath, staticPath = null, params = null) {
-    if (!apiPath && !staticPath) return null;
-
-    try {
-      // Development mode: API only
-      if (this.config.isDevelopment) {
-        return await this.fetchApi(apiPath, params);
-      }
-
-      // Production mode: Static first, then API fallback
-      if (staticPath) {
-        try {
-          const staticResult = await this.fetchStatic(staticPath);
-          if (staticResult) return staticResult;
-        } catch (error) {
-          console.warn('Static fetch failed, trying API:', error);
-        }
-      }
-
-      // API fallback
-      return await this.fetchApi(apiPath, params);
-    } catch (error) {
-      console.error('fetchData failed:', error);
-      return null;
-    }
-  }
-
-  async loadContentPaths() {
-    if (this.contentPaths.questions.size > 0) return;
-
-    try {
-      console.log('Loading content paths from:', this.config.staticPaths.index);
-      const indexData = await this.fetchStatic(this.config.staticPaths.index);
-      
-      if (!indexData) {
-        console.error('No index data found');
-        return;
-      }
-
-      // Process questions
-      indexData.questions?.forEach(item => {
-        if (item?.id && item?.path) {
-          this.contentPaths.questions.set(item.id.toString(), item.path);
-        }
-      });
-
-      // Process solutions
-      indexData.solutions?.forEach(item => {
-        if (item?.id && item?.path) {
-          this.contentPaths.solutions.set(item.id.toString(), item.path);
-        }
-      });
-
-      console.log('Content paths loaded:', {
-        questions: this.contentPaths.questions.size,
-        solutions: this.contentPaths.solutions.size
-      });
-    } catch (error) {
-      console.error('Failed to load content paths:', error);
-      throw error;
-    }
-  }
-
   async getContent(id, type = 'question') {
-    if (!id) return null;
-
     try {
-      // Development mode: API only
       if (this.config.isDevelopment) {
         return await this.fetchApi(`/${type}s/${id}`);
       }
 
-      // Production mode: Static first, API fallback
-      await this.loadContentPaths();
-      const contentPath = this.contentPaths[type + 's'].get(id.toString());
-      
-      if (!contentPath) {
-        console.warn(`No ${type} found for ID: ${id}`);
+      // Use FileManager for production
+      const result = type === 'question' 
+        ? await FileManager.findQuestionById(id)
+        : await FileManager.findSolutionById(id);
+
+      if (!result) {
+        // Fallback to API if file not found
         return await this.fetchApi(`/${type}s/${id}`);
       }
 
-      try {
-        return await this.fetchStatic(contentPath);
-      } catch (error) {
-        console.warn('Static content fetch failed, trying API fallback');
-        return await this.fetchApi(`/${type}s/${id}`);
-      }
+      return result;
     } catch (error) {
       console.error(`Failed to get ${type} content for ID ${id}:`, error);
       return null;
@@ -196,30 +68,11 @@ class DataFetcher {
         return await this.fetchApi('/categories');
       }
 
-      // Production: Try static categories.json first
-      try {
-        const categories = await this.fetchStatic(this.config.staticPaths.categories);
-        if (categories) return categories;
-      } catch (error) {
-        console.warn('Failed to fetch static categories, falling back to API');
-      }
-
-      // Fallback to API
-      const apiCategories = await this.fetchApi('/categories');
-      if (apiCategories) return apiCategories;
-
-      // Last resort: Extract from paths
-      await this.loadContentPaths();
-      const uniqueCategories = new Set();
-      
-      for (const path of this.contentPaths.questions.values()) {
-        const category = path.split('/')[3];
-        if (category) uniqueCategories.add(category);
-      }
-
-      return Array.from(uniqueCategories);
+      const questions = await FileManager.getAllQuestions();
+      const categories = new Set(questions.map(q => q.category).filter(Boolean));
+      return Array.from(categories).sort();
     } catch (error) {
-      console.error('Failed to get categories:', error);
+      console.error('Error getting categories:', error);
       return [];
     }
   }
@@ -230,34 +83,31 @@ class DataFetcher {
         return await this.fetchApi('/featured_questions');
       }
 
-      await this.loadContentPaths();
+      const allQuestions = await FileManager.getAllQuestions();
       const questionsByCategory = {};
 
       // Group questions by category and take first 6 from each
-      for (const [id, path] of this.contentPaths.questions) {
-        const category = path.split('/')[3];
-        if (!category) continue;
+      allQuestions.forEach(question => {
+        if (!question?.category) return;
 
-        if (!questionsByCategory[category]) {
-          questionsByCategory[category] = [];
+        if (!questionsByCategory[question.category]) {
+          questionsByCategory[question.category] = [];
         }
 
-        if (questionsByCategory[category].length < 6) {
-          questionsByCategory[category].push(parseInt(id));
+        if (questionsByCategory[question.category].length < 6) {
+          questionsByCategory[question.category].push(question);
         }
-      }
+      });
 
       return questionsByCategory;
     } catch (error) {
-      console.error('Failed to get featured questions:', error);
+      console.error('Error getting featured questions:', error);
       return {};
     }
   }
 
   clearCache() {
-    this.contentPaths.questions.clear();
-    this.contentPaths.solutions.clear();
-    console.log('Cache cleared');
+    FileManager.clearCache();
   }
 }
 

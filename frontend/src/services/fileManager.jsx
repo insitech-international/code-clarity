@@ -1,8 +1,10 @@
-import React from 'react';
+// frontend\src\services\fileManager.jsx
 
 class FileManager {
   // Configure base URL for static files on GitHub Pages
-  static FILE_BASE_URL = 'https://raw.githubusercontent.com/insitech-international/code-clarity/gh-pages/static/data';
+  static FILE_BASE_URL = 'https://insitech-international.github.io/code-clarity/static/data';
+  // Alternative if raw content is needed:
+  // static FILE_BASE_URL = 'https://raw.githubusercontent.com/insitech-international/code-clarity/gh-pages/static/data';
   
   // Cached data
   static indexData = null;
@@ -43,12 +45,14 @@ class FileManager {
     return this.indexData;
   }
 
-  // Read file from GitHub raw content URL with robust error handling
+  // Read file from GitHub content URL with robust error handling
   static async readFile(filePath) {
     try {
       // Construct full URL using the base URL
-      const fullUrl = `${this.FILE_BASE_URL}${filePath.replace(/^.*?\/static\/data/, '')}`;
+      const cleanPath = filePath.replace(/^.*?\/static\/data/, '');
+      const fullUrl = `${this.FILE_BASE_URL}${cleanPath}`;
       
+      console.log('Fetching file from:', fullUrl);
       const response = await fetch(fullUrl);
       
       if (!response.ok) {
@@ -56,7 +60,9 @@ class FileManager {
         return "";
       }
       
-      return await response.text();
+      const content = await response.text();
+      console.log('Content retrieved:', content.substring(0, 100) + '...');
+      return content;
     } catch (error) {
       console.error(`IO error reading file ${filePath}: ${error.message}`);
       return "";
