@@ -55,15 +55,54 @@ jobs:
               --silent || echo "Failed to cancel deployment $deployment"
           done
 
-      # Repository and Environment Setup
+      # Repository Checkout
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      # Python Setup with Explicit Dependency Installation
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
 
+      - name: Install Backend Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install uvicorn
+          pip install -r ${{ env.BACKEND_DIRECTORY }}/requirements.txt
+          
+          # Verify installations
+          python -m pip list | grep uvicorn
+          python -m pip list | grep fastapi
+
+      # Start Backend Server with More Robust Startup
+      - name: Start FastAPI Server
+        run: |
+          # Ensure we're in the correct directory
+          cd ${{ env.BACKEND_DIRECTORY }}
+          
+          # Start server in background
+          python -m uvicorn code_clarity_fastapi.main:app --host 0.0.0.0 --port 8000 &
+          
+          # Wait and check server availability
+          for i in {1..30}; do
+            if curl -s http://127.0.0.1:8000/questions/ > /dev/null; then
+              echo "FastAPI server is up and running"
+              break
+            fi
+            echo "Waiting for server to start... (attempt $i/30)"
+            sleep 2
+          done
+          
+          # Additional check to fail if server didn't start
+          if ! curl -s http://127.0.0.1:8000/questions/ > /dev/null; then
+            echo "Failed to start FastAPI server"
+            exit 1
+          fi
+
+
+      # Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -71,16 +110,6 @@ jobs:
           cache: "npm"
           cache-dependency-path: ${{ env.WORKING_DIRECTORY }}/package-lock.json
 
-      # Backend Environment and API Setup
-      - name: Setup Backend Environment
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r ${{ env.BACKEND_DIRECTORY }}/requirements.txt
-
-      - name: Start FastAPI Server
-        run: |
-          uvicorn backend.code_clarity_fastapi.main:app --host 0.0.0.0 --port 8000 &
-          timeout 10s bash -c 'until curl -s http://127.0.0.1:8000/questions/; do sleep 1; done' || exit 1
 
       # Frontend Environment Preparation
       - name: Prepare Frontend Environment
