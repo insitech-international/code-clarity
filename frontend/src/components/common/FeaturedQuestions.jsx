@@ -14,19 +14,52 @@ import {
 } from "@mui/material";
 import { useQuestionData } from "../../hooks/useQuestionData";
 
+// Refined Corporate Color Palette
+const COLORS = {
+  prussianBlue: {
+    primary: '#003153',
+    secondary: '#034975',
+    tertiary: '#005582'
+  },
+  blueGray: {
+    primary: '#6E7F80',
+    secondary: '#8A9A9B',
+    tertiary: '#A4B4B6'
+  },
+  gold: {
+    primary: '#CD9575',
+    secondary: '#D8A791',
+    tertiary: '#E3B9A7'
+  },
+  offWhite: {
+    primary: '#F5F5F5',
+    secondary: '#FAFAFA',
+    tertiary: '#FFFFFF'
+  },
+  darkSlate: {
+    primary: '#2F4F4F',
+    secondary: '#3A5A5A',
+    tertiary: '#456666'
+  }
+};
+
 const DifficultyChip = ({ difficulty }) => {
   const color = {
-    Hard: "error",
-    Medium: "warning",
-    Easy: "success"
+    Hard: COLORS.gold.primary,
+    Medium: COLORS.gold.secondary,
+    Easy: COLORS.gold.tertiary
   }[difficulty] || "default";
 
   return (
     <Chip
       label={`Difficulty: ${difficulty}`}
-      color={color}
+      sx={{
+        backgroundColor: color,
+        color: COLORS.offWhite.primary,
+        marginRight: '0.5rem',
+        marginBottom: '0.5rem'
+      }}
       size="small"
-      sx={{ marginRight: '0.5rem', marginBottom: '0.5rem' }}
     />
   );
 };
@@ -42,12 +75,15 @@ const QuestionCard = ({ question }) => {
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
+        backgroundColor: COLORS.darkSlate.primary,
+        color: COLORS.offWhite.primary,
+        borderColor: COLORS.gold.tertiary,
         transition: '0.3s',
         '&:hover': {
           boxShadow: 6,
           transform: 'translateY(-5px)',
+          borderColor: COLORS.gold.primary,
         },
-        // Add padding to create a well-defined margin inside the card
       }}
     >
       <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
@@ -56,12 +92,13 @@ const QuestionCard = ({ question }) => {
           gutterBottom
           sx={{
             fontWeight: 'bold',
+            color: COLORS.offWhite.primary,
             display: '-webkit-box',
             WebkitBoxOrient: 'vertical',
             overflow: 'hidden',
-            WebkitLineClamp: 2, // Allow the title to display up to 2 lines
-            wordWrap: 'break-word', // Ensure long words are wrapped
-            mb: 1, // Add margin-bottom to separate from other content
+            WebkitLineClamp: 2,
+            wordWrap: 'break-word',
+            mb: 1,
           }}
         >
           {question.title || "Untitled Question"}
@@ -70,9 +107,13 @@ const QuestionCard = ({ question }) => {
           {question.subcategory && (
             <Chip
               label={`${question.subcategory}`}
-              color="primary"
-              size="small"
-              sx={{ marginRight: '0.5rem', marginBottom: '0.5rem' }}
+              sx={{
+                backgroundColor: COLORS.gold.tertiary,
+                color: COLORS.offWhite.primary,
+                size: "small",
+                marginRight: '0.5rem',
+                marginBottom: '0.5rem'
+              }}
             />
           )}
           <DifficultyChip difficulty={question.difficulty} />
@@ -81,6 +122,7 @@ const QuestionCard = ({ question }) => {
           variant="body2"
           paragraph
           sx={{
+            color: COLORS.blueGray.secondary,
             flexGrow: 1,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
@@ -99,7 +141,12 @@ const QuestionCard = ({ question }) => {
                 label={domain}
                 variant="outlined"
                 size="small"
-                sx={{ marginRight: '0.5rem', marginBottom: '0.5rem' }}
+                sx={{
+                  marginRight: '0.5rem',
+                  marginBottom: '0.5rem',
+                  borderColor: COLORS.gold.tertiary,
+                  color: COLORS.blueGray.secondary
+                }}
               />
             ))}
         </Box>
@@ -108,7 +155,16 @@ const QuestionCard = ({ question }) => {
           to={`/question/${question.question_id}`}
           variant="outlined"
           size="small"
-          sx={{ mt: 2, alignSelf: 'flex-wrap' }}
+          sx={{
+            mt: 2,
+            alignSelf: 'flex-wrap',
+            color: COLORS.offWhite.primary,
+            borderColor: COLORS.gold.tertiary,
+            '&:hover': {
+              backgroundColor: COLORS.gold.tertiary,
+              color: COLORS.prussianBlue.primary
+            }
+          }}
         >
           View Details
         </Button>
@@ -117,7 +173,6 @@ const QuestionCard = ({ question }) => {
   );
 };
 
-
 const CategorySection = ({ category, questions, onViewAll }) => (
   <Card
     variant="outlined"
@@ -125,14 +180,25 @@ const CategorySection = ({ category, questions, onViewAll }) => (
       mb: 4,
       p: 2,
       borderRadius: 3,
+      backgroundColor: COLORS.prussianBlue.secondary,
+      color: COLORS.offWhite.primary,
       boxShadow: 1,
+      borderColor: COLORS.gold.tertiary,
       transition: '0.3s',
       '&:hover': {
         boxShadow: 3,
+        borderColor: COLORS.gold.primary,
       },
     }}
   >
-    <Typography variant="h5" gutterBottom sx={{ fontWeight: 'medium', color: 'primary.main' }}>
+    <Typography
+      variant="h5"
+      gutterBottom
+      sx={{
+        fontWeight: 'medium',
+        color: COLORS.gold.secondary
+      }}
+    >
       {category}
     </Typography>
     <Grid container spacing={3}>
@@ -144,14 +210,20 @@ const CategorySection = ({ category, questions, onViewAll }) => (
     </Grid>
     <Button
       variant="contained"
-      sx={{ marginTop: '1rem', color: 'white' }}
+      sx={{
+        marginTop: '1rem',
+        backgroundColor: COLORS.gold.secondary,
+        color: COLORS.offWhite.primary,
+        '&:hover': {
+          backgroundColor: COLORS.gold.primary
+        }
+      }}
       onClick={() => onViewAll(category)}
     >
       View All Questions in {category}
     </Button>
   </Card>
 );
-
 
 const FeaturedQuestions = () => {
   const { fetchFeaturedQuestions, loading, error } = useQuestionData();
@@ -184,7 +256,7 @@ const FeaturedQuestions = () => {
     navigate(`/category/${encodeURIComponent(category)}/questions`);
   };
 
-  const sortedCategories = useMemo(() => 
+  const sortedCategories = useMemo(() =>
     Object.entries(categorizedQuestions).sort(([a], [b]) => a.localeCompare(b)),
     [categorizedQuestions]
   );
@@ -194,7 +266,14 @@ const FeaturedQuestions = () => {
       <Grid container spacing={3}>
         {[...Array(3)].map((_, index) => (
           <Grid item xs={12} sm={6} md={4} key={index}>
-            <Skeleton variant="rectangular" height={200} />
+            <Skeleton
+              variant="rectangular"
+              height={200}
+              sx={{
+                backgroundColor: COLORS.darkSlate.primary,
+                borderRadius: 2
+              }}
+            />
           </Grid>
         ))}
       </Grid>
@@ -202,16 +281,37 @@ const FeaturedQuestions = () => {
   }
 
   if (error) {
-    return <Typography color="error">{error}</Typography>;
+    return (
+      <Typography
+        color="error"
+        sx={{ color: COLORS.gold.primary }}
+      >
+        {error}
+      </Typography>
+    );
   }
 
   if (Object.keys(categorizedQuestions).length === 0) {
     return (
-      <Box textAlign="center" py={4}>
-        <Typography variant="h5" gutterBottom>
+      <Box
+        textAlign="center"
+        py={4}
+        sx={{
+          backgroundColor: COLORS.prussianBlue.primary,
+          color: COLORS.offWhite.primary
+        }}
+      >
+        <Typography
+          variant="h5"
+          gutterBottom
+          sx={{ color: COLORS.offWhite.primary }}
+        >
           No Featured Questions Available
         </Typography>
-        <Typography variant="body1">
+        <Typography
+          variant="body1"
+          sx={{ color: COLORS.blueGray.secondary }}
+        >
           Check back later for exciting new questions!
         </Typography>
       </Box>
@@ -219,7 +319,7 @@ const FeaturedQuestions = () => {
   }
 
   return (
-    <section>
+    <section style={{ backgroundColor: COLORS.prussianBlue.primary, padding: '1rem' }}>
       {sortedCategories.map(([category, questions]) => (
         <CategorySection
           key={category}

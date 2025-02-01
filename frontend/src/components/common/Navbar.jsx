@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react"; 
+import React, { useState, useCallback, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AppBar, Toolbar, Container, Box, Modal, Typography, Button, CircularProgress, TextField, MenuItem, IconButton, InputAdornment, Chip } from "@mui/material";
 import { styled, alpha } from "@mui/material/styles";
@@ -7,24 +7,53 @@ import CloseIcon from '@mui/icons-material/Close';
 import ClearIcon from '@mui/icons-material/Clear';
 import { useCategories, useQuestionData } from "../../hooks/useQuestionData";
 
+// Refined Corporate Color Palette
+const COLORS = {
+  prussianBlue: {
+    primary: '#003153',
+    secondary: '#034975',
+    tertiary: '#005582'
+  },
+  blueGray: {
+    primary: '#6E7F80',
+    secondary: '#8A9A9B',
+    tertiary: '#A4B4B6'
+  },
+  gold: {
+    primary: '#CD9575',
+    secondary: '#D8A791',
+    tertiary: '#E3B9A7'
+  },
+  offWhite: {
+    primary: '#F5F5F5',
+    secondary: '#FAFAFA',
+    tertiary: '#FFFFFF'
+  },
+  darkSlate: {
+    primary: '#2F4F4F',
+    secondary: '#3A5A5A',
+    tertiary: '#456666'
+  }
+};
+
 const SearchBar = styled(TextField)(({ theme }) => ({
-  backgroundColor: 'white',
+  backgroundColor: COLORS.offWhite.primary,
   borderRadius: theme.shape.borderRadius,
   width: '100%',
   [`& fieldset`]: {
-    borderColor: theme.palette.primary.light,
+    borderColor: COLORS.gold.tertiary,
   },
   [`&:hover fieldset`]: {
-    borderColor: theme.palette.primary.main,
+    borderColor: COLORS.gold.secondary,
   },
   [`&.Mui-focused fieldset`]: {
-    borderColor: theme.palette.primary.dark,
+    borderColor: COLORS.gold.primary,
   },
 }));
 
-const StyledAppBar = styled(AppBar)(({ theme }) => ({
-  backgroundColor: 'transparent',  // Make the background transparent
-  boxShadow: 'none',  // Remove any box shadow
+const StyledAppBar = styled(AppBar)(() => ({
+  backgroundColor: COLORS.prussianBlue.primary,
+  boxShadow: 'none',
 }));
 
 const ModalContent = styled(Box)(({ theme }) => ({
@@ -36,22 +65,23 @@ const ModalContent = styled(Box)(({ theme }) => ({
   maxWidth: 600,
   maxHeight: '80vh',
   overflowY: 'auto',
-  backgroundColor: theme.palette.background.paper,
+  backgroundColor: COLORS.prussianBlue.secondary,
+  color: COLORS.offWhite.primary,
   boxShadow: theme.shadows[24],
   padding: theme.spacing(4),
   borderRadius: theme.shape.borderRadius,
   outline: 0,
   [theme.breakpoints.up('sm')]: {
-    width: '60%',  // Better modal sizing on larger screens
+    width: '60%',
   },
 }));
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
+  backgroundColor: alpha(COLORS.offWhite.primary, 0.15),
   '&:hover': {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
+    backgroundColor: alpha(COLORS.offWhite.primary, 0.25),
   },
   marginRight: theme.spacing(2),
   marginLeft: 0,
@@ -70,18 +100,17 @@ const SearchIconWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
+  color: COLORS.offWhite.primary,
 }));
 
-const StyledInputBase = styled(TextField)(({ theme }) => ({
-  color: 'inherit',
+const StyledInputBase = styled(TextField)(() => ({
+  color: COLORS.offWhite.primary,
   '& .MuiInputBase-input': {
-    padding: theme.spacing(1, 1, 1, 0),
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create('width'),
+    color: COLORS.offWhite.primary,
+    padding: '8px 8px 8px 0',
+    paddingLeft: 'calc(1em + 32px)',
+    transition: 'width 0.3s',
     width: '100%',
-    [theme.breakpoints.up('md')]: {
-      width: '40ch',
-    },
   },
 }));
 
@@ -182,6 +211,7 @@ const Navbar = () => {
                         onClick={() => setSearchTerm("")}
                         edge="end"
                         size="small"
+                        sx={{ color: COLORS.offWhite.primary }}
                       >
                         <ClearIcon />
                       </IconButton>
@@ -190,7 +220,19 @@ const Navbar = () => {
                 }}
               />
             </Search>
-            <Button sx={{ backgroundColor: 'purple', color: 'white', '&:hover': { backgroundColor: 'darkviolet' } }} onClick={handleSearch}>Search</Button>
+            <Button
+              sx={{
+                backgroundColor: COLORS.gold.secondary,
+                color: COLORS.offWhite.primary,
+                ml: 2,
+                '&:hover': {
+                  backgroundColor: COLORS.gold.primary
+                }
+              }}
+              onClick={handleSearch}
+            >
+              Search
+            </Button>
           </Toolbar>
         </Container>
       </StyledAppBar>
@@ -198,10 +240,15 @@ const Navbar = () => {
       <Modal open={isModalOpen} onClose={handleCloseModal} aria-labelledby="search-modal">
         <ModalContent>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-            <Typography id="search-modal" variant="h5" component="h2">
+            <Typography
+              id="search-modal"
+              variant="h5"
+              component="h2"
+              sx={{ color: COLORS.offWhite.primary }}
+            >
               Search Results
             </Typography>
-            <IconButton onClick={handleCloseModal}>
+            <IconButton onClick={handleCloseModal} sx={{ color: COLORS.offWhite.primary }}>
               <CloseIcon />
             </IconButton>
           </Box>
@@ -212,12 +259,52 @@ const Navbar = () => {
               label="Difficulty"
               value={filters.difficulty}
               onChange={(e) => handleFilterChange('difficulty', e.target.value)}
-              sx={{ minWidth: 120 }}
+              sx={{
+                minWidth: 120,
+                '& .MuiInputLabel-root': { color: COLORS.blueGray.secondary },
+                '& .MuiSelect-icon': { color: COLORS.blueGray.secondary },
+                '& .MuiOutlinedInput-notchedOutline': {
+                  borderColor: COLORS.gold.tertiary
+                }
+              }}
+              InputProps={{
+                sx: {
+                  color: COLORS.offWhite.primary,
+                  '& .MuiSelect-icon': { color: COLORS.offWhite.primary }
+                }
+              }}
             >
-              <MenuItem value="">All</MenuItem>
-              <MenuItem value="easy">Easy</MenuItem>
-              <MenuItem value="medium">Medium</MenuItem>
-              <MenuItem value="hard">Hard</MenuItem>
+              <MenuItem value="" sx={{ backgroundColor: COLORS.prussianBlue.secondary, color: COLORS.offWhite.primary }}>All</MenuItem>
+              <MenuItem
+                value="easy"
+                sx={{
+                  backgroundColor: COLORS.prussianBlue.secondary,
+                  color: COLORS.offWhite.primary,
+                  '&:hover': { backgroundColor: COLORS.darkSlate.primary }
+                }}
+              >
+                Easy
+              </MenuItem>
+              <MenuItem
+                value="medium"
+                sx={{
+                  backgroundColor: COLORS.prussianBlue.secondary,
+                  color: COLORS.offWhite.primary,
+                  '&:hover': { backgroundColor: COLORS.darkSlate.primary }
+                }}
+              >
+                Medium
+              </MenuItem>
+              <MenuItem
+                value="hard"
+                sx={{
+                  backgroundColor: COLORS.prussianBlue.secondary,
+                  color: COLORS.offWhite.primary,
+                  '&:hover': { backgroundColor: COLORS.darkSlate.primary }
+                }}
+              >
+                Hard
+              </MenuItem>
             </TextField>
 
             <TextField
@@ -225,16 +312,50 @@ const Navbar = () => {
               label="Category"
               value={filters.category}
               onChange={(e) => handleFilterChange('category', e.target.value)}
-              sx={{ minWidth: 200 }}
+              sx={{
+                minWidth: 200,
+                '& .MuiInputLabel-root': { color: COLORS.blueGray.secondary },
+                '& .MuiSelect-icon': { color: COLORS.blueGray.secondary },
+                '& .MuiOutlinedInput-notchedOutline': {
+                  borderColor: COLORS.gold.tertiary
+                }
+              }}
+              InputProps={{
+                sx: { color: COLORS.offWhite.primary }
+              }}
             >
-              <MenuItem value="">All</MenuItem>
+              <MenuItem value="" sx={{ backgroundColor: COLORS.prussianBlue.secondary, color: COLORS.offWhite.primary }}>All</MenuItem>
               {categoriesLoading ? (
-                <MenuItem disabled>Loading categories...</MenuItem>
+                <MenuItem
+                  disabled
+                  sx={{
+                    backgroundColor: COLORS.prussianBlue.secondary,
+                    color: COLORS.blueGray.secondary
+                  }}
+                >
+                  Loading categories...
+                </MenuItem>
               ) : categoriesError ? (
-                <MenuItem disabled>Error loading categories</MenuItem>
+                <MenuItem
+                  disabled
+                  sx={{
+                    backgroundColor: COLORS.prussianBlue.secondary,
+                    color: COLORS.blueGray.secondary
+                  }}
+                >
+                  Error loading categories
+                </MenuItem>
               ) : (
                 categories.map((category) => (
-                  <MenuItem key={category} value={category}>
+                  <MenuItem
+                    key={category}
+                    value={category}
+                    sx={{
+                      backgroundColor: COLORS.prussianBlue.secondary,
+                      color: COLORS.offWhite.primary,
+                      '&:hover': { backgroundColor: COLORS.darkSlate.primary }
+                    }}
+                  >
                     {category.replace(/_/g, ' ')}
                   </MenuItem>
                 ))
@@ -247,30 +368,64 @@ const Navbar = () => {
                 label="Subcategory"
                 value={filters.subcategory}
                 onChange={(e) => handleFilterChange('subcategory', e.target.value)}
-                sx={{ minWidth: 200 }}
+                sx={{
+                  minWidth: 200,
+                  '& .MuiInputLabel-root': { color: COLORS.blueGray.secondary },
+                  '& .MuiSelect-icon': { color: COLORS.blueGray.secondary },
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: COLORS.gold.tertiary
+                  }
+                }}
+                InputProps={{
+                  sx: { color: COLORS.offWhite.primary }
+                }}
               >
-                <MenuItem value="">All</MenuItem>
+                <MenuItem value="" sx={{ backgroundColor: COLORS.prussianBlue.secondary, color: COLORS.offWhite.primary }}>All</MenuItem>
                 {subcategories.length > 0 ? (
                   subcategories.map((subcategory) => (
-                    <MenuItem key={subcategory} value={subcategory}>
+                    <MenuItem
+                      key={subcategory}
+                      value={subcategory}
+                      sx={{
+                        backgroundColor: COLORS.prussianBlue.secondary,
+                        color: COLORS.offWhite.primary,
+                        '&:hover': { backgroundColor: COLORS.darkSlate.primary }
+                      }}
+                    >
                       {subcategory.replace(/_/g, ' ')}
                     </MenuItem>
                   ))
                 ) : (
-                  <MenuItem disabled>No subcategories available</MenuItem>
+                  <MenuItem
+                    disabled
+                    sx={{
+                      backgroundColor: COLORS.prussianBlue.secondary,
+                      color: COLORS.blueGray.secondary
+                    }}
+                  >
+                    No subcategories available
+                  </MenuItem>
                 )}
               </TextField>
             )}
           </Box>
 
           {loading ? (
-            <CircularProgress />
+            <CircularProgress sx={{ color: COLORS.gold.primary }} />
           ) : error ? (
             <Typography color="error">{error}</Typography>
           ) : (
             <Box>
               {searchResults.map((result) => (
-                <Chip key={result.id} label={result.question} sx={{ margin: 1 }} />
+                <Chip
+                  key={result.id}
+                  label={result.question}
+                  sx={{
+                    margin: 1,
+                    backgroundColor: COLORS.gold.tertiary,
+                    color: COLORS.offWhite.primary
+                  }}
+                />
               ))}
             </Box>
           )}

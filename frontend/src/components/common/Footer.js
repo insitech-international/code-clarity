@@ -1,7 +1,36 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Box, Typography, Button, IconButton, Stack } from "@mui/material";
-import { ArrowUpward } from "@mui/icons-material"; // Arrow icon for back-to-top functionality
+import { ArrowUpward } from "@mui/icons-material";
+
+// Refined Corporate Color Palette
+const COLORS = {
+  prussianBlue: {
+    primary: '#003153',
+    secondary: '#034975',
+    tertiary: '#005582'
+  },
+  blueGray: {
+    primary: '#6E7F80',
+    secondary: '#8A9A9B',
+    tertiary: '#A4B4B6'
+  },
+  gold: {
+    primary: '#CD9575',
+    secondary: '#D8A791',
+    tertiary: '#E3B9A7'
+  },
+  offWhite: {
+    primary: '#F5F5F5',
+    secondary: '#FAFAFA',
+    tertiary: '#FFFFFF'
+  },
+  darkSlate: {
+    primary: '#2F4F4F',
+    secondary: '#3A5A5A',
+    tertiary: '#456666'
+  }
+};
 
 // Styling for the Footer
 const Footer = () => {
@@ -16,16 +45,24 @@ const Footer = () => {
   return (
     <Box
       sx={{
-        background: "linear-gradient(to right, #5e4b8b, #3a5a99, #8a2be2)", // Gradient from purple to blue to violet
-        color: "#f3f3f3", // Light color for text to create contrast
-        padding: "3rem 0", // Increased padding for a more spacious design
+        background: `linear-gradient(to right,
+          ${COLORS.gold.primary},
+          ${COLORS.prussianBlue.primary} 25%,
+          ${COLORS.prussianBlue.primary} 75%,
+          ${COLORS.gold.primary})`,
+        color: COLORS.offWhite.primary,
+        padding: "3rem 0",
         width: "100%",
-        marginTop: "auto",
+        marginTop: "auto", // Push footer to bottom
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        justifyContent: "center", // Centering content vertically and horizontally
+        justifyContent: "center",
         textAlign: "center",
+        // Ensure footer stays at bottom
+        position: "relative",
+        bottom: 0,
+        left: 0,
       }}
     >
       <Box sx={{ maxWidth: 1200, width: "100%" }}>
@@ -35,70 +72,28 @@ const Footer = () => {
           spacing={3}
           sx={{
             marginBottom: 3,
-            justifyContent: "center", // Centers items horizontally
-            alignItems: "center", // Centers items vertically
+            justifyContent: "center",
+            alignItems: "center",
           }}
         >
-          <Button
-            component={Link}
-            to="/privacy"
-            sx={{
-              color: "#fff", // White text
-              backgroundColor: "#5e4b8b", // Purple background
-              "&:hover": {
-                backgroundColor: "#3a5a99", // Blue on hover
-              },
-              padding: "0.75rem 1.5rem", // Enhanced padding for buttons
-              borderRadius: "20px", // Rounded corners for buttons
-            }}
-          >
-            Privacy Policy
-          </Button>
-          <Button
-            component={Link}
-            to="/terms"
-            sx={{
-              color: "#fff",
-              backgroundColor: "#5e4b8b",
-              "&:hover": {
-                backgroundColor: "#3a5a99",
-              },
-              padding: "0.75rem 1.5rem",
-              borderRadius: "20px",
-            }}
-          >
-            Terms of Service
-          </Button>
-          <Button
-            component={Link}
-            to="/contact"
-            sx={{
-              color: "#fff",
-              backgroundColor: "#5e4b8b",
-              "&:hover": {
-                backgroundColor: "#3a5a99",
-              },
-              padding: "0.75rem 1.5rem",
-              borderRadius: "20px",
-            }}
-          >
-            Contact Us
-          </Button>
-          <Button
-            component={Link}
-            to="/about"
-            sx={{
-              color: "#fff",
-              backgroundColor: "#5e4b8b",
-              "&:hover": {
-                backgroundColor: "#3a5a99",
-              },
-              padding: "0.75rem 1.5rem",
-              borderRadius: "20px",
-            }}
-          >
-            About Us
-          </Button>
+          {["Privacy", "Terms", "Contact", "About"].map((item) => (
+            <Button
+              key={item}
+              component={Link}
+              to={`/${item.toLowerCase().replace(/\s+/g, '')}`}
+              sx={{
+                color: COLORS.offWhite.primary,
+                backgroundColor: COLORS.prussianBlue.secondary,
+                "&:hover": {
+                  backgroundColor: COLORS.prussianBlue.tertiary,
+                },
+                padding: "0.75rem 1.5rem",
+                borderRadius: "20px",
+              }}
+            >
+              {`${item} ${item === "About" ? "Us" : item === "Contact" ? "Us" : "Policy"}`}
+            </Button>
+          ))}
         </Stack>
 
         {/* Social Media Links */}
@@ -107,76 +102,38 @@ const Footer = () => {
           spacing={3}
           sx={{
             marginBottom: 3,
-            justifyContent: "center", // Centers items horizontally
-            alignItems: "center", // Centers items vertically
+            justifyContent: "center",
+            alignItems: "center",
           }}
         >
-          <Button
-            href="https://twitter.com/"
-            target="_blank"
-            sx={{
-              color: "#5e4b8b", // Purple text
-              backgroundColor: "#fff", // White background
-              "&:hover": {
-                backgroundColor: "#d0a0e3", // Soft purple on hover
-              },
-              padding: "0.75rem 1.5rem",
-              borderRadius: "20px",
-            }}
-          >
-            Twitter
-          </Button>
-          <Button
-            href="https://facebook.com/"
-            target="_blank"
-            sx={{
-              color: "#5e4b8b",
-              backgroundColor: "#fff",
-              "&:hover": {
-                backgroundColor: "#d0a0e3",
-              },
-              padding: "0.75rem 1.5rem",
-              borderRadius: "20px",
-            }}
-          >
-            Facebook
-          </Button>
-          <Button
-            href="https://instagram.com/"
-            target="_blank"
-            sx={{
-              color: "#5e4b8b",
-              backgroundColor: "#fff",
-              "&:hover": {
-                backgroundColor: "#d0a0e3",
-              },
-              padding: "0.75rem 1.5rem",
-              borderRadius: "20px",
-            }}
-          >
-            Instagram
-          </Button>
-          <Button
-            href="https://www.linkedin.com/company/104499086/admin/dashboard/"
-            target="_blank"
-            sx={{
-              color: "#5e4b8b",
-              backgroundColor: "#fff",
-              "&:hover": {
-                backgroundColor: "#d0a0e3",
-              },
-              padding: "0.75rem 1.5rem",
-              borderRadius: "20px",
-            }}
-          >
-            LinkedIn
-          </Button>
+          {["Twitter", "Facebook", "Instagram", "LinkedIn"].map((platform) => (
+            <Button
+              key={platform}
+              href={`https://${platform.toLowerCase()}.com/`}
+              target="_blank"
+              sx={{
+                color: COLORS.prussianBlue.primary,
+                backgroundColor: COLORS.offWhite.primary,
+                "&:hover": {
+                  backgroundColor: COLORS.gold.tertiary,
+                  color: COLORS.prussianBlue.primary
+                },
+                padding: "0.75rem 1.5rem",
+                borderRadius: "20px",
+              }}
+            >
+              {platform}
+            </Button>
+          ))}
         </Stack>
 
         {/* Parent Company */}
         <Typography
           variant="body2"
-          sx={{ color: "#e4e4e4", fontSize: "0.9rem" }}
+          sx={{
+            color: COLORS.blueGray.secondary,
+            fontSize: "0.9rem"
+          }}
         >
           © 2024 InsiTech International. All rights reserved.
         </Typography>
@@ -189,14 +146,16 @@ const Footer = () => {
           position: "fixed",
           bottom: 30,
           right: 30,
-          backgroundColor: "#f3f3f3", // Light background for contrast with dark purple
-          color: "#5e4b8b", // Violet color for the icon
+          backgroundColor: COLORS.offWhite.primary,
+          color: COLORS.prussianBlue.primary,
           "&:hover": {
-            backgroundColor: "#d0a0e3", // Soft purple on hover
+            backgroundColor: COLORS.gold.tertiary,
+            color: COLORS.prussianBlue.primary
           },
           borderRadius: "50%",
           padding: "1rem",
           boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
+          zIndex: 1000, // Ensure it's above other elements
         }}
       >
         <ArrowUpward />

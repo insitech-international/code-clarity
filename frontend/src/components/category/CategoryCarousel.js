@@ -2,15 +2,44 @@ import React from "react";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Link } from "react-router-dom";
-import { FaArrowLeft, FaArrowRight } from "react-icons/fa"; // Import icons
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
+
+// Refined Corporate Color Palette
+const COLORS = {
+  prussianBlue: {
+    primary: '#003153',
+    secondary: '#034975',
+    tertiary: '#005582'
+  },
+  blueGray: {
+    primary: '#6E7F80',
+    secondary: '#8A9A9B',
+    tertiary: '#A4B4B6'
+  },
+  gold: {
+    primary: '#CD9575',
+    secondary: '#D8A791',
+    tertiary: '#E3B9A7'
+  },
+  offWhite: {
+    primary: '#F5F5F5',
+    secondary: '#FAFAFA',
+    tertiary: '#FFFFFF'
+  },
+  darkSlate: {
+    primary: '#2F4F4F',
+    secondary: '#3A5A5A',
+    tertiary: '#456666'
+  }
+};
 
 const CarouselWrapper = ({ children }) => {
   const dotColors = [
-    "bg-blue-500",
-    "bg-green-500",
-    "bg-red-500",
-    "bg-yellow-500",
-    "bg-purple-500",
+    COLORS.gold.primary,
+    COLORS.gold.secondary,
+    COLORS.gold.tertiary,
+    COLORS.blueGray.primary,
+    COLORS.blueGray.secondary,
   ];
 
   return (
@@ -29,7 +58,10 @@ const CarouselWrapper = ({ children }) => {
             <button
               type="button"
               onClick={onClickHandler}
-              className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 p-2 bg-blue-500 rounded-full text-white hover:bg-blue-600"
+              className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 p-2 rounded-full text-white hover:opacity-80"
+              style={{
+                backgroundColor: COLORS.prussianBlue.secondary,
+              }}
             >
               <FaArrowLeft size={20} />
             </button>
@@ -40,7 +72,10 @@ const CarouselWrapper = ({ children }) => {
             <button
               type="button"
               onClick={onClickHandler}
-              className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 p-2 bg-blue-500 rounded-full text-white hover:bg-blue-600"
+              className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 p-2 rounded-full text-white hover:opacity-80"
+              style={{
+                backgroundColor: COLORS.prussianBlue.secondary,
+              }}
             >
               <FaArrowRight size={20} />
             </button>
@@ -50,9 +85,10 @@ const CarouselWrapper = ({ children }) => {
           const colorClass = dotColors[index % dotColors.length];
           return (
             <li
-              className={`inline-block mx-1 w-3 h-3 rounded-full cursor-pointer ${colorClass} ${
+              className={`inline-block mx-1 w-3 h-3 rounded-full cursor-pointer ${
                 isSelected ? "opacity-100" : "opacity-50"
               }`}
+              style={{ backgroundColor: colorClass }}
               onClick={onClickHandler}
               onKeyDown={onClickHandler}
               value={index}
@@ -75,7 +111,11 @@ const CategoryCard = ({ reverse, children }) => (
   <div
     className={`flex ${
       reverse ? "flex-row-reverse" : "flex-row"
-    } bg-white rounded-lg p-8 h-[400px] items-center justify-center transition-transform duration-300 ease-in-out hover:scale-102 shadow-lg`}
+    } rounded-lg p-8 h-[400px] items-center justify-center transition-transform duration-300 ease-in-out hover:scale-102 shadow-lg`}
+    style={{
+      backgroundColor: COLORS.offWhite.primary,
+      boxShadow: `0 4px 6px rgba(0,49,83,0.1)`
+    }}
   >
     {children}
   </div>
@@ -83,15 +123,54 @@ const CategoryCard = ({ reverse, children }) => (
 
 const MindMapImage = ({ category }) => (
   <div
-    className="w-full h-full max-w-[50%] max-h-[95%] rounded-lg bg-slate-700 flex items-center justify-center p-4"
+    className="w-full h-full max-w-[50%] max-h-[95%] rounded-lg flex items-center justify-center p-4"
     style={{
-      background: "linear-gradient(45deg, #1a365d 0%, #2d3748 100%)",
+      background: `linear-gradient(45deg, ${COLORS.prussianBlue.primary} 0%, ${COLORS.prussianBlue.secondary} 100%)`,
     }}
   >
     <h3 className="text-white font-bold text-xl text-center break-words p-4">
       {category.replace(/_/g, " ")}
     </h3>
   </div>
+);
+
+const CategoryContent = ({ children }) => (
+  <div className="w-3/5 p-4 px-8 flex flex-col justify-center items-center text-center">
+    {children}
+  </div>
+);
+
+const CategoryName = ({ children }) => (
+  <h3
+    className="text-3xl font-semibold mb-4"
+    style={{ color: COLORS.gold.primary }}
+  >
+    {children}
+  </h3>
+);
+
+const CategoryDescription = ({ children }) => (
+  <p
+    className="text-lg mb-6 leading-relaxed"
+    style={{ color: COLORS.darkSlate.secondary }}
+  >
+    {children}
+  </p>
+);
+
+const CTAButton = ({ to, children }) => (
+  <Link
+    to={to}
+    className="text-white py-3 px-6 rounded-md font-semibold transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md self-center"
+    style={{
+      backgroundColor: COLORS.gold.secondary,
+      '&:hover': {
+        backgroundColor: COLORS.gold.primary
+      }
+    }}
+  >
+    {children}
+  </Link>
 );
 
 const CategoryCarousel = () => {
@@ -118,29 +197,6 @@ const CategoryCarousel = () => {
     </CarouselWrapper>
   );
 };
-
-const CategoryContent = ({ children }) => (
-  <div className="w-3/5 p-4 px-8 flex flex-col justify-center items-center text-center">
-    {children}
-  </div>
-);
-
-const CategoryName = ({ children }) => (
-  <h3 className="text-3xl font-semibold mb-4 text-slate-800">{children}</h3>
-);
-
-const CategoryDescription = ({ children }) => (
-  <p className="text-lg text-slate-700 mb-6 leading-relaxed">{children}</p>
-);
-
-const CTAButton = ({ to, children }) => (
-  <Link
-    to={to}
-    className="bg-blue-500 text-white py-3 px-6 rounded-md font-semibold transition-all duration-300 hover:bg-blue-600 hover:-translate-y-0.5 hover:shadow-md self-center"
-  >
-    {children}
-  </Link>
-);
 
 const categories = [
   {

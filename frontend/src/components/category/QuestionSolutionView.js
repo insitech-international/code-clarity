@@ -23,6 +23,35 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import MarkdownRenderer from "../common/MarkdownRenderer";
 
+// Refined Corporate Color Palette
+const COLORS = {
+  prussianBlue: {
+    primary: '#003153',
+    secondary: '#034975',
+    tertiary: '#005582'
+  },
+  blueGray: {
+    primary: '#6E7F80',
+    secondary: '#8A9A9B',
+    tertiary: '#A4B4B6'
+  },
+  gold: {
+    primary: '#CD9575',
+    secondary: '#D8A791',
+    tertiary: '#E3B9A7'
+  },
+  offWhite: {
+    primary: '#F5F5F5',
+    secondary: '#FAFAFA',
+    tertiary: '#FFFFFF'
+  },
+  darkSlate: {
+    primary: '#2F4F4F',
+    secondary: '#3A5A5A',
+    tertiary: '#456666'
+  }
+};
+
 const CombinedQuestionSolutionView = ({ question, solution }) => {
   const [tabValue, setTabValue] = useState(0);
   const theme = useTheme();
@@ -38,7 +67,12 @@ const CombinedQuestionSolutionView = ({ question, solution }) => {
         {question ? (
           <QuestionCard question={question} />
         ) : (
-          <Typography variant="h6">No question data available</Typography>
+          <Typography
+            variant="h6"
+            sx={{ color: COLORS.offWhite.secondary }}
+          >
+            No question data available
+          </Typography>
         )}
       </Grid>
       <Grid item xs={12} lg={6}>
@@ -50,133 +84,182 @@ const CombinedQuestionSolutionView = ({ question, solution }) => {
             isSmallScreen={isSmallScreen}
           />
         ) : (
-          <Typography variant="h6">No solution data available</Typography>
+          <Typography
+            variant="h6"
+            sx={{ color: COLORS.offWhite.secondary }}
+          >
+            No solution data available
+          </Typography>
         )}
       </Grid>
     </Grid>
   );
 };
 
-const QuestionCard = ({ question }) => (
-  <Card
-    elevation={2}
-    sx={{
-      height: "100%",
-      display: "flex",
-      flexDirection: "column",
-      borderRadius: "12px",
-      p: 2,
-      transition: "0.3s",
-      "&:hover": {
-        boxShadow: 4,
-        transform: "translateY(-3px)",
-      },
-      backgroundColor: "background.paper",
-    }}
-  >
-    <CardContent sx={{ flexGrow: 1 }}>
-      <Box display="flex" flexDirection="column" alignItems="center" mb={2}>
-        <Typography
-          variant="h5"
-          align="center"
-          sx={{ color: "primary.main", fontWeight: "500", mb: 1 }}
-        >
-          {question.title}
-        </Typography>
-        <Box display="flex" alignItems="center" gap={1}>
-          <Chip
-            label={`ID: ${question.question_id}`}
-            color="primary"
-            size="small"
-            sx={{ borderRadius: "8px" }}
-          />
-          <Chip
-            label={question.difficulty}
-            color={
-              question.difficulty === "Hard"
-                ? "error"
-                : question.difficulty === "Medium"
-                ? "warning"
-                : "success"
-            }
-            size="small"
-            sx={{ borderRadius: "8px" }}
-          />
-        </Box>
-        <Typography
-          variant="body2"
-          align="center"
-          color="text.secondary"
-          mt={1}
-        >
-          {question.category} - {question.subcategory}
-        </Typography>
-      </Box>
+const QuestionCard = ({ question }) => {
+  const getDifficultyColor = () => {
+    switch(question.difficulty) {
+      case 'Hard': return COLORS.gold.primary;
+      case 'Medium': return COLORS.gold.secondary;
+      case 'Easy': return COLORS.gold.tertiary;
+      default: return COLORS.blueGray.secondary;
+    }
+  };
 
-      <Divider sx={{ my: 2, borderColor: "divider" }} />
-
-      <Section title="Similar Questions">
-        <Box display="flex" gap={1} flexWrap="wrap">
-          {question.similar_questions?.map((q, index) => (
-            <Chip key={index} label={q} variant="outlined" size="small" />
-          )) || (
-            <Typography variant="body2" color="text.secondary">
-              No similar questions available
-            </Typography>
-          )}
-        </Box>
-      </Section>
-
-      <Section title="Real-life Domains">
-        <Box display="flex" gap={1} flexWrap="wrap">
-          {question.real_life_domains?.map((domain, index) => (
-            <Chip key={index} label={domain} variant="outlined" size="small" />
-          )) || (
-            <Typography variant="body2" color="text.secondary">
-              No real-life domains specified
-            </Typography>
-          )}
-        </Box>
-      </Section>
-
-      <AccordionSection title="Problem Versions">
-        {question.problem_versions?.map((version, index) => (
-          <Box key={index} mb={2}>
-            <MarkdownRenderer content={version} />
-          </Box>
-        )) || (
-          <Typography variant="body2" color="text.secondary">
-            No problem versions available
+  return (
+    <Card
+      elevation={2}
+      sx={{
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        borderRadius: "12px",
+        p: 2,
+        transition: "0.3s",
+        "&:hover": {
+          boxShadow: 4,
+          transform: "translateY(-3px)",
+        },
+        backgroundColor: COLORS.prussianBlue.secondary,
+        color: COLORS.offWhite.primary,
+      }}
+    >
+      <CardContent sx={{ flexGrow: 1 }}>
+        <Box display="flex" flexDirection="column" alignItems="center" mb={2}>
+          <Typography
+            variant="h5"
+            align="center"
+            sx={{ color: COLORS.gold.primary, fontWeight: "500", mb: 1 }}
+          >
+            {question.title}
           </Typography>
-        )}
-      </AccordionSection>
+          <Box display="flex" alignItems="center" gap={1}>
+            <Chip
+              label={`ID: ${question.question_id}`}
+              sx={{
+                backgroundColor: COLORS.blueGray.tertiary,
+                color: COLORS.prussianBlue.primary,
+                borderRadius: "8px"
+              }}
+              size="small"
+            />
+            <Chip
+              label={question.difficulty}
+              sx={{
+                backgroundColor: getDifficultyColor(),
+                color: COLORS.offWhite.primary,
+                borderRadius: "8px"
+              }}
+              size="small"
+            />
+          </Box>
+          <Typography
+            variant="body2"
+            align="center"
+            sx={{ color: COLORS.blueGray.secondary, mt: 1 }}
+          >
+            {question.category} - {question.subcategory}
+          </Typography>
+        </Box>
 
-      <AccordionSection title="Constraints">
-        <MarkdownRenderer
-          content={
-            question.constraints?.join("\n") || (
-              <Typography variant="body2" color="text.secondary">
-                No constraints specified
-              </Typography>
-            )
-          }
-        />
-      </AccordionSection>
+        <Divider sx={{ my: 2, borderColor: COLORS.blueGray.tertiary }} />
 
-      <AccordionSection title="Notes">
-        <MarkdownRenderer
-          content={
-            question.notes?.join("\n") || (
-              <Typography variant="body2" color="text.secondary">
-                No notes available
+        <Section title="Similar Questions">
+          <Box display="flex" gap={1} flexWrap="wrap">
+            {question.similar_questions?.map((q, index) => (
+              <Chip
+                key={index}
+                label={q}
+                variant="outlined"
+                size="small"
+                sx={{
+                  borderColor: COLORS.gold.tertiary,
+                  color: COLORS.blueGray.secondary
+                }}
+              />
+            )) || (
+              <Typography
+                variant="body2"
+                sx={{ color: COLORS.blueGray.secondary }}
+              >
+                No similar questions available
               </Typography>
-            )
-          }
-        />
-      </AccordionSection>
-    </CardContent>
-  </Card>
-);
+            )}
+          </Box>
+        </Section>
+
+        <Section title="Real-life Domains">
+          <Box display="flex" gap={1} flexWrap="wrap">
+            {question.real_life_domains?.map((domain, index) => (
+              <Chip
+                key={index}
+                label={domain}
+                variant="outlined"
+                size="small"
+                sx={{
+                  borderColor: COLORS.gold.tertiary,
+                  color: COLORS.blueGray.secondary
+                }}
+              />
+            )) || (
+              <Typography
+                variant="body2"
+                sx={{ color: COLORS.blueGray.secondary }}
+              >
+                No real-life domains specified
+              </Typography>
+            )}
+          </Box>
+        </Section>
+
+        <AccordionSection title="Problem Versions">
+          {question.problem_versions?.map((version, index) => (
+            <Box key={index} mb={2}>
+              <MarkdownRenderer content={version} />
+            </Box>
+          )) || (
+            <Typography
+              variant="body2"
+              sx={{ color: COLORS.blueGray.secondary }}
+            >
+              No problem versions available
+            </Typography>
+          )}
+        </AccordionSection>
+
+        <AccordionSection title="Constraints">
+          <MarkdownRenderer
+            content={
+              question.constraints?.join("\n") || (
+                <Typography
+                  variant="body2"
+                  sx={{ color: COLORS.blueGray.secondary }}
+                >
+                  No constraints specified
+                </Typography>
+              )
+            }
+          />
+        </AccordionSection>
+
+        <AccordionSection title="Notes">
+          <MarkdownRenderer
+            content={
+              question.notes?.join("\n") || (
+                <Typography
+                  variant="body2"
+                  sx={{ color: COLORS.blueGray.secondary }}
+                >
+                  No notes available
+                </Typography>
+              )
+            }
+          />
+        </AccordionSection>
+      </CardContent>
+    </Card>
+  );
+};
 
 const SolutionCard = ({
   solution,
@@ -269,7 +352,11 @@ const SolutionCard = ({
   };
 
   if (tabContent.length === 0) {
-    return <Typography>No solution content available</Typography>;
+    return (
+      <Typography sx={{ color: COLORS.offWhite.secondary }}>
+        No solution content available
+      </Typography>
+    );
   }
 
   return (
@@ -286,7 +373,8 @@ const SolutionCard = ({
           boxShadow: 4,
           transform: "translateY(-3px)",
         },
-        backgroundColor: "background.paper",
+        backgroundColor: COLORS.prussianBlue.secondary,
+        color: COLORS.offWhite.primary,
       }}
     >
       <CardContent
@@ -295,7 +383,10 @@ const SolutionCard = ({
         <Typography
           variant="h5"
           gutterBottom
-          sx={{ color: "secondary.main", fontWeight: "500" }}
+          sx={{
+            color: COLORS.gold.primary,
+            fontWeight: "500"
+          }}
         >
           Solution
         </Typography>
@@ -305,7 +396,12 @@ const SolutionCard = ({
           {showLeftArrow && (
             <IconButton
               onClick={() => handleScroll("left")}
-              sx={{ position: "absolute", left: 0, zIndex: 1 }}
+              sx={{
+                position: "absolute",
+                left: 0,
+                zIndex: 1,
+                color: COLORS.gold.primary
+              }}
             >
               <ArrowBackIosNewIcon />
             </IconButton>
@@ -336,13 +432,14 @@ const SolutionCard = ({
                     minWidth: "auto",
                     padding: "6px 12px",
                     borderRadius: "8px",
+                    color: COLORS.blueGray.secondary,
                     transition: "background-color 0.3s",
                     "&:hover": {
-                      backgroundColor: "rgba(0, 0, 0, 0.04)",
+                      backgroundColor: COLORS.darkSlate.tertiary,
                     },
                     "&.Mui-selected": {
-                      backgroundColor: "rgba(0, 0, 0, 0.08)",
-                      color: "secondary.main",
+                      backgroundColor: COLORS.gold.tertiary,
+                      color: COLORS.prussianBlue.primary,
                     },
                   }}
                 />
@@ -352,7 +449,12 @@ const SolutionCard = ({
           {showRightArrow && (
             <IconButton
               onClick={() => handleScroll("right")}
-              sx={{ position: "absolute", right: 0, zIndex: 1 }}
+              sx={{
+                position: "absolute",
+                right: 0,
+                zIndex: 1,
+                color: COLORS.gold.primary
+              }}
             >
               <ArrowForwardIosIcon />
             </IconButton>
@@ -368,18 +470,35 @@ const SolutionCard = ({
 
 const Section = ({ title, children }) => (
   <Box mb={3}>
-    <Typography variant="h6" gutterBottom sx={{ color: "primary.main" }}>
+    <Typography
+      variant="h6"
+      gutterBottom
+      sx={{ color: COLORS.gold.secondary }}
+    >
       {title}
     </Typography>
     {children}
-    <Divider sx={{ mt: 2 }} />
+    <Divider sx={{
+      mt: 2,
+      backgroundColor: COLORS.blueGray.tertiary
+    }} />
   </Box>
 );
 
 const AccordionSection = ({ title, children }) => (
-  <Accordion>
-    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-      <Typography variant="h6" sx={{ color: "primary.dark" }}>
+  <Accordion
+    sx={{
+      backgroundColor: COLORS.prussianBlue.tertiary,
+      color: COLORS.offWhite.primary
+    }}
+  >
+    <AccordionSummary
+      expandIcon={<ExpandMoreIcon sx={{ color: COLORS.gold.primary }} />}
+    >
+      <Typography
+        variant="h6"
+        sx={{ color: COLORS.gold.secondary }}
+      >
         {title}
       </Typography>
     </AccordionSummary>

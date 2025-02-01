@@ -18,15 +18,44 @@ import {
   Error,
   PriorityHigh,
   CheckCircle,
-} from "@mui/icons-material"; // Replace with Material Icons or your preferred icons
+} from "@mui/icons-material";
+
+// Refined Corporate Color Palette
+const COLORS = {
+  prussianBlue: {
+    primary: '#003153',
+    secondary: '#034975',
+    tertiary: '#005582'
+  },
+  blueGray: {
+    primary: '#6E7F80',
+    secondary: '#8A9A9B',
+    tertiary: '#A4B4B6'
+  },
+  gold: {
+    primary: '#CD9575',
+    secondary: '#D8A791',
+    tertiary: '#E3B9A7'
+  },
+  offWhite: {
+    primary: '#F5F5F5',
+    secondary: '#FAFAFA',
+    tertiary: '#FFFFFF'
+  },
+  darkSlate: {
+    primary: '#2F4F4F',
+    secondary: '#3A5A5A',
+    tertiary: '#456666'
+  }
+};
 
 const headingColors = [
-  "#1E88E5",
-  "#43A047",
-  "#FB8C00",
-  "#8E24AA",
-  "#D81B60",
-  "#3949AB",
+  COLORS.gold.primary,
+  COLORS.gold.secondary,
+  COLORS.gold.tertiary,
+  COLORS.blueGray.primary,
+  COLORS.blueGray.secondary,
+  COLORS.prussianBlue.secondary
 ];
 
 const CategoryQuestionList = ({
@@ -42,6 +71,15 @@ const CategoryQuestionList = ({
   const getHeadingColor = (index) =>
     headingColors[index % headingColors.length];
 
+  const getDifficultyColor = (difficulty) => {
+    switch(difficulty) {
+      case 'Hard': return COLORS.gold.primary;
+      case 'Medium': return COLORS.gold.secondary;
+      case 'Easy': return COLORS.gold.tertiary;
+      default: return COLORS.blueGray.secondary;
+    }
+  };
+
   const renderQuestion = (question) => (
     <Grid
       item
@@ -53,10 +91,12 @@ const CategoryQuestionList = ({
       <Card
         sx={{
           mb: 3,
+          backgroundColor: COLORS.prussianBlue.secondary,
+          color: COLORS.offWhite.primary,
           transition: "transform 0.3s, box-shadow 0.3s",
           "&:hover": {
             transform: "scale(1.03)",
-            boxShadow: "0 8px 16px rgba(0, 0, 0, 0.2)",
+            boxShadow: `0 8px 16px ${COLORS.prussianBlue.primary}`,
           },
         }}
       >
@@ -65,9 +105,9 @@ const CategoryQuestionList = ({
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
-            alignItems: "center", // Center content
-            textAlign: "center", // Ensure text is centered
-            paddingBottom: 2, // Add bottom padding for spacing
+            alignItems: "center",
+            textAlign: "center",
+            paddingBottom: 2,
           }}
         >
           <Typography
@@ -77,10 +117,14 @@ const CategoryQuestionList = ({
               display: "flex",
               alignItems: "center",
               gap: 1,
-              mb: 2, // Add margin-bottom to separate from other elements
+              mb: 2,
+              color: COLORS.gold.secondary
             }}
           >
-            <Visibility fontSize="small" sx={{ color: "primary.main" }} />
+            <Visibility
+              fontSize="small"
+              sx={{ color: COLORS.gold.primary }}
+            />
             {question.title || question.content.split("\n")[0]}
           </Typography>
           <Box
@@ -103,13 +147,10 @@ const CategoryQuestionList = ({
                   <CheckCircle />
                 )
               }
-              color={
-                question.difficulty === "Hard"
-                  ? "error"
-                  : question.difficulty === "Medium"
-                  ? "warning"
-                  : "success"
-              }
+              sx={{
+                backgroundColor: getDifficultyColor(question.difficulty),
+                color: COLORS.offWhite.primary
+              }}
             />
             {question.tags &&
               question.tags.map((tag, index) => (
@@ -118,6 +159,10 @@ const CategoryQuestionList = ({
                   label={tag}
                   size="small"
                   icon={<Tag fontSize="small" />}
+                  sx={{
+                    backgroundColor: COLORS.blueGray.tertiary,
+                    color: COLORS.prussianBlue.primary
+                  }}
                 />
               ))}
           </Box>
@@ -129,10 +174,10 @@ const CategoryQuestionList = ({
             variant="contained"
             size="small"
             sx={{
-              backgroundColor: "primary.main",
-              color: "white",
+              backgroundColor: COLORS.gold.secondary,
+              color: COLORS.offWhite.primary,
               "&:hover": {
-                backgroundColor: "primary.dark",
+                backgroundColor: COLORS.gold.primary,
               },
             }}
           >
@@ -144,11 +189,18 @@ const CategoryQuestionList = ({
   );
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{
+      p: 3,
+      backgroundColor: COLORS.prussianBlue.primary,
+      minHeight: '100vh'
+    }}>
       <Typography
         variant="h4"
         gutterBottom
-        sx={{ fontWeight: "bold", color: "primary.main" }}
+        sx={{
+          fontWeight: "bold",
+          color: COLORS.gold.primary
+        }}
       >
         {category
           ? `${category.replace(/_/g, " ")} Questions (${totalCount})`
@@ -160,20 +212,25 @@ const CategoryQuestionList = ({
           <Paper
             key={subcategory}
             elevation={3}
-            sx={{ mb: 4, overflow: "hidden", borderRadius: 2 }}
+            sx={{
+              mb: 4,
+              overflow: "hidden",
+              borderRadius: 2,
+              backgroundColor: COLORS.prussianBlue.secondary
+            }}
           >
             <Box
               sx={{
                 background: `linear-gradient(90deg, ${getHeadingColor(
                   index
-                )} 30%, rgba(255, 255, 255, 0) 100%)`,
+                )} 30%, rgba(0,0,0,0) 100%)`,
                 p: 2,
               }}
             >
               <Typography
                 variant="h5"
                 sx={{
-                  color: "white",
+                  color: COLORS.offWhite.primary,
                   fontWeight: "medium",
                 }}
               >

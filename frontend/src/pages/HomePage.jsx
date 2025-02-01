@@ -19,6 +19,35 @@ import FeaturedQuestions from "../components/common/FeaturedQuestions";
 import { useQuestionData, useCategories } from "../hooks/useQuestionData";
 import BucesrCarousel from "../components/common/BucesrCarousel";
 
+// Refined Corporate Color Palette
+const COLORS = {
+  prussianBlue: {
+    primary: '#003153',
+    secondary: '#034975',
+    tertiary: '#005582'
+  },
+  blueGray: {
+    primary: '#6E7F80',
+    secondary: '#8A9A9B',
+    tertiary: '#A4B4B6'
+  },
+  gold: {
+    primary: '#CD9575',
+    secondary: '#D8A791',
+    tertiary: '#E3B9A7'
+  },
+  offWhite: {
+    primary: '#F5F5F5',
+    secondary: '#FAFAFA',
+    tertiary: '#FFFFFF'
+  },
+  darkSlate: {
+    primary: '#2F4F4F',
+    secondary: '#3A5A5A',
+    tertiary: '#456666'
+  }
+};
+
 const HomePage = () => {
   const [featuredQuestions, setFeaturedQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -28,13 +57,13 @@ const HomePage = () => {
   const theme = useTheme();
 
   const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
-  
+
   const phrases = [
-    { text: "Pythonic Implementation", color: "#FF9800" },
-    { text: "Mathematical Abstraction", color: "#00BCD4" },
-    { text: "Real-World Analogies", color: "#FFEB3B" },
-    { text: "Storytelling Approach", color: "#8BC34A" },
-    { text: "Visual Representation", color: "#B39DDB" }
+    { text: "Pythonic Implementation", color: COLORS.gold.primary },
+    { text: "Mathematical Abstraction", color: COLORS.offWhite.primary },
+    { text: "Real-World Analogies", color: COLORS.gold.primary },
+    { text: "Storytelling Approach", color: COLORS.offWhite.primary },
+    { text: "Visual Representation", color: COLORS.gold.primary }
   ];
 
   const typewriterVariants = {
@@ -52,7 +81,6 @@ const HomePage = () => {
     const interval = setInterval(() => {
       setCurrentPhraseIndex((prevIndex) => (prevIndex + 1) % phrases.length);
     }, 3000);
-
     return () => clearInterval(interval);
   }, []);
 
@@ -72,38 +100,73 @@ const HomePage = () => {
   }, [loadFeaturedQuestions]);
 
   if (loading || categoriesLoading) return (
-    <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
-      <CircularProgress />
+    <Box
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      minHeight="100vh"
+      sx={{ backgroundColor: COLORS.prussianBlue.primary }}
+    >
+      <CircularProgress sx={{ color: COLORS.gold.primary }} />
     </Box>
   );
 
   if (error || categoriesError) return (
-    <Container>
-      <Alert severity="error">
-        <AlertTitle>Error</AlertTitle>
+    <Container sx={{ backgroundColor: COLORS.prussianBlue.primary, minHeight: '100vh', pt: 4 }}>
+      <Alert
+        severity="error"
+        sx={{
+          backgroundColor: COLORS.darkSlate.primary,
+          color: COLORS.offWhite.primary,
+          '& .MuiAlert-icon': { color: COLORS.gold.primary }
+        }}
+      >
+        <AlertTitle sx={{ color: COLORS.offWhite.primary }}>Error</AlertTitle>
         {error || categoriesError}
       </Alert>
     </Container>
   );
 
   return (
-    <Box sx={{ bgcolor: 'grey.50', minHeight: '100vh' }}>
-      <Paper 
+    <Box sx={{
+      bgcolor: COLORS.prussianBlue.primary,
+      minHeight: "100vh",
+      color: COLORS.offWhite.primary
+    }}>
+      <Paper
         elevation={0}
         sx={{
-          background: `linear-gradient(to right, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
-          color: 'white',
+          background: `linear-gradient(to right,
+            ${COLORS.gold.primary},
+            ${COLORS.prussianBlue.primary} 25%,
+            ${COLORS.prussianBlue.primary} 75%,
+            ${COLORS.gold.primary})`,
+          color: COLORS.offWhite.primary,
           py: 8,
           mb: 4,
-          borderRadius: '16px',
+          borderRadius: "16px",
           boxShadow: 6
         }}
       >
         <Container maxWidth="lg">
-          <Typography variant="h2" component="h1" gutterBottom align="center" sx={{ fontWeight: 'bold' }}>
+          <Typography
+            variant="h2"
+            component="h1"
+            gutterBottom
+            align="center"
+            sx={{
+              fontWeight: "bold",
+              color: COLORS.offWhite.primary
+            }}
+          >
             Qode Clarity: The 5 How Approach
           </Typography>
-          <Typography variant="body1" align="center" paragraph>
+          <Typography
+            variant="body1"
+            align="center"
+            paragraph
+            sx={{ color: COLORS.blueGray.primary }}
+          >
             Master complex algorithmic and data structure challenges using BUCESR Framework and the '5 How Approach':
           </Typography>
           <Box height="60px" display="flex" justifyContent="center" alignItems="center">
@@ -115,7 +178,14 @@ const HomePage = () => {
                 animate="visible"
                 exit="exit"
               >
-                <Typography variant="h5" align="center" style={{ color: phrases[currentPhraseIndex].color, fontWeight: 'bold' }}>
+                <Typography
+                  variant="h5"
+                  align="center"
+                  style={{
+                    color: phrases[currentPhraseIndex].color,
+                    fontWeight: "bold"
+                  }}
+                >
                   {phrases[currentPhraseIndex].text.split('').map((char, index) => (
                     <motion.span key={index} variants={letterVariants}>
                       {char}
@@ -130,11 +200,22 @@ const HomePage = () => {
 
       <Container maxWidth="lg">
         <Grid container spacing={4}>
-          {/* Category Carousel Section */}
           <Grid item xs={12} sm={12} md={12}>
-            <Card sx={{ boxShadow: 3, borderRadius: '12px' }}>
+            <Card
+              sx={{
+                backgroundColor: COLORS.darkSlate.primary,
+                color: COLORS.offWhite.primary,
+                boxShadow: 3,
+                borderRadius: "12px"
+              }}
+            >
               <CardContent>
-                <Typography variant="h6" gutterBottom align="center">
+                <Typography
+                  variant="h6"
+                  gutterBottom
+                  align="center"
+                  sx={{ color: COLORS.offWhite.primary }}
+                >
                   Categories
                 </Typography>
                 <CategoryCarousel categories={categories} />
@@ -142,27 +223,56 @@ const HomePage = () => {
             </Card>
           </Grid>
 
-          {/* BUCESR Framework Section */}
           <Grid item xs={12} sm={12} md={12}>
-            <Card sx={{ boxShadow: 3, borderRadius: '12px' }}>
-              <CardHeader title="BUCESR Framework" sx={{ backgroundColor: theme.palette.primary.light }} />
+            <Card
+              sx={{
+                backgroundColor: COLORS.darkSlate.primary,
+                color: COLORS.offWhite.primary,
+                boxShadow: 3,
+                borderRadius: "12px"
+              }}
+            >
+              <CardHeader
+                title="BUCESR Framework"
+                sx={{
+                  backgroundColor: COLORS.gold.primary,
+                  color: COLORS.prussianBlue.primary
+                }}
+              />
               <CardContent>
-                <Typography variant="body1" paragraph>
-                  The BUCESR <i style={{ color: "purple", fontWeight: "bold" }}>(Be Unique, Create Easy Solutions Regularly)</i> Framework is a systematic approach to break down and solve complex problems efficiently.
+                <Typography
+                  variant="body1"
+                  paragraph
+                  sx={{ color: COLORS.blueGray.secondary }}
+                >
+                  The BUCESR <i style={{ color: COLORS.gold.secondary, fontWeight: "bold" }}>(Be Unique, Create Easy Solutions Regularly)</i> Framework is a systematic approach to break down and solve complex problems efficiently.
                 </Typography>
                 <BucesrCarousel />
               </CardContent>
             </Card>
           </Grid>
 
-          {/* Featured Questions Section */}
           <Grid item xs={12} sm={12} md={12}>
+            <Card
+              sx={{
+                backgroundColor: COLORS.darkSlate.primary,
+                color: COLORS.offWhite.primary,
+                boxShadow: 3,
+                borderRadius: "12px"
+              }}
+            >
               <CardContent>
-                <Typography variant="h6" gutterBottom align="center">
+                <Typography
+                  variant="h6"
+                  gutterBottom
+                  align="center"
+                  sx={{ color: COLORS.offWhite.primary }}
+                >
                   Featured Questions
                 </Typography>
                 <FeaturedQuestions questions={featuredQuestions} />
               </CardContent>
+            </Card>
           </Grid>
         </Grid>
       </Container>

@@ -1,5 +1,10 @@
 .App {
   text-align: center;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #003153; /* Prussian Blue primary color */
+  color: #F5F5F5; /* Off-white primary color */
 }
 
 .App-logo {
@@ -14,18 +19,18 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: #003153; /* Same Prussian Blue primary color */
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
+  color: #F5F5F5; /* Off-white primary color */
 }
 
 .App-link {
-  color: #61dafb;
+  color: #CD9575; /* Gold primary color */
 }
 
 @keyframes App-logo-spin {

@@ -20,28 +20,59 @@ import { styled } from "@mui/material/styles";
 import CloseIcon from '@mui/icons-material/Close';
 import MenuIcon from '@mui/icons-material/Menu';
 
+// Refined Corporate Color Palette
+const COLORS = {
+  prussianBlue: {
+    primary: '#003153',
+    secondary: '#034975',
+    tertiary: '#005582'
+  },
+  blueGray: {
+    primary: '#6E7F80',
+    secondary: '#8A9A9B',
+    tertiary: '#A4B4B6'
+  },
+  gold: {
+    primary: '#CD9575',
+    secondary: '#D8A791',
+    tertiary: '#E3B9A7'
+  },
+  offWhite: {
+    primary: '#F5F5F5',
+    secondary: '#FAFAFA',
+    tertiary: '#FFFFFF'
+  },
+  darkSlate: {
+    primary: '#2F4F4F',
+    secondary: '#3A5A5A',
+    tertiary: '#456666'
+  }
+};
+
 // Styled components
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   justifyContent: 'space-between',
   padding: theme.spacing(2),
+  backgroundColor: COLORS.prussianBlue.secondary,
 }));
 
-const StyledAppBar = styled(AppBar)(({ theme }) => ({
-  background: 'linear-gradient(135deg, #9c27b0, #3f51b5, #673ab7)', // Gradient from purple to violet through blue
-  color: '#ffffff', // White text color by default
-  boxShadow: 'none', // Remove AppBar shadow for a cleaner look
+const StyledAppBar = styled(AppBar)(() => ({
+  background: COLORS.prussianBlue.primary,
+  color: COLORS.offWhite.primary,
+  boxShadow: 'none',
 }));
 
 const StyledButton = styled(Button)(({ theme }) => ({
-  color: '#ffffff', // White text by default
+  color: COLORS.offWhite.primary,
   marginLeft: theme.spacing(2),
   padding: theme.spacing(1, 3),
   fontWeight: 'bold',
+  backgroundColor: 'transparent',
   '&:hover': {
-    backgroundColor: '#4caf50', // Change to greenish color on hover (can be customized)
-    color: '#000000', // Dark text color on hover
+    backgroundColor: COLORS.gold.primary,
+    color: COLORS.prussianBlue.primary,
   },
-  transition: 'background-color 0.3s, color 0.3s', // Smooth transition for hover effect
+  transition: 'background-color 0.3s, color 0.3s',
 }));
 
 const NavLinks = styled('nav')(({ theme }) => ({
@@ -60,7 +91,8 @@ const modalStyle = (theme) => ({
   width: '90%',
   maxWidth: 800,
   maxHeight: '90vh',
-  bgcolor: 'background.paper',
+  bgcolor: COLORS.prussianBlue.secondary,
+  color: COLORS.offWhite.primary,
   boxShadow: 24,
   p: 4,
   overflowY: 'auto',
@@ -71,9 +103,13 @@ const modalStyle = (theme) => ({
 });
 
 // Color generator for subcategory headings
-const getRandomColor = () => {
-  const colors = ['#f44336', '#2196f3', '#4caf50', '#ff9800', '#9c27b0'];
-  return colors[Math.floor(Math.random() * colors.length)];
+const getRandomGoldTone = () => {
+  const golds = [
+    COLORS.gold.primary,
+    COLORS.gold.secondary,
+    COLORS.gold.tertiary
+  ];
+  return golds[Math.floor(Math.random() * golds.length)];
 };
 
 // bucesrContent object
@@ -166,16 +202,15 @@ const Header = () => {
             component="div" 
             sx={{
               fontWeight: 'bold',
-              color: '#ffffff', // Ensure the title text is white
+              color: COLORS.offWhite.primary,
               backgroundColor: 'transparent',
               padding: '8px 16px',
               borderRadius: '4px',
-              boxShadow: 'none', // No box shadow on title for a sleek look
             }}
           >
             Qode Clarity
           </Typography>
-  
+
           {isMobile ? (
             <IconButton
               size="large"
@@ -184,7 +219,7 @@ const Header = () => {
               aria-label="menu"
               onClick={toggleMobileMenu}
             >
-              <MenuIcon />
+              <MenuIcon sx={{ color: COLORS.offWhite.primary }} />
             </IconButton>
           ) : (
             <NavLinks>
@@ -203,17 +238,26 @@ const Header = () => {
           )}
         </StyledToolbar>
       </StyledAppBar>
-  
+
       {/* Mobile Menu */}
       <Modal
         open={mobileMenuOpen}
         onClose={toggleMobileMenu}
         aria-labelledby="mobile-menu-modal"
       >
-        <Box sx={modalStyle(theme)}>
+        <Box sx={{
+          ...modalStyle(theme),
+          backgroundColor: COLORS.prussianBlue.secondary,
+          color: COLORS.offWhite.primary
+        }}>
           <IconButton
             onClick={toggleMobileMenu}
-            sx={{ position: 'absolute', right: 8, top: 8 }}
+            sx={{
+              position: 'absolute',
+              right: 8,
+              top: 8,
+              color: COLORS.offWhite.primary
+            }}
           >
             <CloseIcon />
           </IconButton>
@@ -228,11 +272,18 @@ const Header = () => {
                 }}
                 component={item.path ? Link : 'li'}
                 to={item.path}
+                sx={{
+                  backgroundColor: COLORS.darkSlate.primary,
+                  margin: '8px 0',
+                  borderRadius: '4px'
+                }}
               >
-                {/* Use StyledButton inside ListItem */}
-                <StyledButton 
+                <StyledButton
                   fullWidth
-                  sx={{ textAlign: 'center' }} // Make button fill the list item
+                  sx={{
+                    textAlign: 'center',
+                    color: COLORS.offWhite.primary
+                  }}
                 >
                   {item.name}
                 </StyledButton>
@@ -241,43 +292,74 @@ const Header = () => {
           </List>
         </Box>
       </Modal>
-  
+
       {/* BUCESR Framework Modal */}
       <Modal
         open={isModalOpen}
         onClose={closeModal}
         aria-labelledby="bucesr-modal-title"
       >
-        <Paper elevation={24} sx={modalStyle(theme)}>
+        <Paper
+          elevation={24}
+          sx={{
+            ...modalStyle(theme),
+            backgroundColor: COLORS.prussianBlue.secondary,
+            color: COLORS.offWhite.primary
+          }}
+        >
           <IconButton
             onClick={closeModal}
-            sx={{ position: 'absolute', right: 8, top: 8 }}
+            sx={{
+              position: 'absolute',
+              right: 8,
+              top: 8,
+              color: COLORS.offWhite.primary
+            }}
           >
             <CloseIcon />
           </IconButton>
-          <Typography id="bucesr-modal-title" variant="h4" component="h2" gutterBottom>
+          <Typography
+            id="bucesr-modal-title"
+            variant="h4"
+            component="h2"
+            gutterBottom
+            sx={{ color: COLORS.offWhite.primary }}
+          >
             BUCESR Framework
           </Typography>
-          <Typography variant="h6" gutterBottom>
+          <Typography
+            variant="h6"
+            gutterBottom
+            sx={{ color: COLORS.blueGray.secondary }}
+          >
             When solving coding problems, it's essential to have a structured approach that can guide you through the process effectively.
           </Typography>
-          <Divider sx={{ my: 2 }} />
+          <Divider sx={{ my: 2, backgroundColor: COLORS.gold.primary }} />
           {Object.entries(bucesrContent).map(([letter, content], index) => (
             <Box key={letter} mt={index > 0 ? 4 : 2}>
               <Typography
                 variant="h5"
                 gutterBottom
-                style={{ color: getRandomColor() }} // Random color for subcategory headings
+                style={{ color: getRandomGoldTone() }}
               >
                 <strong>{letter} - {content.title}</strong>
               </Typography>
-              <Typography variant="body1" paragraph>
+              <Typography
+                variant="body1"
+                paragraph
+                sx={{ color: COLORS.blueGray.secondary }}
+              >
                 {content.description}
               </Typography>
               <List>
                 {content.questions.map((question, qIndex) => (
                   <ListItem key={qIndex}>
-                    <ListItemText primary={`- ${question}`} />
+                    <ListItemText
+                      primary={`- ${question}`}
+                      primaryTypographyProps={{
+                        sx: { color: COLORS.blueGray.tertiary }
+                      }}
+                    />
                   </ListItem>
                 ))}
               </List>
@@ -287,10 +369,6 @@ const Header = () => {
       </Modal>
     </>
   );
-  
 };
 
 export default Header;
-
-
-  
