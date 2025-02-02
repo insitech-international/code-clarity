@@ -14,7 +14,15 @@ import {
 } from "@mui/material";
 import { useQuestionData } from "../../hooks/useQuestionData";
 
-// Refined Corporate Color Palette
+// Import fonts
+import '@fontsource/inter/400.css';
+import '@fontsource/inter/500.css';
+import '@fontsource/inter/600.css';
+import '@fontsource/inter/700.css';
+import '@fontsource/source-code-pro/400.css';
+import '@fontsource/source-code-pro/500.css';
+
+// Enhanced Corporate Color Palette
 const COLORS = {
   prussianBlue: {
     primary: '#003153',
@@ -27,9 +35,9 @@ const COLORS = {
     tertiary: '#A4B4B6'
   },
   gold: {
-    primary: '#CD9575',
-    secondary: '#D8A791',
-    tertiary: '#E3B9A7'
+    primary: '#D4784D',
+    secondary: '#E69B75',
+    tertiary: '#F2BD9B'
   },
   offWhite: {
     primary: '#F5F5F5',
@@ -40,6 +48,65 @@ const COLORS = {
     primary: '#2F4F4F',
     secondary: '#3A5A5A',
     tertiary: '#456666'
+  },
+  emeraldGreen: {
+    primary: '#2ecc71',
+    secondary: '#27ae60',
+    tertiary: '#2980b9'
+  }
+};
+
+// Typography Styles
+const typographyStyles = {
+  h1: {
+    fontFamily: 'Inter, sans-serif',
+    fontSize: '3rem',
+    fontWeight: 700,
+    lineHeight: 1.2,
+    letterSpacing: '-0.02em',
+    color: COLORS.offWhite.primary
+  },
+  h2: {
+    fontFamily: 'Inter, sans-serif',
+    fontSize: '2.25rem',
+    fontWeight: 700,
+    lineHeight: 1.3,
+    letterSpacing: '-0.01em',
+    color: COLORS.offWhite.primary
+  },
+  h5: {
+    fontFamily: 'Inter, sans-serif',
+    fontSize: '1.125rem',
+    fontWeight: 500,
+    lineHeight: 1.5,
+    color: COLORS.offWhite.primary
+  },
+  h6: {
+    fontFamily: 'Inter, sans-serif',
+    fontSize: '1rem',
+    fontWeight: 600,
+    lineHeight: 1.4,
+    color: COLORS.offWhite.primary
+  },
+  body1: {
+    fontFamily: 'Inter, sans-serif',
+    fontSize: '1rem',
+    fontWeight: 400,
+    lineHeight: 1.5,
+    color: COLORS.blueGray.primary
+  },
+  body2: {
+    fontFamily: 'Inter, sans-serif',
+    fontSize: '0.875rem',
+    fontWeight: 400,
+    lineHeight: 1.4,
+    color: COLORS.blueGray.secondary
+  },
+  code: {
+    fontFamily: 'Source Code Pro, monospace',
+    fontSize: '0.875rem',
+    fontWeight: 400,
+    color: COLORS.gold.primary
   }
 };
 
@@ -57,7 +124,9 @@ const DifficultyChip = ({ difficulty }) => {
         backgroundColor: color,
         color: COLORS.offWhite.primary,
         marginRight: '0.5rem',
-        marginBottom: '0.5rem'
+        marginBottom: '0.5rem',
+        fontFamily: typographyStyles.body2.fontFamily,
+        fontSize: typographyStyles.body2.fontSize
       }}
       size="small"
     />
@@ -77,7 +146,7 @@ const QuestionCard = ({ question }) => {
         flexDirection: 'column',
         backgroundColor: COLORS.darkSlate.primary,
         color: COLORS.offWhite.primary,
-        borderColor: COLORS.gold.tertiary,
+//         borderColor: COLORS.gold.tertiary,
         transition: '0.3s',
         '&:hover': {
           boxShadow: 6,
@@ -91,8 +160,7 @@ const QuestionCard = ({ question }) => {
           variant="h6"
           gutterBottom
           sx={{
-            fontWeight: 'bold',
-            color: COLORS.offWhite.primary,
+            ...typographyStyles.h6,
             display: '-webkit-box',
             WebkitBoxOrient: 'vertical',
             overflow: 'hidden',
@@ -112,7 +180,9 @@ const QuestionCard = ({ question }) => {
                 color: COLORS.offWhite.primary,
                 size: "small",
                 marginRight: '0.5rem',
-                marginBottom: '0.5rem'
+                marginBottom: '0.5rem',
+                fontFamily: typographyStyles.body2.fontFamily,
+                fontSize: typographyStyles.body2.fontSize
               }}
             />
           )}
@@ -122,7 +192,7 @@ const QuestionCard = ({ question }) => {
           variant="body2"
           paragraph
           sx={{
-            color: COLORS.blueGray.secondary,
+            ...typographyStyles.body2,
             flexGrow: 1,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
@@ -145,7 +215,9 @@ const QuestionCard = ({ question }) => {
                   marginRight: '0.5rem',
                   marginBottom: '0.5rem',
                   borderColor: COLORS.gold.tertiary,
-                  color: COLORS.blueGray.secondary
+                  color: COLORS.blueGray.secondary,
+                  fontFamily: typographyStyles.body2.fontFamily,
+                  fontSize: typographyStyles.body2.fontSize
                 }}
               />
             ))}
@@ -160,6 +232,8 @@ const QuestionCard = ({ question }) => {
             alignSelf: 'flex-wrap',
             color: COLORS.offWhite.primary,
             borderColor: COLORS.gold.tertiary,
+            fontFamily: typographyStyles.body1.fontFamily,
+            fontSize: typographyStyles.body1.fontSize,
             '&:hover': {
               backgroundColor: COLORS.gold.tertiary,
               color: COLORS.prussianBlue.primary
@@ -174,28 +248,19 @@ const QuestionCard = ({ question }) => {
 };
 
 const CategorySection = ({ category, questions, onViewAll }) => (
-  <Card
-    variant="outlined"
+  <Box
     sx={{
       mb: 4,
       p: 2,
-      borderRadius: 3,
-      backgroundColor: COLORS.prussianBlue.secondary,
-      color: COLORS.offWhite.primary,
-      boxShadow: 1,
-      borderColor: COLORS.gold.tertiary,
-      transition: '0.3s',
-      '&:hover': {
-        boxShadow: 3,
-        borderColor: COLORS.gold.primary,
-      },
+      backgroundColor: 'transparent',
+      color: COLORS.offWhite.primary
     }}
   >
     <Typography
       variant="h5"
       gutterBottom
       sx={{
-        fontWeight: 'medium',
+        ...typographyStyles.h5,
         color: COLORS.gold.secondary
       }}
     >
@@ -214,6 +279,8 @@ const CategorySection = ({ category, questions, onViewAll }) => (
         marginTop: '1rem',
         backgroundColor: COLORS.gold.secondary,
         color: COLORS.offWhite.primary,
+        fontFamily: typographyStyles.body1.fontFamily,
+        fontSize: typographyStyles.body1.fontSize,
         '&:hover': {
           backgroundColor: COLORS.gold.primary
         }
@@ -222,7 +289,7 @@ const CategorySection = ({ category, questions, onViewAll }) => (
     >
       View All Questions in {category}
     </Button>
-  </Card>
+  </Box>
 );
 
 const FeaturedQuestions = () => {
@@ -284,7 +351,10 @@ const FeaturedQuestions = () => {
     return (
       <Typography
         color="error"
-        sx={{ color: COLORS.gold.primary }}
+        sx={{
+          color: COLORS.gold.primary,
+          ...typographyStyles.body1
+        }}
       >
         {error}
       </Typography>
@@ -304,13 +374,19 @@ const FeaturedQuestions = () => {
         <Typography
           variant="h5"
           gutterBottom
-          sx={{ color: COLORS.offWhite.primary }}
+          sx={{
+            ...typographyStyles.h5,
+            color: COLORS.offWhite.primary
+          }}
         >
           No Featured Questions Available
         </Typography>
         <Typography
           variant="body1"
-          sx={{ color: COLORS.blueGray.secondary }}
+          sx={{
+            ...typographyStyles.body1,
+            color: COLORS.blueGray.secondary
+          }}
         >
           Check back later for exciting new questions!
         </Typography>
@@ -319,7 +395,10 @@ const FeaturedQuestions = () => {
   }
 
   return (
-    <section style={{ backgroundColor: COLORS.prussianBlue.primary, padding: '1rem' }}>
+    <section style={{
+      backgroundColor: COLORS.prussianBlue.primary,
+      padding: '1rem'
+    }}>
       {sortedCategories.map(([category, questions]) => (
         <CategorySection
           key={category}

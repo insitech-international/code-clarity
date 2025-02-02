@@ -1,15 +1,12 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { 
-  Typography, 
-  Container, 
-  Box, 
-  CircularProgress, 
+import {
+  Typography,
+  Container,
+  Box,
+  CircularProgress,
   Paper,
   Grid,
   useTheme,
-  Card,
-  CardContent,
-  CardHeader,
   Alert,
   AlertTitle
 } from "@mui/material";
@@ -19,7 +16,15 @@ import FeaturedQuestions from "../components/common/FeaturedQuestions";
 import { useQuestionData, useCategories } from "../hooks/useQuestionData";
 import BucesrCarousel from "../components/common/BucesrCarousel";
 
-// Refined Corporate Color Palette
+// Import fonts
+import '@fontsource/inter/400.css';
+import '@fontsource/inter/500.css';
+import '@fontsource/inter/600.css';
+import '@fontsource/inter/700.css';
+import '@fontsource/source-code-pro/400.css';
+import '@fontsource/source-code-pro/500.css';
+
+// Enhanced Corporate Color Palette
 const COLORS = {
   prussianBlue: {
     primary: '#003153',
@@ -32,9 +37,9 @@ const COLORS = {
     tertiary: '#A4B4B6'
   },
   gold: {
-    primary: '#CD9575',
-    secondary: '#D8A791',
-    tertiary: '#E3B9A7'
+    primary: '#D4784D',
+    secondary: '#E69B75',
+    tertiary: '#F2BD9B'
   },
   offWhite: {
     primary: '#F5F5F5',
@@ -45,6 +50,51 @@ const COLORS = {
     primary: '#2F4F4F',
     secondary: '#3A5A5A',
     tertiary: '#456666'
+  },
+  emeraldGreen: {
+    primary: '#2ecc71',
+    secondary: '#27ae60',
+    tertiary: '#2980b9'
+  }
+};
+
+// Typography Styles
+const typographyStyles = {
+  h1: {
+    fontFamily: 'Inter, sans-serif',
+    fontSize: '3rem',
+    fontWeight: 700,
+    lineHeight: 1.2,
+    letterSpacing: '-0.02em',
+    color: COLORS.offWhite.primary
+  },
+  h2: {
+    fontFamily: 'Inter, sans-serif',
+    fontSize: '2.25rem',
+    fontWeight: 700,
+    lineHeight: 1.3,
+    letterSpacing: '-0.01em',
+    color: COLORS.offWhite.primary
+  },
+  h5: {
+    fontFamily: 'Inter, sans-serif',
+    fontSize: '1.125rem',
+    fontWeight: 500,
+    lineHeight: 1.5,
+    color: COLORS.offWhite.primary
+  },
+  body1: {
+    fontFamily: 'Inter, sans-serif',
+    fontSize: '1rem',
+    fontWeight: 400,
+    lineHeight: 1.5,
+    color: COLORS.blueGray.primary
+  },
+  code: {
+    fontFamily: 'Source Code Pro, monospace',
+    fontSize: '0.875rem',
+    fontWeight: 400,
+    color: COLORS.gold.primary
   }
 };
 
@@ -105,23 +155,54 @@ const HomePage = () => {
       justifyContent="center"
       alignItems="center"
       minHeight="100vh"
-      sx={{ backgroundColor: COLORS.prussianBlue.primary }}
+      sx={{
+        backgroundColor: COLORS.prussianBlue.primary,
+        '@media (prefers-color-scheme: dark)': {
+          backgroundColor: COLORS.darkSlate.primary
+        }
+      }}
     >
-      <CircularProgress sx={{ color: COLORS.gold.primary }} />
+      <CircularProgress
+        sx={{
+          color: COLORS.gold.primary,
+          '@media (prefers-color-scheme: dark)': {
+            color: COLORS.emeraldGreen.primary
+          }
+        }}
+      />
     </Box>
   );
 
   if (error || categoriesError) return (
-    <Container sx={{ backgroundColor: COLORS.prussianBlue.primary, minHeight: '100vh', pt: 4 }}>
+    <Container
+      sx={{
+        backgroundColor: COLORS.prussianBlue.primary,
+        minHeight: '100vh',
+        pt: 4,
+        '@media (prefers-color-scheme: dark)': {
+          backgroundColor: COLORS.darkSlate.primary
+        }
+      }}
+    >
       <Alert
         severity="error"
         sx={{
           backgroundColor: COLORS.darkSlate.primary,
           color: COLORS.offWhite.primary,
-          '& .MuiAlert-icon': { color: COLORS.gold.primary }
+          '& .MuiAlert-icon': {
+            color: COLORS.emeraldGreen.primary
+          },
+          '@media (prefers-color-scheme: dark)': {
+            backgroundColor: COLORS.prussianBlue.secondary
+          }
         }}
       >
-        <AlertTitle sx={{ color: COLORS.offWhite.primary }}>Error</AlertTitle>
+        <AlertTitle sx={{
+          color: COLORS.offWhite.primary,
+          ...typographyStyles.h5
+        }}>
+          Error
+        </AlertTitle>
         {error || categoriesError}
       </Alert>
     </Container>
@@ -131,33 +212,41 @@ const HomePage = () => {
     <Box sx={{
       bgcolor: COLORS.prussianBlue.primary,
       minHeight: "100vh",
-      color: COLORS.offWhite.primary
+      color: COLORS.offWhite.primary,
+      '@media (prefers-color-scheme: dark)': {
+        bgcolor: COLORS.darkSlate.primary,
+        color: COLORS.offWhite.secondary
+      }
     }}>
       <Paper
         elevation={0}
         sx={{
           background: `linear-gradient(to right,
             ${COLORS.gold.primary},
-            ${COLORS.prussianBlue.primary} 25%,
-            ${COLORS.prussianBlue.primary} 75%,
+            ${COLORS.prussianBlue.primary} 10%,
+            ${COLORS.prussianBlue.primary} 90%,
             ${COLORS.gold.primary})`,
           color: COLORS.offWhite.primary,
           py: 8,
           mb: 4,
           borderRadius: "16px",
-          boxShadow: 6
+          boxShadow: 6,
+          '@media (prefers-color-scheme: dark)': {
+            background: `linear-gradient(to right,
+              ${COLORS.gold.secondary},
+              ${COLORS.darkSlate.primary} 10%,
+              ${COLORS.darkSlate.primary} 90%,
+              ${COLORS.gold.secondary})`
+          }
         }}
       >
         <Container maxWidth="lg">
           <Typography
-            variant="h2"
+            variant="h1"
             component="h1"
             gutterBottom
             align="center"
-            sx={{
-              fontWeight: "bold",
-              color: COLORS.offWhite.primary
-            }}
+            sx={typographyStyles.h1}
           >
             Qode Clarity: The 5 How Approach
           </Typography>
@@ -165,9 +254,21 @@ const HomePage = () => {
             variant="body1"
             align="center"
             paragraph
-            sx={{ color: COLORS.blueGray.primary }}
+            sx={typographyStyles.body1}
           >
-            Master complex algorithmic and data structure challenges using BUCESR Framework and the '5 How Approach':
+            Master complex algorithmic and data structure challenges using
+            <Typography
+              component="span"
+              sx={{
+                ...typographyStyles.code,
+                fontStyle: 'italic',
+                ml: 1,
+                mr: 1
+              }}
+            >
+              BUCESR Framework
+            </Typography>
+            and the '5 How Approach':
           </Typography>
           <Box height="60px" display="flex" justifyContent="center" alignItems="center">
             <AnimatePresence mode="wait">
@@ -181,7 +282,8 @@ const HomePage = () => {
                 <Typography
                   variant="h5"
                   align="center"
-                  style={{
+                  sx={{
+                    ...typographyStyles.h5,
                     color: phrases[currentPhraseIndex].color,
                     fontWeight: "bold"
                   }}
@@ -199,80 +301,111 @@ const HomePage = () => {
       </Paper>
 
       <Container maxWidth="lg">
-        <Grid container spacing={4}>
-          <Grid item xs={12} sm={12} md={12}>
-            <Card
-              sx={{
-                backgroundColor: COLORS.darkSlate.primary,
-                color: COLORS.offWhite.primary,
-                boxShadow: 3,
-                borderRadius: "12px"
-              }}
+        <Grid container spacing={6}>
+          <Grid
+            item
+            xs={12}
+            sx={{
+              backgroundColor: 'transparent',
+              py: 4,
+              position: 'relative',
+              '&::after': {
+                content: '""',
+                position: 'absolute',
+                bottom: 0,
+                left: '50%',
+                transform: 'translateX(-50%)',
+                width: '80%',
+                height: '1px',
+                backgroundColor: COLORS.gold.primary,
+                opacity: 0.2
+              }
+            }}
+          >
+            <Typography
+              variant="h5"
+              gutterBottom
+              align="center"
+              sx={typographyStyles.h5}
             >
-              <CardContent>
-                <Typography
-                  variant="h6"
-                  gutterBottom
-                  align="center"
-                  sx={{ color: COLORS.offWhite.primary }}
-                >
-                  Categories
-                </Typography>
-                <CategoryCarousel categories={categories} />
-              </CardContent>
-            </Card>
+              Categories
+            </Typography>
+            <CategoryCarousel categories={categories} />
           </Grid>
 
-          <Grid item xs={12} sm={12} md={12}>
-            <Card
+          <Grid
+            item
+            xs={12}
+            sx={{
+              backgroundColor: 'transparent',
+              py: 4,
+              position: 'relative',
+              '&::after': {
+                content: '""',
+                position: 'absolute',
+                bottom: 0,
+                left: '50%',
+                transform: 'translateX(-50%)',
+                width: '80%',
+                height: '1px',
+                backgroundColor: COLORS.gold.primary,
+                opacity: 0.2
+              }
+            }}
+          >
+            <Typography
+              variant="h5"
+              gutterBottom
+              align="center"
+              sx={typographyStyles.h5}
+            >
+              BUCESR Framework
+            </Typography>
+            <Typography
+              variant="body1"
+              paragraph
+              align="center"
               sx={{
-                backgroundColor: COLORS.darkSlate.primary,
-                color: COLORS.offWhite.primary,
-                boxShadow: 3,
-                borderRadius: "12px"
+                ...typographyStyles.body1,
+                mb: 4,
+                maxWidth: 800,
+                mx: 'auto'
               }}
             >
-              <CardHeader
-                title="BUCESR Framework"
+              The BUCESR
+              <Typography
+                component="span"
                 sx={{
-                  backgroundColor: COLORS.gold.primary,
-                  color: COLORS.prussianBlue.primary
+                  ...typographyStyles.code,
+                  fontStyle: 'italic',
+                  ml: 1,
+                  mr: 1
                 }}
-              />
-              <CardContent>
-                <Typography
-                  variant="body1"
-                  paragraph
-                  sx={{ color: COLORS.blueGray.secondary }}
-                >
-                  The BUCESR <i style={{ color: COLORS.gold.secondary, fontWeight: "bold" }}>(Be Unique, Create Easy Solutions Regularly)</i> Framework is a systematic approach to break down and solve complex problems efficiently.
-                </Typography>
-                <BucesrCarousel />
-              </CardContent>
-            </Card>
+              >
+                (Be Unique, Create Easy Solutions Regularly)
+              </Typography>
+              Framework is a systematic approach to break down and solve complex problems efficiently.
+            </Typography>
+            <BucesrCarousel />
           </Grid>
 
-          <Grid item xs={12} sm={12} md={12}>
-            <Card
-              sx={{
-                backgroundColor: COLORS.darkSlate.primary,
-                color: COLORS.offWhite.primary,
-                boxShadow: 3,
-                borderRadius: "12px"
-              }}
+          <Grid
+            item
+            xs={12}
+            sx={{
+              backgroundColor: 'transparent',
+              py: 4
+            }}
+          >
+            <Typography
+              variant="h5"
+              gutterBottom
+              align="center"
+              sx={typographyStyles.h5}
             >
-              <CardContent>
-                <Typography
-                  variant="h6"
-                  gutterBottom
-                  align="center"
-                  sx={{ color: COLORS.offWhite.primary }}
-                >
-                  Featured Questions
-                </Typography>
-                <FeaturedQuestions questions={featuredQuestions} />
-              </CardContent>
-            </Card>
+              Featured Questions
+            </Typography>
+            <FeaturedQuestions questions={featuredQuestions} />
           </Grid>
         </Grid>
       </Container>

@@ -1,5 +1,8 @@
 import React from "react";
-import styled from "styled-components";
+import {
+  Box,
+  BoxProps
+} from "@mui/material";
 
 // Refined Corporate Color Palette
 const COLORS = {
@@ -30,23 +33,28 @@ const COLORS = {
   }
 };
 
-const CardContainer = styled.div`
-  background-color: ${COLORS.offWhite.primary};
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  margin: 1.5rem 0;
-  padding: 2rem;
-  border: 1px solid ${COLORS.blueGray.secondary};
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
-
-  &:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    transform: translateY(-4px);
-  }
-`;
-
-const Card = ({ children }) => {
-  return <CardContainer>{children}</CardContainer>;
+const Card: React.FC<BoxProps> = ({ children, ...props }) => {
+  return (
+    <Box
+      sx={{
+        backgroundColor: COLORS.offWhite.primary,
+        borderRadius: 2,
+        boxShadow: 2,
+        border: `1px solid ${COLORS.blueGray.secondary}`,
+        margin: '1.5rem 0',
+        padding: '2rem',
+        transition: 'box-shadow 0.3s ease, transform 0.3s ease',
+        '&:hover': {
+          boxShadow: 3,
+          transform: 'translateY(-4px)'
+        },
+        ...props.sx // Allow additional styling to be passed
+      }}
+      {...props}
+    >
+      {children}
+    </Box>
+  );
 };
 
 export default Card;
