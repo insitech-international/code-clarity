@@ -47,8 +47,8 @@ const Footer = () => {
       sx={{
         background: `linear-gradient(to right,
           ${COLORS.gold.primary},
-          ${COLORS.prussianBlue.primary} 25%,
-          ${COLORS.prussianBlue.primary} 75%,
+          ${COLORS.prussianBlue.primary} 5%,
+          ${COLORS.prussianBlue.primary} 95%,
           ${COLORS.gold.primary})`,
         color: COLORS.offWhite.primary,
         padding: "3rem 0",
