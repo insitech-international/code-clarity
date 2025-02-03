@@ -1,383 +1,172 @@
-# InsiTech International Brand Guidelines
+# InsiTech International Design System v1.1
 
-This document outlines the official brand guidelines for InsiTech International, ensuring a consistent and professional identity across all platforms and materials.
+This document outlines the InsiTech International Design System, providing guidelines for creating a professional, cool, inviting, and user-friendly experience.  This version incorporates UI enhancements and best practices.
 
-## 1. Mission Statement
+## 1. Brand Overview
 
-*(Insert InsiTech International's mission statement here)*
+### Mission Statement
+*(To be defined by InsiTech leadership)*
 
-## 2. Target Market
-
+### Target Market
 Africa
 
-## 3. Brand Personality
-
-Professional, Trustworthy, Innovative, Approachable, Energetic
-
-## 4. Color Palette
-
-*   **Primary:** Deep Blue (#0047AB -  Consider a slightly warmer variant if desired)
-*   **Secondary:** Beige (#F5F5DC)
-*   **Accent:** Deep Orange (#FF8C00)
-*   **Grayscale:**  Use shades of gray for text and other elements where needed.  A light gray (#EEEEEE) can be used for dividers or subtle backgrounds.
-
-## 5. Typography
-
-*   **Primary Font:** Montserrat (Sans-Serif)
-*   **Font Weights:**
-    *   **Headings (H1-H6):**  Bold (700) or SemiBold (600)
-    *   **Subheadings:** SemiBold (600) or Medium (500)
-    *   **Body Text:** Regular (400)
-    *   **Captions/Small Text:**  Regular (400) or Light (300)
-*   **Font Sizes and Spacing:** *(Examples – Adjust as needed for different screen sizes)*
-    *   **H1:** 48px - 60px
-    *   **H2:** 36px - 48px
-    *   **H3:** 24px - 32px
-    *   **Body Text:** 16px - 18px
-    *   **Line Height:** 1.5 - 1.7 for body text
-    *   **Letter Spacing:**  Slightly increased letter spacing (e.g., 0.02em) for headings can improve readability.
-*   **Local Language Support:**  Research and include fonts that support local languages and scripts.
-
-## 6. Logo
-
-*(Include detailed logo specifications)*
-
-## 7. Imagery
-
-*(Detailed imagery guidelines)*
-
-## 8. Voice and Tone
-
-*(Detailed voice and tone guidelines)*
-
-## 9. Website Design
-
-*   **Mobile-First:**
-*   **Accessibility:**
-*   **User Experience (UX):**
-*   **Consistency:**
-
-### 9.1. Header
-
-*   **Background:** Beige (#F5F5DC) or a subtle gradient from beige to a slightly lighter shade.
-*   **Logo:**  Prominently displayed on the left side.
-*   **Navigation:**  Use Montserrat SemiBold (600) for navigation links.  Link color: Deep Blue (#0047AB). Hover color: Deep Orange (#FF8C00).
-*   **Call to Action (CTA) Button (in header, if applicable):** Deep Orange (#FF8C00) background. White or very light beige text. Montserrat SemiBold (600). Rounded corners (e.g., 5px).
-
-### 9.2. Hero Section
-
-*   **Background:** Can use a high-quality image (following imagery guidelines) or a combination of beige and blue.
-*   **Headline:** Montserrat Bold (700). Deep Blue (#0047AB).  Large and impactful.
-*   **Subheadline:** Montserrat SemiBold (600). Dark gray.
-*   **CTA Button:** Deep Orange (#FF8C00) background. White text. Montserrat SemiBold (600). Rounded corners.
-
-### 9.3. Content Sections
-
-*   **Background:** Beige (#F5F5DC)
-*   **Headings (H2, H3, etc.):** Montserrat Bold (700) or SemiBold (600). Deep Blue (#0047AB).
-*   **Body Text:** Montserrat Regular (400). Dark gray.
-*   **Links:** Deep Blue (#0047AB). Hover color: Deep Orange (#FF8C00).
-
-### 9.4. Call to Action (CTA) Buttons (General)
-
-*   **Primary CTA:** Deep Orange (#FF8C00) background. White text. Montserrat SemiBold (600). Rounded corners (e.g., 5px).
-*   **Secondary CTA:**  Outline button. Deep Orange (#FF8C00) border. Transparent background. Deep Orange text. Montserrat SemiBold (600). Rounded corners.
-
-### 9.5. Footer
-
-*   **Background:**  Deep Blue (#0047AB) or a dark gray.
-*   **Text:** Light gray or white. Montserrat Regular (400).
-*   **Links:** Light gray or white. Hover color: Deep Orange (#FF8C00).
-
-## 10. Marketing Materials
-
-*(Detailed marketing materials guidelines)*
-
-## 11. Brand Voice Examples
-
-*(Detailed brand voice examples)*
-
-## 12. Contact Information
-
----
-
-This expanded guide provides more specific details for various elements of InsiTech International's branding. Remember to adapt the font sizes, spacing, and other values to best suit your specific design needs and screen sizes.  Always prioritize readability and user experience.
-
-# Qode Clarity Design System: Color Palette & Typography Guide
-
-## 🎨 Color Philosophy
-Our color palette is designed to create a cohesive, professional, and engaging visual experience across all digital platforms.
-
-## 🌈 Color Palette
-## 🌈 Primary Color Palette
-
-### 1. Prussian Blue
-- **Semantic Meaning**: Trust, Professionalism, Stability
-- **Hex Codes**:
-  - Primary: `#003153`
-  - Secondary: `#034975`
-  - Tertiary: `#005582`
-- **Usage**:
-  - Primary backgrounds
-  - Headers
-  - Navigation elements
-  - Key call-to-action areas
-
-### 2. Blue Gray
-- **Semantic Meaning**: Neutrality, Calm, Readability
-- **Hex Codes**:
-  - Primary: `#6E7F80`
-  - Secondary: `#8A9A9B`
-  - Tertiary: `#A4B4B6`
-- **Usage**:
-  - Body text
-  - Subheadings
-  - Border colors
-  - Secondary components
-
-### 3. Gold
-- **Semantic Meaning**: Warmth, Luxury, Attention
-- **Hex Codes**:
-  - Primary: `#D4784D`
-  - Secondary: `#E69B75`
-  - Tertiary: `#F2BD9B`
-- **Usage**:
-  - Accent elements
-  - Highlight sections
-  - Interactive elements
-  - Icons and dividers
-
-### 4. Off-White
-- **Semantic Meaning**: Clarity, Cleanliness, Minimalism
-- **Hex Codes**:
-  - Primary: `#F5F5F5`
-  - Secondary: `#FAFAFA`
-  - Tertiary: `#FFFFFF`
-- **Usage**:
-  - Background sections
-  - Text on dark backgrounds
-  - Light mode components
-
-### 5. Dark Slate
-- **Semantic Meaning**: Depth, Sophistication, Focus
-- **Hex Codes**:
-  - Primary: `#2F4F4F`
-  - Secondary: `#3A5A5A`
-  - Tertiary: `#456666`
-- **Usage**:
-  - Dark mode backgrounds
-  - Footer sections
-  - Alert and notification backgrounds
-
-### 6. Emerald Green (Status Color)
-- **Semantic Meaning**: Success, Positivity, Growth
-- **Hex Codes**:
-  - Primary: `#2ECC71`
-  - Secondary: `#27AE60`
-  - Tertiary: `#2980B9`
-- **Usage**:
-  - Success messages
-  - Positive confirmations
-  - Progress indicators
-  - Validation states
-
-## 🖌️ Color Application Guidelines
-
-### Accessibility Principles
-- Maintain minimum WCAG 2.1 AA contrast ratios
-- Test color combinations across different devices
-- Provide alternative color states for different interaction modes
-
-### Dark Mode Considerations
-- Use media queries to adapt color palette
-- Ensure readability and visual comfort
-- Maintain brand consistency across light and dark modes
-
-### Interaction States
-- **Default**: Primary color
-- **Hover**: Secondary color with 10% brightness increase
-- **Active/Pressed**: Tertiary color with 20% brightness decrease
-- **Disabled**: 40% opacity of the default state color
-
-## 📐 Color Combination Rules
-
-### Text on Background
-- **Dark Backgrounds**: Use Off-White or Blue Gray for text
-- **Light Backgrounds**: Use Prussian Blue or Dark Slate for text
-- Always check contrast ratio (minimum 4.5:1 for normal text)
-
-### Gradient and Overlay Techniques
-- Use gold and prussian blue for smooth, professional gradients
-- Limit gradient usage to hero sections, headers, and key visual breaks
-- Maintain 10-20% color transition zones
-
-## 🔍 Design Token Example (for developers)
-```javascript
-const QODE_COLORS = {
-  prussianBlue: {
-    primary: '#003153',
-    secondary: '#034975',
-    tertiary: '#005582'
-  },
-  blueGray: { ... },
-  gold: { ... },
-  offWhite: { ... },
-  darkSlate: { ... },
-  emeraldGreen: { ... }
-};
-```
-
-## 📦 Implementation Recommendations
-- Use CSS custom properties
-- Create a centralized color management system
-- Develop a Figma/design system library
-- Implement theme providers in React/Vue applications
-
-## 🚀 Version Control
-- **Current Version**: 1.0
-- **Last Updated**: February 2024
-- **Review Cycle**: Quarterly
-
----
-
-**Note to Design and Development Teams**:
-This color palette is the visual DNA of our brand. Consistent application ensures recognizability and professional presentation across all platforms.
-
-## 🔤 Typography System
-
-### Font Family Selection
-#### Primary Font: Inter
-- **Category**: Geometric Sans-Serif
-- **Usage**: Primary body text, headings, and interfaces
-- **Strengths**: 
-  - Excellent readability
-  - Modern, clean aesthetic
-  - Wide language support
-  - Optimized for digital screens
-
-#### Secondary Font: Source Code Pro
-- **Category**: Monospaced Font
-- **Usage**: Code snippets, technical annotations, special callouts
-- **Strengths**:
-  - Crisp rendering in programming contexts
-  - Clear distinction for technical content
-  - Consistent character width
-
-### Typography Scale
-
-#### Heading Styles
-```
-h1: 48px / 3rem
-    - Weight: 700 (Bold)
-    - Line Height: 1.2
-    - Letter Spacing: -0.02em
-
-h2: 36px / 2.25rem
-    - Weight: 700 (Bold)
-    - Line Height: 1.3
-    - Letter Spacing: -0.01em
-
-h3: 24px / 1.5rem
-    - Weight: 600 (Semi-Bold)
-    - Line Height: 1.4
-    - Letter Spacing: -0.005em
-
-h4: 20px / 1.25rem
-    - Weight: 600 (Semi-Bold)
-    - Line Height: 1.5
-
-h5: 18px / 1.125rem
-    - Weight: 500 (Medium)
-    - Line Height: 1.5
-
-h6: 16px / 1rem
-    - Weight: 500 (Medium)
-    - Line Height: 1.6
-```
-
-#### Body Text Styles
-```
-Body Large: 18px / 1.125rem
-    - Weight: 400 (Regular)
-    - Line Height: 1.6
-    - Used for main content paragraphs
-
-Body Medium: 16px / 1rem
-    - Weight: 400 (Regular)
-    - Line Height: 1.5
-    - Default body text
-
-Body Small: 14px / 0.875rem
-    - Weight: 400 (Regular)
-    - Line Height: 1.4
-    - Annotations, captions
-```
-
-#### Functional Text
-```
-Caption: 12px / 0.75rem
-    - Weight: 400 (Regular)
-    - Line Height: 1.3
-    - Used for metadata, timestamps
-
-Overline: 10px / 0.625rem
-    - Weight: 500 (Medium)
-    - Text Transform: UPPERCASE
-    - Used for section identifiers
-```
-
-### Typography Web Implementation
-
-#### CSS Custom Properties
-```css
-:root {
-  /* Font Families */
-  --font-primary: 'Inter', sans-serif;
-  --font-secondary: 'Source Code Pro', monospace;
-
-  /* Font Sizes */
-  --text-size-h1: 3rem;
-  --text-size-h2: 2.25rem;
-  --text-size-h3: 1.5rem;
-  --text-size-body-large: 1.125rem;
-  --text-size-body-medium: 1rem;
-  --text-size-body-small: 0.875rem;
-}
-```
-
-#### React/Tailwind Implementation
-```jsx
-const typographyClasses = {
-  h1: 'text-[3rem] font-bold leading-tight tracking-tighter',
-  h2: 'text-[2.25rem] font-bold leading-tight tracking-tight',
-  bodyLarge: 'text-[1.125rem] font-normal leading-relaxed',
-  // ... other classes
-};
-```
+### Brand Personality
+- Professional
+- Trustworthy
+- Innovative
+- Approachable
+- Energetic
+
+## 2. Color Palette
+
+### Primary Color: Deep Blue
+- **Hex:** `#0047AB`
+- **Variants:**
+  - Primary: `#0047AB`
+  - Secondary: `#034975` (For subtle backgrounds or accents)
+  - Tertiary: `#005582` (For very dark backgrounds, use sparingly)
+- **Semantic Meaning:** Trust, Professionalism, Stability, Intelligence
+
+### Secondary Color: Off-White / Light Beige
+- **Hex:** `#F8F8F8` (Consider `#FFFFFF` for very clean look, or `#FAF9F6` for a warmer feel)
+- **Variants:**
+  - Primary: `#F8F8F8`
+  - Secondary: `#F9F9F9` (For very subtle differentiation)
+  - Tertiary: `#FFFFFF` 
+- **Semantic Meaning:** Cleanliness, Openness, Calmness, Approachability
+
+### Accent Color: Deep Orange / Coral
+- **Hex:** `#E99361` (Consider `#F29A76` for a slightly softer look)
+- **Variants:**
+  - Primary: `#E99361`
+  - Secondary: `#ECAB81` (For hover states or secondary actions)
+  - Tertiary: `#F0C3A1` (For subtle highlights)
+- **Semantic Meaning:** Warmth, Energy, Enthusiasm, Attention (use strategically)
+
+### Interactive Color (for active states, highlights, links)
+- **Hex:** `#4DB6AC` (Teal / Light Blue - evokes innovation)
+- **Variants:**
+    - Primary:  `#4DB6AC`
+    - Secondary:  `#26A69A` (Darker version for contrast on light backgrounds)
+    - Tertiary: `#80CBC4` (Lighter version for subtle highlights)
+
+### Grayscale
+- Light Gray: `#EEEEEE` (Consider `#F2F2F2` for a warmer tone)
+- Medium Gray: `#9E9E9E` (For subtle dividers or secondary text)
+- Dark Gray: `#424242` (For primary text on light backgrounds)
+
+### Color Usage Guidelines:
+- **Primary:** Used for main branding elements, headers, and key actions.
+- **Secondary:** Used for backgrounds, secondary elements, and to create visual hierarchy.
+- **Accent:** Used sparingly to highlight important elements, calls to action, and interactive components.
+- **Interactive:** Used for links, active states, hover effects, and interactive elements.
+- **Grayscale:** Used for text, borders, dividers, and to create visual balance.
 
 ### Accessibility Considerations
-- Minimum font size: 16px for body text
-- Contrast ratio: Minimum 4.5:1 for text
-- Support for system font scaling
-- Responsive typography that adapts to screen sizes
+- Maintain WCAG 2.1 AA contrast ratios. Use a contrast checker tool (e.g., WebAIM).
+- Provide color adaptations for dark mode (consider using CSS variables for easy switching).
+- Consider accessibility in color combinations (e.g., for color blindness).  Test with different accessibility tools.
 
-### Font Loading Strategy
-1. Use `font-display: swap`
-2. Implement system font fallbacks
-3. Preload critical fonts
-4. Consider variable fonts for performance
+## 3. Typography
 
-### Performance Optimization
-- Use WOFF2 font format
-- Subset fonts to reduce file size
-- Implement font-loading techniques
+### Primary Font
+- **Font:** Montserrat (Sans-Serif)
+- **Google Fonts:** `@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');`  (Include all weights)
 
-## 🚀 Version Control
-- **Typography Version**: 1.0
-- **Last Updated**: February 2024
-- **Review Cycle**: Quarterly
+### Font Weights and Usage
+- **Headings (H1-H6):** Bold (700) or SemiBold (600)
+- **Subheadings:** SemiBold (600) or Medium (500)
+- **Body Text:** Regular (400)
+- **Captions/Small Text:** Regular (400) or Light (300)
 
----
+### Typography Scale (Examples - Adapt as needed)
 
-**Design Principle**: 
-Typography is the visual representation of our voice. Clean, precise, and purposeful—just like our code.
+#### Headings (Responsive)
+- **H1:** 
+  - Size: 48-60px (adjust for smaller screens)
+  - Weight: Bold (700)
+  - Line Height: 1.3-1.4
+  - Letter Spacing: 0.02em
+
+- **H2:**
+  - Size: 36-48px (adjust for smaller screens)
+  - Weight: SemiBold (600)
+  - Line Height: 1.3-1.4
+
+- **H3:**
+  - Size: 24-32px (adjust for smaller screens)
+  - Weight: SemiBold (600)
+  - Line Height: 1.3
+
+- **H4 - H6:** Scale down proportionally from H3.
+
+#### Body Text (Responsive)
+- **Primary Body Text:**
+  - Size: 16-18px (consider 14px minimum on smaller screens)
+  - Weight: Regular (400)
+  - Line Height: 1.5-1.6
+  - Color: Dark Gray (`#424242`)
+
+### Accessibility Considerations
+- Minimum font size: 16px for body text (consider responsive scaling).
+- Contrast ratio: Minimum 4.5:1 (Use a contrast checker).
+- Support system font scaling.
+- Responsive typography (adjust font sizes, line heights, and letter spacing for different screen sizes).
+
+## 4. Website Design Guidelines (UI Focused)
+
+### General Principles
+- Mobile-First Approach
+- Prioritize Accessibility (WCAG 2.1 AA compliance)
+- Consistent User Experience
+- Clean and Modern Design
+- Intuitive Navigation and Information Architecture
+- Focus on User Needs and Goals
+
+### Header Design
+- **Background:** Deep Blue (`#0047AB`)
+- **Logo:** Prominently displayed on the left side (Use SVG format for scalability and crispness).  Ensure sufficient spacing around the logo.
+- **Navigation:**
+  - Font: Montserrat SemiBold (600)
+  - Link Color: White (`#FFFFFF`)
+  - Hover Color: Light Gray (`#EEEEEE` or `#F2F2F2`)
+  - Active Link: Interactive Color (`#4DB6AC`) with Darker version for text (`#26A69A`).  Consider a subtle background highlight or underline for active links.
+  - Use clear and concise labels for navigation items.
+  - Keep the number of navigation items to a reasonable amount (consider a "More" menu for secondary items).
+
+### Hero Section
+- **Background:** High-quality, relevant image or Deep Blue/Off-White combination.  Use a subtle overlay if needed to ensure text readability.
+- **Headline:** Montserrat Bold (700), White or Deep Blue (depending on background).  Keep headlines concise and impactful.
+- **Subheadline:** Montserrat SemiBold (600), Dark Gray.  Provide context and clarify the value proposition.
+- **CTA Button:** Deep Orange (`#E99361`) background, White text.  Rounded corners (4-6px).  Use action-oriented verbs in button text (e.g., "Get Started," "Learn More").
+
+### Content Sections
+- **Background:** Off-White (`#F8F8F8`).  Consider using subtle background variations (e.g., slightly darker or lighter shades) to differentiate sections.
+- **Headings:** Montserrat Bold/SemiBold, Deep Blue.  Use a clear hierarchy of headings (H2-H4) to structure content.
+- **Body Text:** Montserrat Regular, Dark Gray (`#424242`).  Ensure good readability with appropriate line height and spacing.
+- **Links:** Interactive Color (`#4DB6AC`), Hover to a darker shade (`#26A69A`).  Use clear link styles (e.g., underline or different color).
+
+### Cards (for displaying information in a visually appealing way)
+- **Background:** White (`#FFFFFF`) with a subtle box shadow for depth.
+- **Border:** Light Gray (`#EEEEEE`) or transparent.
+- **Content:** Follow the general typography and color guidelines.
+- **Hover Effect:**  A subtle lift or background color change can enhance interactivity.
+
+### Forms
+- **Labels:** Dark Gray (`#424242`), Montserrat Regular.  Ensure labels are clearly associated with their respective input fields.
+- **Input Fields:** White background, Light Gray border.  Use clear placeholder text.
+- **Button:** Primary CTA style for submit buttons.
+
+### Call to Action (CTA) Buttons
+- **Primary CTA:**
+  - Background: Deep Orange (`#E99361`)
+  - Text: White
+  - Font: Montserrat SemiBold (600)
+  - Corners: Rounded (4-6px)
+  - Hover Effect:  Slightly darker orange.
+
+- **Secondary CTA:**
+  - Border: Deep Orange
+  - Background: Transparent
+  - Text: Deep Orange
+  - Font:

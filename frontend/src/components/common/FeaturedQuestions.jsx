@@ -1,128 +1,76 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { 
-  Card, 
-  CardContent, 
-  Typography, 
-  Chip, 
-  Grid, 
-  Box, 
-  Button, 
+import {
+  Card,
+  CardContent,
+  Typography,
+  Chip,
+  Grid,
+  Box,
+  Button,
   Skeleton,
   useMediaQuery,
   useTheme
 } from "@mui/material";
 import { useQuestionData } from "../../hooks/useQuestionData";
 
-// Import fonts
-import '@fontsource/inter/400.css';
-import '@fontsource/inter/500.css';
-import '@fontsource/inter/600.css';
-import '@fontsource/inter/700.css';
-import '@fontsource/source-code-pro/400.css';
-import '@fontsource/source-code-pro/500.css';
-
-// Enhanced Corporate Color Palette
+// Color Palette - Aligned with InsiTech Design System
 const COLORS = {
-  prussianBlue: {
-    primary: '#003153',
-    secondary: '#034975',
-    tertiary: '#005582'
-  },
-  blueGray: {
-    primary: '#6E7F80',
-    secondary: '#8A9A9B',
-    tertiary: '#A4B4B6'
-  },
-  gold: {
-    primary: '#D4784D',
-    secondary: '#E69B75',
-    tertiary: '#F2BD9B'
-  },
-  offWhite: {
-    primary: '#F5F5F5',
-    secondary: '#FAFAFA',
-    tertiary: '#FFFFFF'
-  },
-  darkSlate: {
-    primary: '#2F4F4F',
-    secondary: '#3A5A5A',
-    tertiary: '#456666'
-  },
-  emeraldGreen: {
-    primary: '#2ecc71',
-    secondary: '#27ae60',
-    tertiary: '#2980b9'
+  primary: '#0047AB',      // Deep Blue
+  secondary: '#F5EFE7',    // Beige
+  accent: '#DA8359',       // Deep Orange
+  gray: {
+    light: '#EEEEEE',      // Light Gray
+    dark: '#666666'        // Dark Gray
   }
 };
 
-// Typography Styles
+// Typography Styles - Aligned with InsiTech Design System
 const typographyStyles = {
   h1: {
-    fontFamily: 'Inter, sans-serif',
-    fontSize: '3rem',
-    fontWeight: 700,
-    lineHeight: 1.2,
-    letterSpacing: '-0.02em',
-    color: COLORS.offWhite.primary
-  },
-  h2: {
-    fontFamily: 'Inter, sans-serif',
-    fontSize: '2.25rem',
-    fontWeight: 700,
-    lineHeight: 1.3,
-    letterSpacing: '-0.01em',
-    color: COLORS.offWhite.primary
+    fontFamily: 'Montserrat, sans-serif',
+    fontSize: '3.75rem',    // Between 48-60px
+    fontWeight: 700,        // Bold
+    lineHeight: 1.5,
+    letterSpacing: '0.02em',
+    color: COLORS.primary
   },
   h5: {
-    fontFamily: 'Inter, sans-serif',
-    fontSize: '1.125rem',
-    fontWeight: 500,
-    lineHeight: 1.5,
-    color: COLORS.offWhite.primary
-  },
-  h6: {
-    fontFamily: 'Inter, sans-serif',
-    fontSize: '1rem',
-    fontWeight: 600,
+    fontFamily: 'Montserrat, sans-serif',
+    fontSize: '1.5rem',     // Between 24-32px
+    fontWeight: 600,        // SemiBold
     lineHeight: 1.4,
-    color: COLORS.offWhite.primary
+    color: COLORS.primary
   },
   body1: {
-    fontFamily: 'Inter, sans-serif',
-    fontSize: '1rem',
-    fontWeight: 400,
-    lineHeight: 1.5,
-    color: COLORS.blueGray.primary
+    fontFamily: 'Montserrat, sans-serif',
+    fontSize: '1rem',       // 16-18px
+    fontWeight: 400,        // Regular
+    lineHeight: 1.6,
+    color: COLORS.gray.dark
   },
   body2: {
-    fontFamily: 'Inter, sans-serif',
-    fontSize: '0.875rem',
-    fontWeight: 400,
+    fontFamily: 'Montserrat, sans-serif',
+    fontSize: '0.875rem',   // Small text
+    fontWeight: 400,        // Regular
     lineHeight: 1.4,
-    color: COLORS.blueGray.secondary
-  },
-  code: {
-    fontFamily: 'Source Code Pro, monospace',
-    fontSize: '0.875rem',
-    fontWeight: 400,
-    color: COLORS.gold.primary
+    color: COLORS.gray.dark
   }
 };
 
 const DifficultyChip = ({ difficulty }) => {
   const color = {
-    Hard: COLORS.gold.primary,
-    Medium: COLORS.gold.secondary,
-    Easy: COLORS.gold.tertiary
-  }[difficulty] || "default";
+    Hard: COLORS.accent,
+    Medium: COLORS.primary,
+    Easy: COLORS.gray.secondary
+  }[difficulty] || COLORS.gray.light;
 
   return (
     <Chip
       label={`Difficulty: ${difficulty}`}
       sx={{
         backgroundColor: color,
-        color: COLORS.offWhite.primary,
+        color: COLORS.secondary,
         marginRight: '0.5rem',
         marginBottom: '0.5rem',
         fontFamily: typographyStyles.body2.fontFamily,
@@ -144,14 +92,13 @@ const QuestionCard = ({ question }) => {
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
-        backgroundColor: COLORS.darkSlate.primary,
-        color: COLORS.offWhite.primary,
-//         borderColor: COLORS.gold.tertiary,
+        backgroundColor: COLORS.secondary,
+        borderColor: COLORS.primary,
         transition: '0.3s',
         '&:hover': {
           boxShadow: 6,
           transform: 'translateY(-5px)',
-          borderColor: COLORS.gold.primary,
+          borderColor: COLORS.accent,
         },
       }}
     >
@@ -160,7 +107,10 @@ const QuestionCard = ({ question }) => {
           variant="h6"
           gutterBottom
           sx={{
-            ...typographyStyles.h6,
+            fontFamily: 'Montserrat, sans-serif',
+            fontSize: '1.25rem',
+            fontWeight: 600,
+            color: COLORS.primary,
             display: '-webkit-box',
             WebkitBoxOrient: 'vertical',
             overflow: 'hidden',
@@ -176,8 +126,8 @@ const QuestionCard = ({ question }) => {
             <Chip
               label={`${question.subcategory}`}
               sx={{
-                backgroundColor: COLORS.gold.tertiary,
-                color: COLORS.offWhite.primary,
+                backgroundColor: COLORS.accent,
+                color: COLORS.secondary,
                 size: "small",
                 marginRight: '0.5rem',
                 marginBottom: '0.5rem',
@@ -214,8 +164,8 @@ const QuestionCard = ({ question }) => {
                 sx={{
                   marginRight: '0.5rem',
                   marginBottom: '0.5rem',
-                  borderColor: COLORS.gold.tertiary,
-                  color: COLORS.blueGray.secondary,
+                  borderColor: COLORS.accent,
+                  color: COLORS.primary,
                   fontFamily: typographyStyles.body2.fontFamily,
                   fontSize: typographyStyles.body2.fontSize
                 }}
@@ -230,13 +180,13 @@ const QuestionCard = ({ question }) => {
           sx={{
             mt: 2,
             alignSelf: 'flex-wrap',
-            color: COLORS.offWhite.primary,
-            borderColor: COLORS.gold.tertiary,
+            color: COLORS.primary,
+            borderColor: COLORS.accent,
             fontFamily: typographyStyles.body1.fontFamily,
             fontSize: typographyStyles.body1.fontSize,
             '&:hover': {
-              backgroundColor: COLORS.gold.tertiary,
-              color: COLORS.prussianBlue.primary
+              backgroundColor: COLORS.accent,
+              color: COLORS.secondary
             }
           }}
         >
@@ -253,7 +203,7 @@ const CategorySection = ({ category, questions, onViewAll }) => (
       mb: 4,
       p: 2,
       backgroundColor: 'transparent',
-      color: COLORS.offWhite.primary
+      color: COLORS.primary
     }}
   >
     <Typography
@@ -261,7 +211,7 @@ const CategorySection = ({ category, questions, onViewAll }) => (
       gutterBottom
       sx={{
         ...typographyStyles.h5,
-        color: COLORS.gold.secondary
+        color: COLORS.primary
       }}
     >
       {category}
@@ -277,12 +227,12 @@ const CategorySection = ({ category, questions, onViewAll }) => (
       variant="contained"
       sx={{
         marginTop: '1rem',
-        backgroundColor: COLORS.gold.secondary,
-        color: COLORS.offWhite.primary,
+        backgroundColor: COLORS.accent,
+        color: COLORS.secondary,
         fontFamily: typographyStyles.body1.fontFamily,
         fontSize: typographyStyles.body1.fontSize,
         '&:hover': {
-          backgroundColor: COLORS.gold.primary
+          backgroundColor: COLORS.primary
         }
       }}
       onClick={() => onViewAll(category)}
@@ -297,27 +247,27 @@ const FeaturedQuestions = () => {
   const [categorizedQuestions, setCategorizedQuestions] = useState({});
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const loadFeaturedQuestions = async () => {
-      try {
-        const questions = await fetchFeaturedQuestions();
-        const flattenedQuestions = Object.values(questions).reduce((acc, category) => {
-          category.forEach(question => {
-            if (!acc[question.category]) {
-              acc[question.category] = [];
-            }
-            acc[question.category].push(question);
-          });
-          return acc;
-        }, {});
-        setCategorizedQuestions(flattenedQuestions);
-      } catch (error) {
-        console.error("Error fetching featured questions:", error);
-      }
-    };
-
-    loadFeaturedQuestions();
+  const loadFeaturedQuestions = useCallback(async () => {
+    try {
+      const questions = await fetchFeaturedQuestions();
+      const flattenedQuestions = Object.values(questions).reduce((acc, category) => {
+        category.forEach(question => {
+          if (!acc[question.category]) {
+            acc[question.category] = [];
+          }
+          acc[question.category].push(question);
+        });
+        return acc;
+      }, {});
+      setCategorizedQuestions(flattenedQuestions);
+    } catch (error) {
+      console.error("Error fetching featured questions:", error);
+    }
   }, [fetchFeaturedQuestions]);
+
+  useEffect(() => {
+    loadFeaturedQuestions();
+  }, [loadFeaturedQuestions]);
 
   const handleViewAll = (category) => {
     navigate(`/category/${encodeURIComponent(category)}/questions`);
@@ -337,7 +287,7 @@ const FeaturedQuestions = () => {
               variant="rectangular"
               height={200}
               sx={{
-                backgroundColor: COLORS.darkSlate.primary,
+                backgroundColor: COLORS.secondary,
                 borderRadius: 2
               }}
             />
@@ -352,7 +302,7 @@ const FeaturedQuestions = () => {
       <Typography
         color="error"
         sx={{
-          color: COLORS.gold.primary,
+          color: COLORS.accent,
           ...typographyStyles.body1
         }}
       >
@@ -367,8 +317,8 @@ const FeaturedQuestions = () => {
         textAlign="center"
         py={4}
         sx={{
-          backgroundColor: COLORS.prussianBlue.primary,
-          color: COLORS.offWhite.primary
+          backgroundColor: COLORS.secondary,
+          color: COLORS.primary
         }}
       >
         <Typography
@@ -376,7 +326,7 @@ const FeaturedQuestions = () => {
           gutterBottom
           sx={{
             ...typographyStyles.h5,
-            color: COLORS.offWhite.primary
+            color: COLORS.primary
           }}
         >
           No Featured Questions Available
@@ -385,7 +335,7 @@ const FeaturedQuestions = () => {
           variant="body1"
           sx={{
             ...typographyStyles.body1,
-            color: COLORS.blueGray.secondary
+            color: COLORS.gray.dark
           }}
         >
           Check back later for exciting new questions!
@@ -396,7 +346,7 @@ const FeaturedQuestions = () => {
 
   return (
     <section style={{
-      backgroundColor: COLORS.prussianBlue.primary,
+      backgroundColor: COLORS.secondary,
       padding: '1rem'
     }}>
       {sortedCategories.map(([category, questions]) => (

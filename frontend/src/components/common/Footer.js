@@ -1,40 +1,24 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Box, Typography, Button, IconButton, Stack } from "@mui/material";
+import { Box, Typography, Container, Grid, IconButton, Paper } from "@mui/material";
 import { ArrowUpward } from "@mui/icons-material";
 
-// Refined Corporate Color Palette
+// InsiTech Color Palette
 const COLORS = {
-  prussianBlue: {
-    primary: '#003153',
-    secondary: '#034975',
-    tertiary: '#005582'
-  },
-  blueGray: {
-    primary: '#6E7F80',
-    secondary: '#8A9A9B',
-    tertiary: '#A4B4B6'
-  },
-  gold: {
-    primary: '#CD9575',
-    secondary: '#D8A791',
-    tertiary: '#E3B9A7'
-  },
-  offWhite: {
-    primary: '#F5F5F5',
-    secondary: '#FAFAFA',
+  primary: '#0047AB',      // Deep Blue
+  secondary: {
+    primary: '#F5EFE7',    // Beige
+    secondary: '#F7EFE5',
     tertiary: '#FFFFFF'
   },
-  darkSlate: {
-    primary: '#2F4F4F',
-    secondary: '#3A5A5A',
-    tertiary: '#456666'
+  accent: '#DA8359',       // Deep Orange
+  gray: {
+    light: '#EEEEEE',
+    dark: '#666666'
   }
 };
 
-// Styling for the Footer
 const Footer = () => {
-  // Scroll to top functionality
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -42,125 +26,150 @@ const Footer = () => {
     });
   };
 
+  const footerLinks = [
+    {
+      title: "Company",
+      links: [
+        { name: "About", path: "/about" },
+        { name: "Careers", path: "/careers" },
+        { name: "Contact", path: "/contact" }
+      ]
+    },
+    {
+      title: "Resources",
+      links: [
+        { name: "Blog", path: "/blog" },
+        { name: "Documentation", path: "/docs" },
+        { name: "Support", path: "/support" }
+      ]
+    },
+    {
+      title: "Legal",
+      links: [
+        { name: "Privacy Policy", path: "/privacy" },
+        { name: "Terms of Service", path: "/terms" },
+        { name: "Cookies", path: "/cookies" }
+      ]
+    }
+  ];
+
   return (
-    <Box
+    <Paper
+      component="footer"
+      elevation={4}
       sx={{
-        background: `linear-gradient(to right,
-          ${COLORS.gold.primary},
-          ${COLORS.prussianBlue.primary} 5%,
-          ${COLORS.prussianBlue.primary} 95%,
-          ${COLORS.gold.primary})`,
-        color: COLORS.offWhite.primary,
-        padding: "3rem 0",
-        width: "100%",
-        marginTop: "auto", // Push footer to bottom
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        textAlign: "center",
-        // Ensure footer stays at bottom
-        position: "relative",
-        bottom: 0,
-        left: 0,
+        backgroundColor: COLORS.secondary.primary,
+        color: COLORS.primary,
+        py: { xs: 4, md: 6 },
+        position: 'relative',
+        borderTop: `4px solid ${COLORS.accent}`,
+        borderRadius: 0
       }}
     >
-      <Box sx={{ maxWidth: 1200, width: "100%" }}>
-        {/* Footer Navigation Links */}
-        <Stack
-          direction="row"
-          spacing={3}
-          sx={{
-            marginBottom: 3,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          {["Privacy", "Terms", "Contact", "About"].map((item) => (
-            <Button
-              key={item}
-              component={Link}
-              to={`/${item.toLowerCase().replace(/\s+/g, '')}`}
+      <Container maxWidth="lg">
+        <Grid container spacing={{ xs: 2, md: 4 }}>
+          {/* Logo and Description */}
+          <Grid item xs={12} md={4}>
+            <Typography
+              variant="h6"
               sx={{
-                color: COLORS.offWhite.primary,
-                backgroundColor: COLORS.prussianBlue.secondary,
-                "&:hover": {
-                  backgroundColor: COLORS.prussianBlue.tertiary,
-                },
-                padding: "0.75rem 1.5rem",
-                borderRadius: "20px",
+                fontFamily: 'Montserrat, sans-serif',
+                fontWeight: 700,
+                color: COLORS.primary,
+                mb: 2
               }}
             >
-              {`${item} ${item === "About" ? "Us" : item === "Contact" ? "Us" : "Policy"}`}
-            </Button>
-          ))}
-        </Stack>
-
-        {/* Social Media Links */}
-        <Stack
-          direction="row"
-          spacing={3}
-          sx={{
-            marginBottom: 3,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          {["Twitter", "Facebook", "Instagram", "LinkedIn"].map((platform) => (
-            <Button
-              key={platform}
-              href={`https://${platform.toLowerCase()}.com/`}
-              target="_blank"
+              Qode Clarity
+            </Typography>
+            <Typography
+              variant="body2"
               sx={{
-                color: COLORS.prussianBlue.primary,
-                backgroundColor: COLORS.offWhite.primary,
-                "&:hover": {
-                  backgroundColor: COLORS.gold.tertiary,
-                  color: COLORS.prussianBlue.primary
-                },
-                padding: "0.75rem 1.5rem",
-                borderRadius: "20px",
+                color: COLORS.gray.dark,
+                fontFamily: 'Montserrat, sans-serif',
+                pr: { xs: 0, md: 4 }
               }}
             >
-              {platform}
-            </Button>
-          ))}
-        </Stack>
+              Empowering developers to solve complex problems with structured, innovative approaches.
+            </Typography>
+          </Grid>
 
-        {/* Parent Company */}
-        <Typography
-          variant="body2"
+          {/* Footer Links */}
+          {footerLinks.map((section) => (
+            <Grid item xs={6} md={2} key={section.title}>
+              <Typography
+                variant="subtitle1"
+                sx={{
+                  fontFamily: 'Montserrat, sans-serif',
+                  fontWeight: 600,
+                  color: COLORS.primary,
+                  mb: 2
+                }}
+              >
+                {section.title}
+              </Typography>
+              {section.links.map((link) => (
+                <Typography
+                  key={link.name}
+                  component={Link}
+                  to={link.path}
+                  sx={{
+                    display: 'block',
+                    color: COLORS.gray.dark,
+                    textDecoration: 'none',
+                    fontFamily: 'Montserrat, sans-serif',
+                    mb: 1,
+                    '&:hover': {
+                      color: COLORS.accent
+                    }
+                  }}
+                >
+                  {link.name}
+                </Typography>
+              ))}
+            </Grid>
+          ))}
+        </Grid>
+
+        {/* Copyright */}
+        <Box
           sx={{
-            color: COLORS.blueGray.secondary,
-            fontSize: "0.9rem"
+            borderTop: `1px solid ${COLORS.gray.light}`,
+            mt: { xs: 3, md: 4 },
+            pt: 3,
+            textAlign: 'center'
           }}
         >
-          © 2024 InsiTech International. All rights reserved.
-        </Typography>
-      </Box>
+          <Typography
+            variant="body2"
+            sx={{
+              color: COLORS.gray.dark,
+              fontFamily: 'Montserrat, sans-serif'
+            }}
+          >
+            © {new Date().getFullYear()} InsiTech International. All rights reserved.
+          </Typography>
+        </Box>
+      </Container>
 
       {/* Back to Top Button */}
       <IconButton
         onClick={scrollToTop}
         sx={{
           position: "fixed",
-          bottom: 30,
-          right: 30,
-          backgroundColor: COLORS.offWhite.primary,
-          color: COLORS.prussianBlue.primary,
+          bottom: { xs: 16, md: 30 },
+          right: { xs: 16, md: 30 },
+          backgroundColor: COLORS.accent,
+          color: COLORS.secondary.tertiary,
           "&:hover": {
-            backgroundColor: COLORS.gold.tertiary,
-            color: COLORS.prussianBlue.primary
+            backgroundColor: COLORS.primary
           },
-          borderRadius: "50%",
-          padding: "1rem",
-          boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
-          zIndex: 1000, // Ensure it's above other elements
+          boxShadow: 3,
+          zIndex: 1000
         }}
       >
         <ArrowUpward />
       </IconButton>
-    </Box>
+    </Paper>
   );
 };
 

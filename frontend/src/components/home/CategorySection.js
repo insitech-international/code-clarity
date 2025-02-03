@@ -1,69 +1,29 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import styled from "styled-components";
+import {
+  Card,
+  CardContent,
+  Typography,
+  Grid,
+  Box,
+  Button,
+  CardMedia
+} from "@mui/material";
 
-const SectionWrapper = styled.div`
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  transition: transform 0.3s;
-  cursor: pointer;
-
-  &:hover {
-    transform: scale(1.05);
+// InsiTech Color Palette
+const COLORS = {
+  primary: '#0047AB',      // Deep Blue
+  secondary: {
+    primary: '#F5EFE7',    // Beige
+    secondary: '#F7EFE5',
+    tertiary: '#FFFFFF'
+  },
+  accent: '#DA8359',       // Deep Orange
+  gray: {
+    light: '#EEEEEE',
+    dark: '#666666'
   }
-`;
-
-const Content = styled.div`
-  padding: 1rem;
-`;
-
-const Title = styled.h2`
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-`;
-
-const Description = styled.p`
-  font-size: 0.9rem;
-  color: #666;
-  margin-bottom: 1rem;
-`;
-
-const Grid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-`;
-
-const SampleCard = styled.div`
-  background-color: #f8f9fa;
-  border-radius: 4px;
-  padding: 0.5rem;
-`;
-
-const MindMapImage = styled.img`
-  max-width: 100%;
-  border-radius: 4px;
-  margin-top: 1rem;
-`;
-
-const ExploreButton = styled.button`
-  background-color: #28a745;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 0.5rem 1rem;
-  font-weight: 600;
-  margin-top: 1rem;
-  cursor: pointer;
-  transition: background-color 0.3s;
-
-  &:hover {
-    background-color: #218838;
-  }
-`;
+};
 
 const CategorySection = ({ category }) => {
   const urlSlug = category.name
@@ -72,27 +32,106 @@ const CategorySection = ({ category }) => {
     .replace(/&/g, "and");
 
   return (
-    <SectionWrapper>
-      <Link to={`/category/${urlSlug}`}>
-        <Content>
-          <Title>{category.name}</Title>
-          <Description>{category.description}</Description>
-          <Grid>
+    <Card
+      sx={{
+        backgroundColor: COLORS.secondary.primary,
+        borderRadius: 2,
+        boxShadow: 3,
+        transition: 'transform 0.3s',
+        '&:hover': {
+          transform: 'scale(1.05)'
+        }
+      }}
+    >
+      <Link
+        to={`/category/${urlSlug}`}
+        style={{ textDecoration: 'none' }}
+      >
+        <CardContent>
+          <Typography
+            variant="h5"
+            sx={{
+              color: COLORS.primary,
+              fontFamily: 'Montserrat, sans-serif',
+              fontWeight: 600,
+              mb: 1
+            }}
+          >
+            {category.name}
+          </Typography>
+          <Typography
+            variant="body2"
+            sx={{
+              color: COLORS.gray.dark,
+              fontFamily: 'Montserrat, sans-serif',
+              mb: 2
+            }}
+          >
+            {category.description}
+          </Typography>
+
+          <Grid container spacing={1} sx={{ mb: 2 }}>
             {category.sampleQuestions.slice(0, 5).map((question, index) => (
-              <SampleCard key={index}>
-                <h3>{question.title}</h3>
-                <p>{question.description}</p>
-              </SampleCard>
+              <Grid item xs={12} sm={6} key={index}>
+                <Box
+                  sx={{
+                    backgroundColor: COLORS.gray.light,
+                    borderRadius: 1,
+                    p: 1
+                  }}
+                >
+                  <Typography
+                    variant="subtitle2"
+                    sx={{
+                      color: COLORS.primary,
+                      fontFamily: 'Montserrat, sans-serif'
+                    }}
+                  >
+                    {question.title}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: COLORS.gray.dark,
+                      fontFamily: 'Montserrat, sans-serif'
+                    }}
+                  >
+                    {question.description}
+                  </Typography>
+                </Box>
+              </Grid>
             ))}
           </Grid>
-          <MindMapImage
-            src={`/images/mindmaps/${category.id}.svg`}
+
+          <CardMedia
+            component="img"
+            image={`/images/mindmaps/${category.id}.svg`}
             alt={`Mindmap for ${category.name}`}
+            sx={{
+              borderRadius: 1,
+              maxHeight: 200,
+              objectFit: 'cover',
+              mb: 2
+            }}
           />
-          <ExploreButton>Explore</ExploreButton>
-        </Content>
+
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: COLORS.accent,
+              color: COLORS.secondary.tertiary,
+              fontFamily: 'Montserrat, sans-serif',
+              fontWeight: 600,
+              '&:hover': {
+                backgroundColor: COLORS.primary
+              }
+            }}
+          >
+            Explore
+          </Button>
+        </CardContent>
       </Link>
-    </SectionWrapper>
+    </Card>
   );
 };
 

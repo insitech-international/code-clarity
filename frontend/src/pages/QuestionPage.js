@@ -3,34 +3,26 @@ import { useParams, Link } from "react-router-dom";
 import { useQuestionData } from "../hooks/useQuestionData";
 import QuestionSolutionView from "../components/category/QuestionSolutionView";
 import LoadingSpinner from "../components/common/LoadingSpinner";
-import { Box, Typography, Button, Container, Paper } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Button,
+  Container,
+  Paper
+} from "@mui/material";
 
-// Refined Corporate Color Palette
+// InsiTech Color Palette
 const COLORS = {
-  prussianBlue: {
-    primary: '#003153',
-    secondary: '#034975',
-    tertiary: '#005582'
-  },
-  blueGray: {
-    primary: '#6E7F80',
-    secondary: '#8A9A9B',
-    tertiary: '#A4B4B6'
-  },
-  gold: {
-    primary: '#CD9575',
-    secondary: '#D8A791',
-    tertiary: '#E3B9A7'
-  },
-  offWhite: {
-    primary: '#F5F5F5',
-    secondary: '#FAFAFA',
+  primary: '#0047AB',      // Deep Blue
+  secondary: {
+    primary: '#F5EFE7',    // Beige
+    secondary: '#F7EFE5',
     tertiary: '#FFFFFF'
   },
-  darkSlate: {
-    primary: '#2F4F4F',
-    secondary: '#3A5A5A',
-    tertiary: '#456666'
+  accent: '#DA8359',       // Deep Orange
+  gray: {
+    light: '#EEEEEE',
+    dark: '#666666'
   }
 };
 
@@ -72,7 +64,7 @@ const QuestionPage = () => {
       <Container
         maxWidth="md"
         sx={{
-          backgroundColor: COLORS.prussianBlue.primary,
+          backgroundColor: COLORS.secondary.primary,
           minHeight: '100vh',
           display: 'flex',
           alignItems: 'center',
@@ -85,14 +77,15 @@ const QuestionPage = () => {
             mt: 4,
             p: 3,
             textAlign: "center",
-            backgroundColor: COLORS.prussianBlue.secondary,
-            color: COLORS.offWhite.primary
+            backgroundColor: COLORS.secondary.secondary,
+            color: COLORS.primary
           }}
         >
           <Typography
             variant="h6"
             sx={{
-              color: COLORS.gold.primary,
+              color: COLORS.accent,
+              fontFamily: 'Montserrat, sans-serif',
               gutterBottom: true
             }}
           >
@@ -103,10 +96,11 @@ const QuestionPage = () => {
             to="/"
             variant="contained"
             sx={{
-              backgroundColor: COLORS.gold.secondary,
-              color: COLORS.offWhite.primary,
+              backgroundColor: COLORS.accent,
+              color: COLORS.secondary.tertiary,
+              fontFamily: 'Montserrat, sans-serif',
               '&:hover': {
-                backgroundColor: COLORS.gold.primary
+                backgroundColor: COLORS.primary
               }
             }}
           >
@@ -121,7 +115,7 @@ const QuestionPage = () => {
     <Container
       maxWidth="lg"
       sx={{
-        backgroundColor: COLORS.prussianBlue.primary,
+        backgroundColor: COLORS.secondary.primary,
         minHeight: '100vh',
         py: 4
       }}
@@ -131,8 +125,10 @@ const QuestionPage = () => {
           variant="h4"
           gutterBottom
           sx={{
-            color: COLORS.gold.primary,
-            textAlign: 'center'
+            color: COLORS.primary,
+            textAlign: 'center',
+            fontFamily: 'Montserrat, sans-serif',
+            fontWeight: 700
           }}
         >
           {question.title}
@@ -144,10 +140,11 @@ const QuestionPage = () => {
             to="/"
             variant="contained"
             sx={{
-              backgroundColor: COLORS.gold.secondary,
-              color: COLORS.offWhite.primary,
+              backgroundColor: COLORS.accent,
+              color: COLORS.secondary.tertiary,
+              fontFamily: 'Montserrat, sans-serif',
               '&:hover': {
-                backgroundColor: COLORS.gold.primary
+                backgroundColor: COLORS.primary
               }
             }}
           >

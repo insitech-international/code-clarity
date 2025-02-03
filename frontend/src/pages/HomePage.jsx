@@ -8,7 +8,8 @@ import {
   Grid,
   useTheme,
   Alert,
-  AlertTitle
+  AlertTitle,
+  Button // Import Button component
 } from "@mui/material";
 import { motion, AnimatePresence } from "framer-motion";
 import CategoryCarousel from "../components/category/CategoryCarousel";
@@ -17,87 +18,63 @@ import { useQuestionData, useCategories } from "../hooks/useQuestionData";
 import BucesrCarousel from "../components/common/BucesrCarousel";
 
 // Import fonts
-import '@fontsource/inter/400.css';
-import '@fontsource/inter/500.css';
-import '@fontsource/inter/600.css';
-import '@fontsource/inter/700.css';
-import '@fontsource/source-code-pro/400.css';
-import '@fontsource/source-code-pro/500.css';
+import '@fontsource/montserrat/400.css';
+import '@fontsource/montserrat/500.css';
+import '@fontsource/montserrat/600.css';
+import '@fontsource/montserrat/700.css';
 
-// Enhanced Corporate Color Palette
+// Color Palette - Aligned with InsiTech Design System (Updated Colors)
 const COLORS = {
-  prussianBlue: {
-    primary: '#003153',
-    secondary: '#034975',
-    tertiary: '#005582'
-  },
-  blueGray: {
-    primary: '#6E7F80',
-    secondary: '#8A9A9B',
-    tertiary: '#A4B4B6'
-  },
-  gold: {
-    primary: '#D4784D',
-    secondary: '#E69B75',
-    tertiary: '#F2BD9B'
-  },
-  offWhite: {
-    primary: '#F5F5F5',
-    secondary: '#FAFAFA',
-    tertiary: '#FFFFFF'
-  },
-  darkSlate: {
-    primary: '#2F4F4F',
-    secondary: '#3A5A5A',
-    tertiary: '#456666'
-  },
-  emeraldGreen: {
-    primary: '#2ecc71',
-    secondary: '#27ae60',
-    tertiary: '#2980b9'
+  primary: '#0047AB',      // Deep Blue
+  secondary: '#F8F8F8',    // Off-White
+  accent: '#E99361',       // Deep Orange / Coral
+  interactive: '#4DB6AC',  // Teal / Light Blue
+  gray: {
+    light: '#EEEEEE',      // Light Gray
+    medium: '#9E9E9E',    // Medium Gray
+    dark: '#424242'       // Dark Gray
   }
 };
 
-// Typography Styles
+// Typography Styles - Aligned with Design System (Updated Sizes and Styles)
 const typographyStyles = {
   h1: {
-    fontFamily: 'Inter, sans-serif',
-    fontSize: '3rem',
-    fontWeight: 700,
-    lineHeight: 1.2,
-    letterSpacing: '-0.02em',
-    color: COLORS.offWhite.primary
+    fontFamily: 'Montserrat, sans-serif',
+    fontSize: '3rem',    // Adjusted size
+    fontWeight: 700,        // Bold
+    lineHeight: 1.3,        // Adjusted line height
+    letterSpacing: '0.02em',
+    color: COLORS.primary
   },
   h2: {
-    fontFamily: 'Inter, sans-serif',
-    fontSize: '2.25rem',
-    fontWeight: 700,
-    lineHeight: 1.3,
-    letterSpacing: '-0.01em',
-    color: COLORS.offWhite.primary
+    fontFamily: 'Montserrat, sans-serif',
+    fontSize: '2.25rem',    // Adjusted size
+    fontWeight: 600,        // SemiBold
+    lineHeight: 1.3,        // Adjusted line height
+    letterSpacing: '0.02em',
+    color: COLORS.primary
   },
-  h5: {
-    fontFamily: 'Inter, sans-serif',
-    fontSize: '1.125rem',
-    fontWeight: 500,
-    lineHeight: 1.5,
-    color: COLORS.offWhite.primary
+  h5: {  // Using h5 for section titles
+    fontFamily: 'Montserrat, sans-serif',
+    fontSize: '1.5rem',     // Adjusted size
+    fontWeight: 600,        // SemiBold
+    lineHeight: 1.3,        // Adjusted line height
+    color: COLORS.primary
   },
   body1: {
-    fontFamily: 'Inter, sans-serif',
-    fontSize: '1rem',
-    fontWeight: 400,
-    lineHeight: 1.5,
-    color: COLORS.blueGray.primary
+    fontFamily: 'Montserrat, sans-serif',
+    fontSize: '1rem',       // 16px
+    fontWeight: 400,        // Regular
+    lineHeight: 1.5,        // Adjusted line height
+    color: COLORS.gray.dark
   },
-  code: {
-    fontFamily: 'Source Code Pro, monospace',
-    fontSize: '0.875rem',
-    fontWeight: 400,
-    color: COLORS.gold.primary
+  button: { // Style for buttons
+    fontFamily: 'Montserrat, sans-serif',
+    fontSize: '1rem',
+    fontWeight: 600,
+    textTransform: 'none' // Prevent uppercase transformation
   }
 };
-
 const HomePage = () => {
   const [featuredQuestions, setFeaturedQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -108,12 +85,13 @@ const HomePage = () => {
 
   const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
 
+  // Maintained the existing phrases with slight color adjustment
   const phrases = [
-    { text: "Pythonic Implementation", color: COLORS.gold.primary },
-    { text: "Mathematical Abstraction", color: COLORS.offWhite.primary },
-    { text: "Real-World Analogies", color: COLORS.gold.primary },
-    { text: "Storytelling Approach", color: COLORS.offWhite.primary },
-    { text: "Visual Representation", color: COLORS.gold.primary }
+    { text: "Pythonic Implementation", color: COLORS.accent },
+    { text: "Mathematical Abstraction", color: COLORS.primary },
+    { text: "Real-World Analogies", color: COLORS.accent },
+    { text: "Storytelling Approach", color: COLORS.primary },
+    { text: "Visual Representation", color: COLORS.accent }
   ];
 
   const typewriterVariants = {
@@ -149,6 +127,7 @@ const HomePage = () => {
     loadFeaturedQuestions();
   }, [loadFeaturedQuestions]);
 
+  // Loading State - Aligned with Design System
   if (loading || categoriesLoading) return (
     <Box
       display="flex"
@@ -156,49 +135,38 @@ const HomePage = () => {
       alignItems="center"
       minHeight="100vh"
       sx={{
-        backgroundColor: COLORS.prussianBlue.primary,
-        '@media (prefers-color-scheme: dark)': {
-          backgroundColor: COLORS.darkSlate.primary
-        }
+        backgroundColor: COLORS.secondary
       }}
     >
       <CircularProgress
         sx={{
-          color: COLORS.gold.primary,
-          '@media (prefers-color-scheme: dark)': {
-            color: COLORS.emeraldGreen.primary
-          }
+          color: COLORS.accent
         }}
       />
     </Box>
   );
 
+  // Error State - Aligned with Design System
   if (error || categoriesError) return (
     <Container
       sx={{
-        backgroundColor: COLORS.prussianBlue.primary,
+        backgroundColor: COLORS.secondary,
         minHeight: '100vh',
-        pt: 4,
-        '@media (prefers-color-scheme: dark)': {
-          backgroundColor: COLORS.darkSlate.primary
-        }
+        pt: 4
       }}
     >
       <Alert
         severity="error"
         sx={{
-          backgroundColor: COLORS.darkSlate.primary,
-          color: COLORS.offWhite.primary,
+          backgroundColor: COLORS.gray.dark,
+          color: COLORS.secondary,
           '& .MuiAlert-icon': {
-            color: COLORS.emeraldGreen.primary
-          },
-          '@media (prefers-color-scheme: dark)': {
-            backgroundColor: COLORS.prussianBlue.secondary
+            color: COLORS.accent
           }
         }}
       >
         <AlertTitle sx={{
-          color: COLORS.offWhite.primary,
+          color: COLORS.secondary,
           ...typographyStyles.h5
         }}>
           Error
@@ -210,34 +178,19 @@ const HomePage = () => {
 
   return (
     <Box sx={{
-      bgcolor: COLORS.prussianBlue.primary,
+      bgcolor: COLORS.secondary,
       minHeight: "100vh",
-      color: COLORS.offWhite.primary,
-      '@media (prefers-color-scheme: dark)': {
-        bgcolor: COLORS.darkSlate.primary,
-        color: COLORS.offWhite.secondary
-      }
+      color: COLORS.primary
     }}>
+      {/* Hero Section - Aligned with Design System (Updated) */}
       <Paper
         elevation={0}
         sx={{
-          background: `linear-gradient(to right,
-            ${COLORS.gold.primary},
-            ${COLORS.prussianBlue.primary} 10%,
-            ${COLORS.prussianBlue.primary} 90%,
-            ${COLORS.gold.primary})`,
-          color: COLORS.offWhite.primary,
+          background: COLORS.secondary,
+          color: COLORS.primary,
           py: 8,
           mb: 4,
-          borderRadius: "16px",
-          boxShadow: 6,
-          '@media (prefers-color-scheme: dark)': {
-            background: `linear-gradient(to right,
-              ${COLORS.gold.secondary},
-              ${COLORS.darkSlate.primary} 10%,
-              ${COLORS.darkSlate.primary} 90%,
-              ${COLORS.gold.secondary})`
-          }
+          borderRadius: "0px" // Removed border radius
         }}
       >
         <Container maxWidth="lg">
@@ -260,16 +213,19 @@ const HomePage = () => {
             <Typography
               component="span"
               sx={{
-                ...typographyStyles.code,
+                fontFamily: 'monospace',
                 fontStyle: 'italic',
                 ml: 1,
-                mr: 1
+                mr: 1,
+                color: COLORS.accent
               }}
             >
               BUCESR Framework
             </Typography>
             and the '5 How Approach':
           </Typography>
+
+          {/* Typewriter Effect (Updated with correct styles) */}
           <Box height="60px" display="flex" justifyContent="center" alignItems="center">
             <AnimatePresence mode="wait">
               <motion.div
@@ -280,7 +236,7 @@ const HomePage = () => {
                 exit="exit"
               >
                 <Typography
-                  variant="h5"
+                  variant="h5" // Use h5 for the phrases
                   align="center"
                   sx={{
                     ...typographyStyles.h5,
@@ -297,11 +253,31 @@ const HomePage = () => {
               </motion.div>
             </AnimatePresence>
           </Box>
+
+          {/* Added a CTA Button */}
+          <Box display="flex" justifyContent="center" mt={4}>
+            <Button
+              variant="contained"
+              sx={{
+                ...typographyStyles.button, // Apply button styles
+                backgroundColor: COLORS.accent,
+                color: COLORS.secondary,
+                padding: '12px 24px',
+                borderRadius: '4px', // Rounded corners
+                '&:hover': {
+                  backgroundColor: COLORS.accent // Darker shade on hover
+                }
+              }}
+            >
+              Learn More
+            </Button>
+          </Box>
         </Container>
       </Paper>
-
+      {/* Content Sections - Aligned with Design System */}
       <Container maxWidth="lg">
         <Grid container spacing={6}>
+          {/* Categories Section */}
           <Grid
             item
             xs={12}
@@ -317,7 +293,7 @@ const HomePage = () => {
                 transform: 'translateX(-50%)',
                 width: '80%',
                 height: '1px',
-                backgroundColor: COLORS.gold.primary,
+                backgroundColor: COLORS.accent,
                 opacity: 0.2
               }
             }}
@@ -333,6 +309,7 @@ const HomePage = () => {
             <CategoryCarousel categories={categories} />
           </Grid>
 
+          {/* BUCESR Framework Section */}
           <Grid
             item
             xs={12}
@@ -348,7 +325,7 @@ const HomePage = () => {
                 transform: 'translateX(-50%)',
                 width: '80%',
                 height: '1px',
-                backgroundColor: COLORS.gold.primary,
+                backgroundColor: COLORS.accent,
                 opacity: 0.2
               }
             }}
@@ -376,10 +353,11 @@ const HomePage = () => {
               <Typography
                 component="span"
                 sx={{
-                  ...typographyStyles.code,
+                  fontFamily: 'monospace',
                   fontStyle: 'italic',
                   ml: 1,
-                  mr: 1
+                  mr: 1,
+                  color: COLORS.accent
                 }}
               >
                 (Be Unique, Create Easy Solutions Regularly)
@@ -389,6 +367,7 @@ const HomePage = () => {
             <BucesrCarousel />
           </Grid>
 
+          {/* Featured Questions Section */}
           <Grid
             item
             xs={12}
