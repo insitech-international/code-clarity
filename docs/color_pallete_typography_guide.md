@@ -1,3 +1,108 @@
+# InsiTech International Brand Guidelines
+
+This document outlines the official brand guidelines for InsiTech International, ensuring a consistent and professional identity across all platforms and materials.
+
+## 1. Mission Statement
+
+*(Insert InsiTech International's mission statement here)*
+
+## 2. Target Market
+
+Africa
+
+## 3. Brand Personality
+
+Professional, Trustworthy, Innovative, Approachable, Energetic
+
+## 4. Color Palette
+
+*   **Primary:** Deep Blue (#0047AB -  Consider a slightly warmer variant if desired)
+*   **Secondary:** Beige (#F5F5DC)
+*   **Accent:** Deep Orange (#FF8C00)
+*   **Grayscale:**  Use shades of gray for text and other elements where needed.  A light gray (#EEEEEE) can be used for dividers or subtle backgrounds.
+
+## 5. Typography
+
+*   **Primary Font:** Montserrat (Sans-Serif)
+*   **Font Weights:**
+    *   **Headings (H1-H6):**  Bold (700) or SemiBold (600)
+    *   **Subheadings:** SemiBold (600) or Medium (500)
+    *   **Body Text:** Regular (400)
+    *   **Captions/Small Text:**  Regular (400) or Light (300)
+*   **Font Sizes and Spacing:** *(Examples – Adjust as needed for different screen sizes)*
+    *   **H1:** 48px - 60px
+    *   **H2:** 36px - 48px
+    *   **H3:** 24px - 32px
+    *   **Body Text:** 16px - 18px
+    *   **Line Height:** 1.5 - 1.7 for body text
+    *   **Letter Spacing:**  Slightly increased letter spacing (e.g., 0.02em) for headings can improve readability.
+*   **Local Language Support:**  Research and include fonts that support local languages and scripts.
+
+## 6. Logo
+
+*(Include detailed logo specifications)*
+
+## 7. Imagery
+
+*(Detailed imagery guidelines)*
+
+## 8. Voice and Tone
+
+*(Detailed voice and tone guidelines)*
+
+## 9. Website Design
+
+*   **Mobile-First:**
+*   **Accessibility:**
+*   **User Experience (UX):**
+*   **Consistency:**
+
+### 9.1. Header
+
+*   **Background:** Beige (#F5F5DC) or a subtle gradient from beige to a slightly lighter shade.
+*   **Logo:**  Prominently displayed on the left side.
+*   **Navigation:**  Use Montserrat SemiBold (600) for navigation links.  Link color: Deep Blue (#0047AB). Hover color: Deep Orange (#FF8C00).
+*   **Call to Action (CTA) Button (in header, if applicable):** Deep Orange (#FF8C00) background. White or very light beige text. Montserrat SemiBold (600). Rounded corners (e.g., 5px).
+
+### 9.2. Hero Section
+
+*   **Background:** Can use a high-quality image (following imagery guidelines) or a combination of beige and blue.
+*   **Headline:** Montserrat Bold (700). Deep Blue (#0047AB).  Large and impactful.
+*   **Subheadline:** Montserrat SemiBold (600). Dark gray.
+*   **CTA Button:** Deep Orange (#FF8C00) background. White text. Montserrat SemiBold (600). Rounded corners.
+
+### 9.3. Content Sections
+
+*   **Background:** Beige (#F5F5DC)
+*   **Headings (H2, H3, etc.):** Montserrat Bold (700) or SemiBold (600). Deep Blue (#0047AB).
+*   **Body Text:** Montserrat Regular (400). Dark gray.
+*   **Links:** Deep Blue (#0047AB). Hover color: Deep Orange (#FF8C00).
+
+### 9.4. Call to Action (CTA) Buttons (General)
+
+*   **Primary CTA:** Deep Orange (#FF8C00) background. White text. Montserrat SemiBold (600). Rounded corners (e.g., 5px).
+*   **Secondary CTA:**  Outline button. Deep Orange (#FF8C00) border. Transparent background. Deep Orange text. Montserrat SemiBold (600). Rounded corners.
+
+### 9.5. Footer
+
+*   **Background:**  Deep Blue (#0047AB) or a dark gray.
+*   **Text:** Light gray or white. Montserrat Regular (400).
+*   **Links:** Light gray or white. Hover color: Deep Orange (#FF8C00).
+
+## 10. Marketing Materials
+
+*(Detailed marketing materials guidelines)*
+
+## 11. Brand Voice Examples
+
+*(Detailed brand voice examples)*
+
+## 12. Contact Information
+
+---
+
+This expanded guide provides more specific details for various elements of InsiTech International's branding. Remember to adapt the font sizes, spacing, and other values to best suit your specific design needs and screen sizes.  Always prioritize readability and user experience.
+
 # Qode Clarity Design System: Color Palette & Typography Guide
 
 ## 🎨 Color Philosophy
