@@ -1,0 +1,195 @@
+{
+  "Object-Oriented Programming": [
+    "Abstract Classes and Interfaces",
+    "Classes and Objects",
+    "Encapsulation",
+    "Inheritance",
+    "Polymorphism"
+  ],
+  "Concurrency": [
+    "Asynchronous Programming",
+    "Multiprocessing",
+    "Parallel Processing",
+    "Threading"
+  ],
+  "Database Operations": [
+    "NoSQL Databases",
+    "ORM",
+    "SQL Databases"
+  ],
+  "Advanced Python Concepts": [
+    "Context Managers",
+    "Coroutines and AsyncIO",
+    "Descriptors",
+    "Generators and Iterators",
+    "Metaclasses"
+  ],
+  "Python Basics": [
+    "Control Flow",
+    "Functions",
+    "Language Basics",
+    "Modules and Packages"
+  ],
+  "Backtracking": [
+    "Combination Problems",
+    "Combinatorial Optimization",
+    "Graph Theory",
+    "Grid Backtracking",
+    "String Backtracking"
+  ],
+  "Data Structures": [
+    "Arrays",
+    "Dictionaries",
+    "Lists",
+    "Sets",
+    "Strings",
+    "Tuples"
+  ],
+  "Greedy Algorithms": [
+    "Activity Selection",
+    "Fractional Knapsack",
+    "Greedy String Manipulation",
+    "Job Scheduling",
+    "Minimum Spanning Tree",
+    "Miscellaneous Greedy Problems"
+  ],
+  "Dynamic Programming": [
+    "Coin Change and Other Related Problems",
+    "Knapsack Problems",
+    "String Algorithms"
+  ],
+  "Algorithms and Data Structures": [
+    "Algorithms",
+    "Functional Programming"
+  ],
+  "Computational Geometry": [
+    "Line Algorithms",
+    "Polygon Algorithms"
+  ],
+  "Advanced Data Structures": [
+    "Computational Geometry",
+    "Disjoint Set Union",
+    "Probabilistic Data Structures"
+  ],
+  "Searching Algorithms": [
+    "Comparison Searches",
+    "Sequential Search",
+    "String Matching Algorithms"
+  ],
+  "Divide and Conquer": [
+    "Numerical Algorithms",
+    "Search Algorithms",
+    "Sorting Algorithms"
+  ],
+  "Sorting Algorithms": [
+    "Comparison Sorts",
+    "Comparison Sorts, Insertion Sort Variations",
+    "Comparison Sorts, Tree-Based Sorts",
+    "Distribution Sorts",
+    "Divide and Conquer, Comparison Sorts",
+    "Non-Comparative Sorts, Distribution Sorts",
+    "Partitioning Algorithms"
+  ],
+  "Mathematical Algorithms": [
+    "Computational Geometry",
+    "Linear Algebra",
+    "Number Theory",
+    "Number Theory, Divide and Conquer",
+    "Numerical Methods"
+  ],
+  "Tree Algorithms": [
+    "Advanced Data Structures",
+    "Binary Search Tree Operations",
+    "Binary Trees",
+    "External Memory Data Structures",
+    "Self-Balancing Trees",
+    "Tree Traversal Techniques"
+  ],
+  "Bit Manipulation": [
+    "Advanced Bit Operations",
+    "Basic Bit Operations",
+    "Counting Bits",
+    "Set Theory"
+  ],
+  "Array": [
+    "Matrix Manipulation",
+    "Matrix Traversal"
+  ],
+  "Python 2 to 3 Migration": [
+    "Data Types",
+    "Syntax Changes"
+  ],
+  "Networking": [
+    "HTTP Requests",
+    "Http Requests",
+    "Low-Level Communication",
+    "Socket Programming",
+    "Web Scraping"
+  ],
+  "Testing": [
+    "Mocking",
+    "Test Coverage Tools",
+    "Unit Testing"
+  ],
+  "Data Science and Machine Learning": [
+    "Data Manipulation",
+    "Data Visualization",
+    "Data Wrangling",
+    "Deep Learning",
+    "Machine Learning Pipelines"
+  ],
+  "Scikit-learn": [
+    "Model Evaluation",
+    "Model Selection",
+    "Preprocessing",
+    "Supervised Learning",
+    "Unsupervised Learning"
+  ],
+  "MLOps": [
+    "Advanced Model Serving"
+  ],
+  "Deployment and DevOps": [
+    "CI/CD",
+    "Containerization",
+    "Orchestration and Automation",
+    "Package Management",
+    "Serverless",
+    "Virtual Environments"
+  ],
+  "Design Patterns": [
+    "Behavioral Patterns",
+    "Creational Patterns",
+    "Structural Patterns"
+  ],
+  "Security": [
+    "Cryptography",
+    "Web Security"
+  ],
+  "Exception Handling": [
+    "Error Handling",
+    "Error Specification",
+    "Resource Management"
+  ],
+  "Performance Optimization": [
+    "Code Optimization",
+    "Profiling"
+  ],
+  "Standard Library": [
+    "Collections Module",
+    "Functools Module",
+    "Itertools Module",
+    "Text Processing",
+    "Type Hinting"
+  ],
+  "File Handling": [
+    "Data Import/Export",
+    "Data Interchange Format",
+    "Data Serialization",
+    "File Management"
+  ],
+  "Web Development": [
+    "Django",
+    "FastAPI",
+    "Flask"
+  ]
+}

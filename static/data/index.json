@@ -1,0 +1,2630 @@
+{
+  "questions": [
+    {
+      "id": 111,
+      "path": "Advanced_Python_Concepts/Context_Managers/111_Contextlib_Module.md"
+    },
+    {
+      "id": 112,
+      "path": "Advanced_Python_Concepts/Context_Managers/112_Decorators_Context_Managers.md"
+    },
+    {
+      "id": 121,
+      "path": "Advanced_Python_Concepts/Coroutines_and_AsyncIO/121_Asynchronous_Comprehensions.md"
+    },
+    {
+      "id": 122,
+      "path": "Advanced_Python_Concepts/Coroutines_and_AsyncIO/122_Coroutines_Asyncio.md"
+    },
+    {
+      "id": 131,
+      "path": "Advanced_Python_Concepts/Descriptors/131_Non-Data_Descriptors.md"
+    },
+    {
+      "id": 132,
+      "path": "Advanced_Python_Concepts/Descriptors/132_Property_Descriptors.md"
+    },
+    {
+      "id": 141,
+      "path": "Advanced_Python_Concepts/Generators_and_Iterators/141_Generator_Functions.md"
+    },
+    {
+      "id": 142,
+      "path": "Advanced_Python_Concepts/Generators_and_Iterators/142_Iterator_Protocol.md"
+    },
+    {
+      "id": 151,
+      "path": "Advanced_Python_Concepts/Metaclasses/151_Custom_Metaclasses.md"
+    },
+    {
+      "id": 152,
+      "path": "Advanced_Python_Concepts/Metaclasses/152_Metaclasses_Descriptors.md"
+    },
+    {
+      "id": 201,
+      "path": "Algorithms_and_Data_Structures/Advanced_Data_Structures/201_Bloom_Filter.md"
+    },
+    {
+      "id": 202,
+      "path": "Algorithms_and_Data_Structures/Advanced_Data_Structures/202_Skip_List.md"
+    },
+    {
+      "id": 211,
+      "path": "Algorithms_and_Data_Structures/Advanced_Data_Structures/Disjoint_Set_Union/211_Accounts_Merge.md"
+    },
+    {
+      "id": 212,
+      "path": "Algorithms_and_Data_Structures/Advanced_Data_Structures/Disjoint_Set_Union/212_Number_Of_Islands_II.md"
+    },
+    {
+      "id": 213,
+      "path": "Algorithms_and_Data_Structures/Advanced_Data_Structures/Disjoint_Set_Union/213_Redundant_Connection.md"
+    },
+    {
+      "id": 214,
+      "path": "Algorithms_and_Data_Structures/Advanced_Data_Structures/Disjoint_Set_Union/214_Union_Find.md"
+    },
+    {
+      "id": 2211,
+      "path": "Algorithms_and_Data_Structures/Array/Matrix_Manipulation/2211_Rotate_Image.md"
+    },
+    {
+      "id": 2221,
+      "path": "Algorithms_and_Data_Structures/Array/Matrix_Traversal/2221_Spiral_Matrix.md"
+    },
+    {
+      "id": 2301,
+      "path": "Algorithms_and_Data_Structures/Backtracking/2301_Hamiltonian_Cycle.md"
+    },
+    {
+      "id": 2311,
+      "path": "Algorithms_and_Data_Structures/Backtracking/Combination_Problems/2311_Combination_Sum.md"
+    },
+    {
+      "id": 2312,
+      "path": "Algorithms_and_Data_Structures/Backtracking/Combination_Problems/2312_Permutations.md"
+    },
+    {
+      "id": 2313,
+      "path": "Algorithms_and_Data_Structures/Backtracking/Combination_Problems/2313_Subset_Sum.md"
+    },
+    {
+      "id": 2321,
+      "path": "Algorithms_and_Data_Structures/Backtracking/Grid_Backtracking/2321_N_Queens.md"
+    },
+    {
+      "id": 2322,
+      "path": "Algorithms_and_Data_Structures/Backtracking/Grid_Backtracking/2322_Sudoku_Solver.md"
+    },
+    {
+      "id": 2331,
+      "path": "Algorithms_and_Data_Structures/Backtracking/String_Backtracking/2331_Generate_Parentheses.md"
+    },
+    {
+      "id": 2332,
+      "path": "Algorithms_and_Data_Structures/Backtracking/String_Backtracking/2332_Palindrome_Partitioning.md"
+    },
+    {
+      "id": 2333,
+      "path": "Algorithms_and_Data_Structures/Backtracking/String_Backtracking/2333_Word_Search.md"
+    },
+    {
+      "id": 2401,
+      "path": "Algorithms_and_Data_Structures/Bit_Manipulation/2401_Power_Set.md"
+    },
+    {
+      "id": 2411,
+      "path": "Algorithms_and_Data_Structures/Bit_Manipulation/Advanced_Bit_Operations/2411_Bitwise_AND_Of_Numbers_Range.md"
+    },
+    {
+      "id": 2412,
+      "path": "Algorithms_and_Data_Structures/Bit_Manipulation/Advanced_Bit_Operations/2412_Maximum_XOR_Of_Two_Numbers.md"
+    },
+    {
+      "id": 2421,
+      "path": "Algorithms_and_Data_Structures/Bit_Manipulation/Basic_Bit_Operations/2421_Counting_Bits.md"
+    },
+    {
+      "id": 2422,
+      "path": "Algorithms_and_Data_Structures/Bit_Manipulation/Basic_Bit_Operations/2422_Single_Number.md"
+    },
+    {
+      "id": 2423,
+      "path": "Algorithms_and_Data_Structures/Bit_Manipulation/Basic_Bit_Operations/2423_Number_Of_1_Bits.md"
+    },
+    {
+      "id": 2424,
+      "path": "Algorithms_and_Data_Structures/Bit_Manipulation/Basic_Bit_Operations/2424_Reverse_Bits.md"
+    },
+    {
+      "id": 2425,
+      "path": "Algorithms_and_Data_Structures/Bit_Manipulation/Basic_Bit_Operations/2425_Bit_Masks.md"
+    },
+    {
+      "id": 2501,
+      "path": "Algorithms_and_Data_Structures/Computational_Geometry/2501_Closest_Pair_of_Points.md"
+    },
+    {
+      "id": 2502,
+      "path": "Algorithms_and_Data_Structures/Computational_Geometry/2502_Convex_Hull.md"
+    },
+    {
+      "id": 2503,
+      "path": "Algorithms_and_Data_Structures/Computational_Geometry/2503_Line_Intersection.md"
+    },
+    {
+      "id": 2504,
+      "path": "Algorithms_and_Data_Structures/Computational_Geometry/2504_Point_in_Polygon.md"
+    },
+    {
+      "id": 2611,
+      "path": "Algorithms_and_Data_Structures/Data_Structures/Arrays/2611_Array_Module.md"
+    },
+    {
+      "id": 2612,
+      "path": "Algorithms_and_Data_Structures/Data_Structures/Arrays/2612_Numpy_Arrays.md"
+    },
+    {
+      "id": 2621,
+      "path": "Algorithms_and_Data_Structures/Data_Structures/Dictionaries/2621_Dictionary_Comprehensions.md"
+    },
+    {
+      "id": 2622,
+      "path": "Algorithms_and_Data_Structures/Data_Structures/Dictionaries/2622_Dictionary_Operations.md"
+    },
+    {
+      "id": 2631,
+      "path": "Algorithms_and_Data_Structures/Data_Structures/Lists/2631_List_Comprehensions.md"
+    },
+    {
+      "id": 2632,
+      "path": "Algorithms_and_Data_Structures/Data_Structures/Lists/2632_List_Operations.md"
+    },
+    {
+      "id": 2641,
+      "path": "Algorithms_and_Data_Structures/Data_Structures/Sets/2641_Frozen_Sets.md"
+    },
+    {
+      "id": 2642,
+      "path": "Algorithms_and_Data_Structures/Data_Structures/Sets/2642_Set_Operations.md"
+    },
+    {
+      "id": 2651,
+      "path": "Algorithms_and_Data_Structures/Data_Structures/Strings/2651_String_Formatting.md"
+    },
+    {
+      "id": 2652,
+      "path": "Algorithms_and_Data_Structures/Data_Structures/Strings/2652_String_Operations.md"
+    },
+    {
+      "id": 2661,
+      "path": "Algorithms_and_Data_Structures/Data_Structures/Tuples/2661_Named_Tuples.md"
+    },
+    {
+      "id": 2662,
+      "path": "Algorithms_and_Data_Structures/Data_Structures/Tuples/2662_Tuple_Basics.md"
+    },
+    {
+      "id": 2701,
+      "path": "Algorithms_and_Data_Structures/Design/2701_Design_File_System.md"
+    },
+    {
+      "id": 2702,
+      "path": "Algorithms_and_Data_Structures/Design/2702_Design_Twitter.md"
+    },
+    {
+      "id": 2703,
+      "path": "Algorithms_and_Data_Structures/Design/2703_Implement_Queue_Using_Stacks.md"
+    },
+    {
+      "id": 2704,
+      "path": "Algorithms_and_Data_Structures/Design/2704_LRU_Cache.md"
+    },
+    {
+      "id": 2705,
+      "path": "Algorithms_and_Data_Structures/Design/2705_Min_Stack.md"
+    },
+    {
+      "id": 2811,
+      "path": "Algorithms_and_Data_Structures/Divide_and_Conquer/Numerical_Algorithms/2811_Karatsuba_Algorithm.md"
+    },
+    {
+      "id": 2821,
+      "path": "Algorithms_and_Data_Structures/Divide_and_Conquer/Search_Algorithms/2821_Binary_Search.md"
+    },
+    {
+      "id": 2822,
+      "path": "Algorithms_and_Data_Structures/Divide_and_Conquer/Search_Algorithms/2822_Binary_Search_Variants.md"
+    },
+    {
+      "id": 2823,
+      "path": "Algorithms_and_Data_Structures/Divide_and_Conquer/Search_Algorithms/2823_Exponential_Search.md"
+    },
+    {
+      "id": 2824,
+      "path": "Algorithms_and_Data_Structures/Divide_and_Conquer/Search_Algorithms/2824_Interpolation_Search.md"
+    },
+    {
+      "id": 2825,
+      "path": "Algorithms_and_Data_Structures/Divide_and_Conquer/Search_Algorithms/2825_Jump_Search.md"
+    },
+    {
+      "id": 2826,
+      "path": "Algorithms_and_Data_Structures/Divide_and_Conquer/Search_Algorithms/2826_Linear_Search.md"
+    },
+    {
+      "id": 2827,
+      "path": "Algorithms_and_Data_Structures/Divide_and_Conquer/Search_Algorithms/2827_Sublist_Search.md"
+    },
+    {
+      "id": 28310,
+      "path": "Algorithms_and_Data_Structures/Divide_and_Conquer/Sorting_Algorithms/28310_Radix_Sort.md"
+    },
+    {
+      "id": 28311,
+      "path": "Algorithms_and_Data_Structures/Divide_and_Conquer/Sorting_Algorithms/28311_Selection_Sort.md"
+    },
+    {
+      "id": 28312,
+      "path": "Algorithms_and_Data_Structures/Divide_and_Conquer/Sorting_Algorithms/28312_Shell_Sort.md"
+    },
+    {
+      "id": 2831,
+      "path": "Algorithms_and_Data_Structures/Divide_and_Conquer/Sorting_Algorithms/2831_Quick_Sort.md"
+    },
+    {
+      "id": 2832,
+      "path": "Algorithms_and_Data_Structures/Divide_and_Conquer/Sorting_Algorithms/2832_Merge_Sort.md"
+    },
+    {
+      "id": 2833,
+      "path": "Algorithms_and_Data_Structures/Divide_and_Conquer/Sorting_Algorithms/2833_Bubble_Sort.md"
+    },
+    {
+      "id": 2834,
+      "path": "Algorithms_and_Data_Structures/Divide_and_Conquer/Sorting_Algorithms/2834_Bucket_Sort.md"
+    },
+    {
+      "id": 2835,
+      "path": "Algorithms_and_Data_Structures/Divide_and_Conquer/Sorting_Algorithms/2835_Counting_Sort.md"
+    },
+    {
+      "id": 2836,
+      "path": "Algorithms_and_Data_Structures/Divide_and_Conquer/Sorting_Algorithms/2836_Custom_Sort_String.md"
+    },
+    {
+      "id": 2837,
+      "path": "Algorithms_and_Data_Structures/Divide_and_Conquer/Sorting_Algorithms/2837_Dutch_National_Flag.md"
+    },
+    {
+      "id": 2838,
+      "path": "Algorithms_and_Data_Structures/Divide_and_Conquer/Sorting_Algorithms/2838_Heap_Sort.md"
+    },
+    {
+      "id": 2839,
+      "path": "Algorithms_and_Data_Structures/Divide_and_Conquer/Sorting_Algorithms/2839_Insertion_Sort.md"
+    },
+    {
+      "id": 2911,
+      "path": "Algorithms_and_Data_Structures/Dynamic_Programming/1D_DP/2911_Climbing_Stairs.md"
+    },
+    {
+      "id": 2912,
+      "path": "Algorithms_and_Data_Structures/Dynamic_Programming/1D_DP/2912_House_Robber.md"
+    },
+    {
+      "id": 2913,
+      "path": "Algorithms_and_Data_Structures/Dynamic_Programming/1D_DP/2913_Longest_Increasing_Subsequence.md"
+    },
+    {
+      "id": 29010,
+      "path": "Algorithms_and_Data_Structures/Dynamic_Programming/29010_Minimum_Add_to_Make_Parentheses_Valid.md"
+    },
+    {
+      "id": 29011,
+      "path": "Algorithms_and_Data_Structures/Dynamic_Programming/29011_Range_Sum_Query___Immutable.md"
+    },
+    {
+      "id": 29012,
+      "path": "Algorithms_and_Data_Structures/Dynamic_Programming/29012_Tabulation.md"
+    },
+    {
+      "id": 2901,
+      "path": "Algorithms_and_Data_Structures/Dynamic_Programming/2901_Longest_Common_Subsequence.md"
+    },
+    {
+      "id": 2902,
+      "path": "Algorithms_and_Data_Structures/Dynamic_Programming/2902_Continuous_Subarray_Sum.md"
+    },
+    {
+      "id": 2903,
+      "path": "Algorithms_and_Data_Structures/Dynamic_Programming/2903_Edit_Distance.md"
+    },
+    {
+      "id": 2904,
+      "path": "Algorithms_and_Data_Structures/Dynamic_Programming/2904_Fibonacci_Sequence.md"
+    },
+    {
+      "id": 2905,
+      "path": "Algorithms_and_Data_Structures/Dynamic_Programming/2905_Jump_Game.md"
+    },
+    {
+      "id": 2906,
+      "path": "Algorithms_and_Data_Structures/Dynamic_Programming/2906_Longest_Increasing_Subsequence.md"
+    },
+    {
+      "id": 2907,
+      "path": "Algorithms_and_Data_Structures/Dynamic_Programming/2907_Longest_Palindrome.md"
+    },
+    {
+      "id": 2908,
+      "path": "Algorithms_and_Data_Structures/Dynamic_Programming/2908_Matrix_Chain_Multiplication.md"
+    },
+    {
+      "id": 2909,
+      "path": "Algorithms_and_Data_Structures/Dynamic_Programming/2909_Memoization.md"
+    },
+    {
+      "id": 2921,
+      "path": "Algorithms_and_Data_Structures/Dynamic_Programming/2D_DP/2921_Edit_Distance.md"
+    },
+    {
+      "id": 2922,
+      "path": "Algorithms_and_Data_Structures/Dynamic_Programming/2D_DP/2922_Longest_Common_Subsequence.md"
+    },
+    {
+      "id": 2923,
+      "path": "Algorithms_and_Data_Structures/Dynamic_Programming/2D_DP/2923_Unique_Paths.md"
+    },
+    {
+      "id": 2931,
+      "path": "Algorithms_and_Data_Structures/Dynamic_Programming/Coin_Change_and_Related_Problems/2931_Coin_Change.md"
+    },
+    {
+      "id": 2932,
+      "path": "Algorithms_and_Data_Structures/Dynamic_Programming/Coin_Change_and_Related_Problems/2932_Maximum_Units_on_a_Truck.md"
+    },
+    {
+      "id": 2933,
+      "path": "Algorithms_and_Data_Structures/Dynamic_Programming/Coin_Change_and_Related_Problems/2933_Minimum_Number_of_Coins.md"
+    },
+    {
+      "id": 2941,
+      "path": "Algorithms_and_Data_Structures/Dynamic_Programming/Knapsack_Problems/2941_Zero_One_Knapsack.md"
+    },
+    {
+      "id": 2942,
+      "path": "Algorithms_and_Data_Structures/Dynamic_Programming/Knapsack_Problems/2942_Partition_Equal_Subset_Sum.md"
+    },
+    {
+      "id": 21001,
+      "path": "Algorithms_and_Data_Structures/Functional_Programming/21001_Functools.md"
+    },
+    {
+      "id": 21002,
+      "path": "Algorithms_and_Data_Structures/Functional_Programming/21002_Higher_Order_Functions.md"
+    },
+    {
+      "id": 21003,
+      "path": "Algorithms_and_Data_Structures/Functional_Programming/21003_Immutability.md"
+    },
+    {
+      "id": 21004,
+      "path": "Algorithms_and_Data_Structures/Functional_Programming/21004_Itertools.md"
+    },
+    {
+      "id": 21005,
+      "path": "Algorithms_and_Data_Structures/Functional_Programming/21005_Recursion_Techniques.md"
+    },
+    {
+      "id": 211010,
+      "path": "Algorithms_and_Data_Structures/Graph_Algorithms/211010_Strongly_Connected_Components.md"
+    },
+    {
+      "id": 211011,
+      "path": "Algorithms_and_Data_Structures/Graph_Algorithms/211011_Topological_Sort.md"
+    },
+    {
+      "id": 21101,
+      "path": "Algorithms_and_Data_Structures/Graph_Algorithms/21101_Bellman-Ford_Algorithm.md"
+    },
+    {
+      "id": 21102,
+      "path": "Algorithms_and_Data_Structures/Graph_Algorithms/21102_Breadth_First_Search.md"
+    },
+    {
+      "id": 21103,
+      "path": "Algorithms_and_Data_Structures/Graph_Algorithms/21103_Clone_Graph.md"
+    },
+    {
+      "id": 21104,
+      "path": "Algorithms_and_Data_Structures/Graph_Algorithms/21104_Depth_First_Search.md"
+    },
+    {
+      "id": 21105,
+      "path": "Algorithms_and_Data_Structures/Graph_Algorithms/21105_Dijkstra's_Algorithm.md"
+    },
+    {
+      "id": 21106,
+      "path": "Algorithms_and_Data_Structures/Graph_Algorithms/21106_Floyd-Warshall_Algorithm.md"
+    },
+    {
+      "id": 21107,
+      "path": "Algorithms_and_Data_Structures/Graph_Algorithms/21107_Graph_Representation.md"
+    },
+    {
+      "id": 21108,
+      "path": "Algorithms_and_Data_Structures/Graph_Algorithms/21108_Kruskal's_Algorithm.md"
+    },
+    {
+      "id": 21111,
+      "path": "Algorithms_and_Data_Structures/Graph_Algorithms/Graph_Traversal/21111_Number_of_Islands.md"
+    },
+    {
+      "id": 21112,
+      "path": "Algorithms_and_Data_Structures/Graph_Algorithms/Graph_Traversal/21112_Word_Ladder.md"
+    },
+    {
+      "id": 21121,
+      "path": "Algorithms_and_Data_Structures/Graph_Algorithms/Tree_Traversal/21121_Binary_Tree_Inorder_Traversal.md"
+    },
+    {
+      "id": 21122,
+      "path": "Algorithms_and_Data_Structures/Graph_Algorithms/Tree_Traversal/21122_Binary_Tree_Level_Order_Traversal.md"
+    },
+    {
+      "id": 21123,
+      "path": "Algorithms_and_Data_Structures/Graph_Algorithms/Tree_Traversal/21123_Binary_Tree_Zigzag_Level_Order_Traversal.md"
+    },
+    {
+      "id": 21211,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Activity_Selection/21211_Job_Sequencing_with_Deadlines.md"
+    },
+    {
+      "id": 21212,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Activity_Selection/21212_Classroom_Allocation.md"
+    },
+    {
+      "id": 21213,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Activity_Selection/21213_Course_Schedule_III.md"
+    },
+    {
+      "id": 21214,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Activity_Selection/21214_Meeting_Rooms_II.md"
+    },
+    {
+      "id": 21221,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Fractional_Knapsack/21221_Fractional_Knapsack_Problem.md"
+    },
+    {
+      "id": 21231,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Greedy_Coloring_of_Graphs/21231_Chromatic_Number_of_a_Graph.md"
+    },
+    {
+      "id": 21232,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Greedy_Coloring_of_Graphs/21232_Greedy_Algorithm_for_Graph_Coloring.md"
+    },
+    {
+      "id": 21233,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Greedy_Coloring_of_Graphs/21233_Graph_Coloring_Problem.md"
+    },
+    {
+      "id": 21281,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Greedy_String_Manipulation/21281_Remove_K_Digits.md"
+    },
+    {
+      "id": 21282,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Greedy_String_Manipulation/21282_Partition_Labels.md"
+    },
+    {
+      "id": 21283,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Greedy_String_Manipulation/21283_Minimum_Number_of_Deletions_to_Make_a_String_Balanced.md"
+    },
+    {
+      "id": 21284,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Greedy_String_Manipulation/21284_Reorganize_String.md"
+    },
+    {
+      "id": 21241,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Greedy_in_Arrays/21241_Jump_Game_II.md"
+    },
+    {
+      "id": 21242,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Greedy_in_Arrays/21242_Boats_to_Save_People.md"
+    },
+    {
+      "id": 21243,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Greedy_in_Arrays/21243_Candy_Distribution.md"
+    },
+    {
+      "id": 21261,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Greedy_in_Matrix/21261_Diagonal_Traverse_II.md"
+    },
+    {
+      "id": 21271,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Greedy_in_Trees/21271_Binary_Tree_Cameras.md"
+    },
+    {
+      "id": 21272,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Greedy_in_Trees/21272_Minimum_Cost_Tree_From_Leaf_Values.md"
+    },
+    {
+      "id": 21291,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Huffman_Coding/21291_Huffman_Encoding.md"
+    },
+    {
+      "id": 21292,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Huffman_Coding/21292_Optimal_File_Merge_Pattern.md"
+    },
+    {
+      "id": 212101,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Interval_Scheduling/212101_Meeting_Rooms.md"
+    },
+    {
+      "id": 212111,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Minimum_Spanning_Tree/212111_Kruskals_Algorithm.md"
+    },
+    {
+      "id": 212112,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Minimum_Spanning_Tree/212112_Prims_Algorithm.md"
+    },
+    {
+      "id": 212113,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Minimum_Spanning_Tree/212113_Connecting_Cities_with_Minimum_Cost.md"
+    },
+    {
+      "id": 212121,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Miscellaneous_Greedy_Problems/212121_Gas_Station.md"
+    },
+    {
+      "id": 212122,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Miscellaneous_Greedy_Problems/212122_Minimum_Number_of_Taps_to_Open_to_Water_a_Garden.md"
+    },
+    {
+      "id": 212123,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Miscellaneous_Greedy_Problems/212123_Task_Scheduling.md"
+    },
+    {
+      "id": 212124,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Miscellaneous_Greedy_Problems/212124_Insert_Interval.md"
+    },
+    {
+      "id": 212125,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Miscellaneous_Greedy_Problems/212125_Merge_Intervals.md"
+    },
+    {
+      "id": 212126,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Miscellaneous_Greedy_Problems/212126_Min_Arrows_To_Burst_Balloons.md"
+    },
+    {
+      "id": 212127,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Miscellaneous_Greedy_Problems/212127_Non_Overlapping_Intervals.md"
+    },
+    {
+      "id": 212131,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Set_Cover/212131_Minimum_Set_Cover.md"
+    },
+    {
+      "id": 212132,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Set_Cover/212132_Weighted_Set_Cover.md"
+    },
+    {
+      "id": 212133,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Set_Cover/212133_Approximation_Algorithms_for_Set_Cover.md"
+    },
+    {
+      "id": 212141,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Stock_Buy_and_Sell/212141_Best_Time_to_Buy_and_Sell_Stock.md"
+    },
+    {
+      "id": 212142,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Stock_Buy_and_Sell/212142_Best_Time_to_Buy_and_Sell_Stock_II.md"
+    },
+    {
+      "id": 212143,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Stock_Buy_and_Sell/212143_Best_Time_to_Buy_and_Sell_Stock_with_Cooldown.md"
+    },
+    {
+      "id": 21311,
+      "path": "Algorithms_and_Data_Structures/Heap/Merge_K_Sorted_Structures/21311_Merge_K_Sorted_Lists.md"
+    },
+    {
+      "id": 21312,
+      "path": "Algorithms_and_Data_Structures/Heap/Merge_K_Sorted_Structures/21312_Smallest_Range_Covering_Elements_From_K_Lists.md"
+    },
+    {
+      "id": 21321,
+      "path": "Algorithms_and_Data_Structures/Heap/Sliding_Window_With_Heap/21321_Find_Median_From_Data_Stream.md"
+    },
+    {
+      "id": 21322,
+      "path": "Algorithms_and_Data_Structures/Heap/Sliding_Window_With_Heap/21322_Sliding_Window_Median.md"
+    },
+    {
+      "id": 21331,
+      "path": "Algorithms_and_Data_Structures/Heap/Top_K_Problems/21331_Find_K_Pairs_With_Smallest_Sums.md"
+    },
+    {
+      "id": 21332,
+      "path": "Algorithms_and_Data_Structures/Heap/Top_K_Problems/21332_Kth_Largest_Element_Array.md"
+    },
+    {
+      "id": 21333,
+      "path": "Algorithms_and_Data_Structures/Heap/Top_K_Problems/21333_Top_K_Frequent_Elements.md"
+    },
+    {
+      "id": 21411,
+      "path": "Algorithms_and_Data_Structures/Linked_List/Advanced_Linked_List_Operations/21411_Copy_List_with_Random_Pointer.md"
+    },
+    {
+      "id": 1001,
+      "path": "Algorithms_and_Data_Structures/Mathematical_Algorithms/1001_Catalan_Number.md"
+    },
+    {
+      "id": 1002,
+      "path": "Algorithms_and_Data_Structures/Mathematical_Algorithms/1002_Ugly_Number_II.md"
+    },
+    {
+      "id": 1003,
+      "path": "Algorithms_and_Data_Structures/Mathematical_Algorithms/1003_Max_Points_On_A_Line.md"
+    },
+    {
+      "id": 1004,
+      "path": "Algorithms_and_Data_Structures/Mathematical_Algorithms/1004_Prime_Numbers.md"
+    },
+    {
+      "id": 1005,
+      "path": "Algorithms_and_Data_Structures/Mathematical_Algorithms/1005_Matrix_Exponentiation.md"
+    },
+    {
+      "id": 1006,
+      "path": "Algorithms_and_Data_Structures/Mathematical_Algorithms/1006_Sqrt.md"
+    },
+    {
+      "id": 1007,
+      "path": "Algorithms_and_Data_Structures/Mathematical_Algorithms/1007_Fast_Exponentiation.md"
+    },
+    {
+      "id": 1008,
+      "path": "Algorithms_and_Data_Structures/Mathematical_Algorithms/1008_Euclidean_Algorithm.md"
+    },
+    {
+      "id": 275,
+      "path": "Algorithms_and_Data_Structures/Mathematical_Algorithms/275_Strassen's_Matrix_Multiplication.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Python_Internals/Bytecode_Operations.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Python_Internals/GIL_(Global_Interpreter_Lock).md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Python_Internals/Memory_Management.md"
+    },
+    {
+      "id": 1311,
+      "path": "Algorithms_and_Data_Structures/String_Algorithms/1311_Group_Anagrams.md"
+    },
+    {
+      "id": 1312,
+      "path": "Algorithms_and_Data_Structures/String_Algorithms/1312_Longest_Substring_K_Distinct_Characters.md"
+    },
+    {
+      "id": 1313,
+      "path": "Algorithms_and_Data_Structures/String_Algorithms/1313_Minimum_Window_Substring.md"
+    },
+    {
+      "id": 1323,
+      "path": "Algorithms_and_Data_Structures/String_Algorithms/1323_Regular_Expression_Matching.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/String_Algorithms/Aho-Corasick_Algorithm.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/String_Algorithms/Find_All_Anagrams_in_a_String.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/String_Algorithms/KMP_Algorithm.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/String_Algorithms/Longest_Substring_Without_Repeating_Characters.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/String_Algorithms/Manacher's_Algorithm.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/String_Algorithms/Minimum_Window_Substring.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/String_Algorithms/Rabin-Karp_Algorithm.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/String_Algorithms/Sliding_Window_Maximum.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/String_Algorithms/Suffix_Array_and_LCP.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/String_Algorithms/Z_Algorithm.md"
+    },
+    {
+      "id": 22021,
+      "path": "Algorithms_and_Data_Structures/Tree_Algorithms/22021_AVL_Tree.md"
+    },
+    {
+      "id": 22022,
+      "path": "Algorithms_and_Data_Structures/Tree_Algorithms/22022_B_Tree.md"
+    },
+    {
+      "id": 22023,
+      "path": "Algorithms_and_Data_Structures/Tree_Algorithms/22023_Binary_Search_Tree.md"
+    },
+    {
+      "id": 22024,
+      "path": "Algorithms_and_Data_Structures/Tree_Algorithms/22024_Binary_Tree_Traversals.md"
+    },
+    {
+      "id": 22025,
+      "path": "Algorithms_and_Data_Structures/Tree_Algorithms/22025_Red-Black_Tree.md"
+    },
+    {
+      "id": 22026,
+      "path": "Algorithms_and_Data_Structures/Tree_Algorithms/22026_Serialize_Deserialize_Binary_Tree.md"
+    },
+    {
+      "id": 22011,
+      "path": "Algorithms_and_Data_Structures/Tree_Algorithms/Binary_Search_Tree/22011_Kth_Smallest_Element_in_a_BST.md"
+    },
+    {
+      "id": 22012,
+      "path": "Algorithms_and_Data_Structures/Tree_Algorithms/Binary_Search_Tree/22012_Lowest_Common_Ancestor_of_a_Binary_Search_Tree.md"
+    },
+    {
+      "id": 22013,
+      "path": "Algorithms_and_Data_Structures/Tree_Algorithms/Binary_Search_Tree/22013_Validate_Binary_Search_Tree.md"
+    },
+    {
+      "id": 111,
+      "path": "Algorithms_and_Data_Structures/Tree_Algorithms/Segment_Tree_and_BIT/111_Count_Smaller_Numbers_After_Self.md"
+    },
+    {
+      "id": 112,
+      "path": "Algorithms_and_Data_Structures/Tree_Algorithms/Segment_Tree_and_BIT/112_Range_Sum_Query_Mutable.md"
+    },
+    {
+      "id": 22031,
+      "path": "Algorithms_and_Data_Structures/Tree_Algorithms/Trie/22031_Design_Add_Search_Words_Data_Structure.md"
+    },
+    {
+      "id": 22032,
+      "path": "Algorithms_and_Data_Structures/Tree_Algorithms/Trie/22032_Implement_Trie.md"
+    },
+    {
+      "id": 22033,
+      "path": "Algorithms_and_Data_Structures/Tree_Algorithms/Trie/22033_Word_Search_II.md"
+    },
+    {
+      "id": null,
+      "path": "Best_Practices_and_Code_Style/Code_Documentation/Docstrings.md"
+    },
+    {
+      "id": null,
+      "path": "Best_Practices_and_Code_Style/Code_Documentation/Type_Annotations.md"
+    },
+    {
+      "id": null,
+      "path": "Best_Practices_and_Code_Style/Code_Organization/Module_Design.md"
+    },
+    {
+      "id": null,
+      "path": "Best_Practices_and_Code_Style/Code_Organization/Project_Structure.md"
+    },
+    {
+      "id": null,
+      "path": "Best_Practices_and_Code_Style/PEP8_Guidelines.md"
+    },
+    {
+      "id": 511,
+      "path": "Concurrency/Asynchronous_Programming/511_Asynchronous_Context_Managers.md"
+    },
+    {
+      "id": 512,
+      "path": "Concurrency/Asynchronous_Programming/512_Event_Loops.md"
+    },
+    {
+      "id": 531,
+      "path": "Concurrency/Mixing_Concurrency_Models/531_Asyncio_and_Multiprocessing.md"
+    },
+    {
+      "id": 532,
+      "path": "Concurrency/Mixing_Concurrency_Models/532_Best_Practices_for_Mixed_Concurrency.md"
+    },
+    {
+      "id": 533,
+      "path": "Concurrency/Mixing_Concurrency_Models/533_Combining_Threading_with_Asyncio.md"
+    },
+    {
+      "id": null,
+      "path": "Concurrency/Mixing_Concurrency_Models/Mixing_Threading_and_Multiprocessing.md"
+    },
+    {
+      "id": 541,
+      "path": "Concurrency/Multiprocessing/541_Multithreading_Multiprocessing.md"
+    },
+    {
+      "id": 542,
+      "path": "Concurrency/Multiprocessing/542_Inter-Process_Communication.md"
+    },
+    {
+      "id": 543,
+      "path": "Concurrency/Multiprocessing/543_Process_Creation.md"
+    },
+    {
+      "id": 521,
+      "path": "Concurrency/Parallel_Processing/521_ProcessPoolExecutor.md"
+    },
+    {
+      "id": 522,
+      "path": "Concurrency/Parallel_Processing/522_ThreadPoolExecutor.md"
+    },
+    {
+      "id": 551,
+      "path": "Concurrency/Threading/551_Thread_Basics.md"
+    },
+    {
+      "id": 552,
+      "path": "Concurrency/Threading/552_Design_Bounded_Blocking_Queue.md"
+    },
+    {
+      "id": 553,
+      "path": "Concurrency/Threading/553_Print_FooBar_Alternately.md"
+    },
+    {
+      "id": 554,
+      "path": "Concurrency/Threading/554_Print_In_Order.md"
+    },
+    {
+      "id": 555,
+      "path": "Concurrency/Threading/555_Thread_Synchronization.md"
+    },
+    {
+      "id": 556,
+      "path": "Concurrency/Threading/556_Web_Crawler_Multithreaded.md"
+    },
+    {
+      "id": 5110,
+      "path": "Data_Science_and_Machine_Learning/Deep_Learning/5110_Advanced_Transfer_Learning.md"
+    },
+    {
+      "id": 511,
+      "path": "Data_Science_and_Machine_Learning/Deep_Learning/511_Introduction_to_PyTorch.md"
+    },
+    {
+      "id": 512,
+      "path": "Data_Science_and_Machine_Learning/Deep_Learning/512_Introduction_to_TensorFlow.md"
+    },
+    {
+      "id": 513,
+      "path": "Data_Science_and_Machine_Learning/Deep_Learning/513_Model_Optimization.md"
+    },
+    {
+      "id": 514,
+      "path": "Data_Science_and_Machine_Learning/Deep_Learning/514_Model_Training.md"
+    },
+    {
+      "id": 515,
+      "path": "Data_Science_and_Machine_Learning/Deep_Learning/515_Transfer_Learning.md"
+    },
+    {
+      "id": 516,
+      "path": "Data_Science_and_Machine_Learning/Deep_Learning/516_Introduction_to_PyTorch.md"
+    },
+    {
+      "id": 517,
+      "path": "Data_Science_and_Machine_Learning/Deep_Learning/517_Introduction_to_TensorFlow.md"
+    },
+    {
+      "id": 518,
+      "path": "Data_Science_and_Machine_Learning/Deep_Learning/518_Advanced_Model_Optimization.md"
+    },
+    {
+      "id": 519,
+      "path": "Data_Science_and_Machine_Learning/Deep_Learning/519_Advanced_Model_Training.md"
+    },
+    {
+      "id": 521,
+      "path": "Data_Science_and_Machine_Learning/Machine_Learning_Pipelines/521_Building_End_to_End_Pipelines.md"
+    },
+    {
+      "id": 522,
+      "path": "Data_Science_and_Machine_Learning/Machine_Learning_Pipelines/522_Model_Deployment_with_FastAPI.md"
+    },
+    {
+      "id": 523,
+      "path": "Data_Science_and_Machine_Learning/Machine_Learning_Pipelines/523_Model_Deployment_with_Flask.md"
+    },
+    {
+      "id": 524,
+      "path": "Data_Science_and_Machine_Learning/Machine_Learning_Pipelines/524_Advanced_Building_End_to_End_Pipelines.md"
+    },
+    {
+      "id": 525,
+      "path": "Data_Science_and_Machine_Learning/Machine_Learning_Pipelines/525_Advanced_Model_Deployment_with_FastAPI.md"
+    },
+    {
+      "id": 526,
+      "path": "Data_Science_and_Machine_Learning/Machine_Learning_Pipelines/526_Model_Deployment_with_Flask.md"
+    },
+    {
+      "id": 531,
+      "path": "Data_Science_and_Machine_Learning/Matplotlib_and_Seaborn/531_Advanced_Visualizations.md"
+    },
+    {
+      "id": 532,
+      "path": "Data_Science_and_Machine_Learning/Matplotlib_and_Seaborn/532_Basic_Plotting.md"
+    },
+    {
+      "id": null,
+      "path": "Data_Science_and_Machine_Learning/Matplotlib_and_Seaborn/Advanced_Visualizations.md"
+    },
+    {
+      "id": null,
+      "path": "Data_Science_and_Machine_Learning/Matplotlib_and_Seaborn/Basic_Plotting.md"
+    },
+    {
+      "id": 541,
+      "path": "Data_Science_and_Machine_Learning/NumPy/541_Array_Operations.md"
+    },
+    {
+      "id": 542,
+      "path": "Data_Science_and_Machine_Learning/NumPy/542_Mathematical_Functions.md"
+    },
+    {
+      "id": null,
+      "path": "Data_Science_and_Machine_Learning/NumPy/Array_Operations.md"
+    },
+    {
+      "id": null,
+      "path": "Data_Science_and_Machine_Learning/NumPy/Mathematical_Functions.md"
+    },
+    {
+      "id": 551,
+      "path": "Data_Science_and_Machine_Learning/Pandas/551_Data_Cleaning.md"
+    },
+    {
+      "id": 552,
+      "path": "Data_Science_and_Machine_Learning/Pandas/552_DataFrame_Operations.md"
+    },
+    {
+      "id": null,
+      "path": "Data_Science_and_Machine_Learning/Pandas/DataFrame_Operations.md"
+    },
+    {
+      "id": null,
+      "path": "Data_Science_and_Machine_Learning/Pandas/Data_Cleaning.md"
+    },
+    {
+      "id": 561,
+      "path": "Data_Science_and_Machine_Learning/Scikit-learn/561_Model_Evaluation.md"
+    },
+    {
+      "id": 562,
+      "path": "Data_Science_and_Machine_Learning/Scikit-learn/562_Model_Selection.md"
+    },
+    {
+      "id": 563,
+      "path": "Data_Science_and_Machine_Learning/Scikit-learn/563_Preprocessing.md"
+    },
+    {
+      "id": 564,
+      "path": "Data_Science_and_Machine_Learning/Scikit-learn/564_Supervised_Learning.md"
+    },
+    {
+      "id": 565,
+      "path": "Data_Science_and_Machine_Learning/Scikit-learn/565_Unsupervised_Learning.md"
+    },
+    {
+      "id": 611,
+      "path": "Database_Operations/NoSQL_Databases/611_MongoDB_with_PyMongo.md"
+    },
+    {
+      "id": 612,
+      "path": "Database_Operations/NoSQL_Databases/612_Redis_with_redis-py.md"
+    },
+    {
+      "id": 621,
+      "path": "Database_Operations/ORM/621_Django_ORM.md"
+    },
+    {
+      "id": 622,
+      "path": "Database_Operations/ORM/622_SQLAlchemy.md"
+    },
+    {
+      "id": 631,
+      "path": "Database_Operations/SQL_Databases/631_PostgreSQL_with_Psycopg2.md"
+    },
+    {
+      "id": 632,
+      "path": "Database_Operations/SQL_Databases/632_SQLite3.md"
+    },
+    {
+      "id": 711,
+      "path": "Deployment_and_DevOps/CI_CD/711_GitHub_Actions.md"
+    },
+    {
+      "id": 712,
+      "path": "Deployment_and_DevOps/CI_CD/712_Jenkins_for_Python.md"
+    },
+    {
+      "id": 721,
+      "path": "Deployment_and_DevOps/Containerization/721_Docker_Compose.md"
+    },
+    {
+      "id": 722,
+      "path": "Deployment_and_DevOps/Containerization/722_Docker_for_Python.md"
+    },
+    {
+      "id": 731,
+      "path": "Deployment_and_DevOps/Orchestration_and_Automation/731_Ansible_for_Automation.md"
+    },
+    {
+      "id": 732,
+      "path": "Deployment_and_DevOps/Orchestration_and_Automation/732_Kubernetes_Basics.md"
+    },
+    {
+      "id": 733,
+      "path": "Deployment_and_DevOps/Orchestration_and_Automation/733_Terraform_Basics.md"
+    },
+    {
+      "id": 741,
+      "path": "Deployment_and_DevOps/Package_Management/741_Pip.md"
+    },
+    {
+      "id": 742,
+      "path": "Deployment_and_DevOps/Package_Management/742_Poetry.md"
+    },
+    {
+      "id": 751,
+      "path": "Deployment_and_DevOps/Serverless/751_AWS_Lambda_Basics.md"
+    },
+    {
+      "id": 752,
+      "path": "Deployment_and_DevOps/Serverless/752_Azure_Functions.md"
+    },
+    {
+      "id": 753,
+      "path": "Deployment_and_DevOps/Serverless/753_GCP_Functions.md"
+    },
+    {
+      "id": 761,
+      "path": "Deployment_and_DevOps/Virtual_Environments/761_Venv.md"
+    },
+    {
+      "id": 762,
+      "path": "Deployment_and_DevOps/Virtual_Environments/762_Virtualenv.md"
+    },
+    {
+      "id": 911,
+      "path": "Design_Patterns/Behavioral_Patterns/911_Observer.md"
+    },
+    {
+      "id": 912,
+      "path": "Design_Patterns/Behavioral_Patterns/912_Strategy.md"
+    },
+    {
+      "id": 921,
+      "path": "Design_Patterns/Creational_Patterns/921_Factory_Method.md"
+    },
+    {
+      "id": 922,
+      "path": "Design_Patterns/Creational_Patterns/922_Singleton.md"
+    },
+    {
+      "id": 931,
+      "path": "Design_Patterns/Structural_Patterns/931_Adapter.md"
+    },
+    {
+      "id": 932,
+      "path": "Design_Patterns/Structural_Patterns/932_Decorator.md"
+    },
+    {
+      "id": 1001,
+      "path": "Exception_Handling/1001_Context_Managers_for_Exception_Handling.md"
+    },
+    {
+      "id": 1002,
+      "path": "Exception_Handling/1002_Custom_Exceptions.md"
+    },
+    {
+      "id": 1003,
+      "path": "Exception_Handling/1003_Try_Except_Blocks.md"
+    },
+    {
+      "id": 1101,
+      "path": "File_Handling/1101_File_IO_Operations.md"
+    },
+    {
+      "id": 1102,
+      "path": "File_Handling/1102_JSON_Handling.md"
+    },
+    {
+      "id": 1103,
+      "path": "File_Handling/1103_Working_with_CSV.md"
+    },
+    {
+      "id": 1104,
+      "path": "File_Handling/1104_XML_Parsing.md"
+    },
+    {
+      "id": 1111,
+      "path": "Networking/HTTP_Requests/1111_AIOHTTP_for_Async_Requests.md"
+    },
+    {
+      "id": 1112,
+      "path": "Networking/HTTP_Requests/1112_http_requests.md"
+    },
+    {
+      "id": 1113,
+      "path": "Networking/HTTP_Requests/1113_Requests_Library.md"
+    },
+    {
+      "id": 1121,
+      "path": "Networking/Socket_Programming/1121_socket_programming.md"
+    },
+    {
+      "id": 1122,
+      "path": "Networking/Socket_Programming/1122_TCP_Sockets.md"
+    },
+    {
+      "id": 1123,
+      "path": "Networking/Socket_Programming/1123_UDP_Sockets.md"
+    },
+    {
+      "id": 1131,
+      "path": "Networking/Web_Scraping/1131_BeautifulSoup.md"
+    },
+    {
+      "id": 1132,
+      "path": "Networking/Web_Scraping/1132_Scrapy_Framework.md"
+    },
+    {
+      "id": 1311,
+      "path": "Object_Oriented_Programming/Abstract_Classes_and_Interfaces/1311_ABC_Module.md"
+    },
+    {
+      "id": 1312,
+      "path": "Object_Oriented_Programming/Abstract_Classes_and_Interfaces/1312_Protocols.md"
+    },
+    {
+      "id": 1321,
+      "path": "Object_Oriented_Programming/Classes_and_Objects/1321_Class_Definition.md"
+    },
+    {
+      "id": 1322,
+      "path": "Object_Oriented_Programming/Classes_and_Objects/1322_Instance_and_Class_Variables.md"
+    },
+    {
+      "id": 1331,
+      "path": "Object_Oriented_Programming/Encapsulation/1331_Access_Modifiers.md"
+    },
+    {
+      "id": 1332,
+      "path": "Object_Oriented_Programming/Encapsulation/1332_Properties.md"
+    },
+    {
+      "id": 1341,
+      "path": "Object_Oriented_Programming/Inheritance/1341_Multiple_Inheritance.md"
+    },
+    {
+      "id": 1342,
+      "path": "Object_Oriented_Programming/Inheritance/1342_Single_Inheritance.md"
+    },
+    {
+      "id": 1351,
+      "path": "Object_Oriented_Programming/Polymorphism/1351_Method_Overriding.md"
+    },
+    {
+      "id": 1352,
+      "path": "Object_Oriented_Programming/Polymorphism/1352_Operator_Overloading.md"
+    },
+    {
+      "id": 1311,
+      "path": "Performance_Optimization/Code_Optimization/1311_Algorithmic_Efficiency.md"
+    },
+    {
+      "id": 1312,
+      "path": "Performance_Optimization/Code_Optimization/1312_Cython_for_Speed.md"
+    },
+    {
+      "id": 1321,
+      "path": "Performance_Optimization/Profiling/1321_cProfile.md"
+    },
+    {
+      "id": 1322,
+      "path": "Performance_Optimization/Profiling/1322_Memory_Profiler.md"
+    },
+    {
+      "id": 1401,
+      "path": "Python Basics/1401_Variables_and_Data_Types.md"
+    },
+    {
+      "id": 1411,
+      "path": "Python Basics/Control_Flow/1411_Conditional_Statements.md"
+    },
+    {
+      "id": 1412,
+      "path": "Python Basics/Control_Flow/1412_Loops.md"
+    },
+    {
+      "id": 1421,
+      "path": "Python Basics/Functions/1421_Decorators.md"
+    },
+    {
+      "id": 1422,
+      "path": "Python Basics/Functions/1422_Function_Basics.md"
+    },
+    {
+      "id": 1423,
+      "path": "Python Basics/Functions/1423_Lambda_Functions.md"
+    },
+    {
+      "id": 1431,
+      "path": "Python Basics/Modules_and_Packages/1431_Creating_Modules.md"
+    },
+    {
+      "id": 1432,
+      "path": "Python Basics/Modules_and_Packages/1432_Importing_Modules.md"
+    },
+    {
+      "id": 1433,
+      "path": "Python Basics/Modules_and_Packages/1433_Package_Structure.md"
+    },
+    {
+      "id": 1501,
+      "path": "Python_2_to_3_Migration/1501_Division_Operator.md"
+    },
+    {
+      "id": 1502,
+      "path": "Python_2_to_3_Migration/1502_Print_Function.md"
+    },
+    {
+      "id": 1503,
+      "path": "Python_2_to_3_Migration/1503_Unicode_Strings.md"
+    },
+    {
+      "id": 1611,
+      "path": "Security/Cryptography/1611_Encryption_with_Cryptography.md"
+    },
+    {
+      "id": 1612,
+      "path": "Security/Cryptography/1612_Hashing_with_Hashlib.md"
+    },
+    {
+      "id": 1621,
+      "path": "Security/Web_Security/1621_CSRF_Protection.md"
+    },
+    {
+      "id": 1622,
+      "path": "Security/Web_Security/1622_XSS_Prevention.md"
+    },
+    {
+      "id": 1623,
+      "path": "Security/Web_Security/1623_OWASP_Best_Practices.md"
+    },
+    {
+      "id": 1624,
+      "path": "Security/Web_Security/1624_API_Security.md"
+    },
+    {
+      "id": 1625,
+      "path": "Security/Web_Security/1625_Authentication_and_Authorization.md"
+    },
+    {
+      "id": 1626,
+      "path": "Security/Web_Security/1626_Input_Validation.md"
+    },
+    {
+      "id": 1712,
+      "path": "Standard_Library/Collections_Module/1712_Counter.md"
+    },
+    {
+      "id": 1713,
+      "path": "Standard_Library/Collections_Module/1713_DefaultDict.md"
+    },
+    {
+      "id": 1714,
+      "path": "Standard_Library/Collections_Module/1714_Deque.md"
+    },
+    {
+      "id": null,
+      "path": "Standard_Library/Collections_Module/Collections_Module.md"
+    },
+    {
+      "id": null,
+      "path": "Standard_Library/Concurrent_Module/Executors.md"
+    },
+    {
+      "id": null,
+      "path": "Standard_Library/Concurrent_Module/Futures.md"
+    },
+    {
+      "id": 1731,
+      "path": "Standard_Library/Functools_Module/1731_LRU_Cache.md"
+    },
+    {
+      "id": 1732,
+      "path": "Standard_Library/Functools_Module/1732_Partial.md"
+    },
+    {
+      "id": 1741,
+      "path": "Standard_Library/Itertools_Module/1741_Combinations.md"
+    },
+    {
+      "id": 1742,
+      "path": "Standard_Library/Itertools_Module/1742_Itertools_Functools.md"
+    },
+    {
+      "id": 1743,
+      "path": "Standard_Library/Itertools_Module/1743_Permutations.md"
+    },
+    {
+      "id": 1744,
+      "path": "Standard_Library/Itertools_Module/1744_Product.md"
+    },
+    {
+      "id": 1751,
+      "path": "Standard_Library/Re_Module/1751_Regular_Expressions.md"
+    },
+    {
+      "id": 1761,
+      "path": "Standard_Library/Typing_Module/1761_Generic_Types.md"
+    },
+    {
+      "id": 1762,
+      "path": "Standard_Library/Typing_Module/1762_Type_Hints.md"
+    },
+    {
+      "id": 1811,
+      "path": "Testing/Mocking/1811_Pytest_monkeypatch.md"
+    },
+    {
+      "id": 1812,
+      "path": "Testing/Mocking/1812_Unittest_mock.md"
+    },
+    {
+      "id": 1821,
+      "path": "Testing/Test_Coverage/1821_Coverage_py.md"
+    },
+    {
+      "id": 1831,
+      "path": "Testing/Unit_Testing/1831_Pytest.md"
+    },
+    {
+      "id": 1832,
+      "path": "Testing/Unit_Testing/1832_Unittest_Framework.md"
+    },
+    {
+      "id": 18411,
+      "path": "Web_Development/Django/18411_Django_REST_Framework.md"
+    },
+    {
+      "id": 18412,
+      "path": "Web_Development/Django/18412_Models.md"
+    },
+    {
+      "id": 18413,
+      "path": "Web_Development/Django/18413_Views.md"
+    },
+    {
+      "id": 18421,
+      "path": "Web_Development/FastAPI/18421_Dependency_Injection.md"
+    },
+    {
+      "id": 18422,
+      "path": "Web_Development/FastAPI/18422_Path_Operations.md"
+    },
+    {
+      "id": 18431,
+      "path": "Web_Development/Flask/18431_Flask_RESTful.md"
+    },
+    {
+      "id": 18432,
+      "path": "Web_Development/Flask/18432_Routing.md"
+    },
+    {
+      "id": 18433,
+      "path": "Web_Development/Flask/18433_Templates.md"
+    }
+  ],
+  "solutions": [
+    {
+      "id": 111,
+      "path": "Advanced_Python_Concepts/Context_Managers/111_Contextlib_Module.md"
+    },
+    {
+      "id": null,
+      "path": "Advanced_Python_Concepts/Context_Managers/With_Statement.md"
+    },
+    {
+      "id": null,
+      "path": "Advanced_Python_Concepts/Coroutines_and_AsyncIO/Asynchronous_Comprehensions.md"
+    },
+    {
+      "id": null,
+      "path": "Advanced_Python_Concepts/Coroutines_and_AsyncIO/Asyncio_Basics.md"
+    },
+    {
+      "id": null,
+      "path": "Advanced_Python_Concepts/Descriptors/Non-Data_Descriptors.md"
+    },
+    {
+      "id": null,
+      "path": "Advanced_Python_Concepts/Descriptors/Property_Descriptors.md"
+    },
+    {
+      "id": null,
+      "path": "Advanced_Python_Concepts/Generators_and_Iterators/Generator_Functions.md"
+    },
+    {
+      "id": null,
+      "path": "Advanced_Python_Concepts/Generators_and_Iterators/Iterator_Protocol.md"
+    },
+    {
+      "id": null,
+      "path": "Advanced_Python_Concepts/Metaclasses/Custom_Metaclasses.md"
+    },
+    {
+      "id": null,
+      "path": "Advanced_Python_Concepts/Metaclasses/Metaclass_Basics.md"
+    },
+    {
+      "id": 201,
+      "path": "Algorithms_and_Data_Structures/Advanced_Data_Structures/201_Bloom_Filter.md"
+    },
+    {
+      "id": 202,
+      "path": "Algorithms_and_Data_Structures/Advanced_Data_Structures/202_Skip_List.md"
+    },
+    {
+      "id": 211,
+      "path": "Algorithms_and_Data_Structures/Advanced_Data_Structures/Disjoint_Set_Union/211_Accounts_Merge.md"
+    },
+    {
+      "id": 212,
+      "path": "Algorithms_and_Data_Structures/Advanced_Data_Structures/Disjoint_Set_Union/212_Number_Of_Islands_II.md"
+    },
+    {
+      "id": 213,
+      "path": "Algorithms_and_Data_Structures/Advanced_Data_Structures/Disjoint_Set_Union/213_Redundant_Connection.md"
+    },
+    {
+      "id": 214,
+      "path": "Algorithms_and_Data_Structures/Advanced_Data_Structures/Disjoint_Set_Union/214_Union_Find.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Backtracking/Hamiltonian_Cycle.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Backtracking/N-Queens_Problem.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Backtracking/Subset_Sum.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Backtracking/Sudoku_Solver.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Bit_Manipulation/Basic_Bit_Operations.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Bit_Manipulation/Bit_Masks.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Bit_Manipulation/Power_Set.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Computational_Geometry/Closest_Pair_of_Points.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Computational_Geometry/Convex_Hull.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Computational_Geometry/Line_Intersection.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Computational_Geometry/Point_in_Polygon.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Data_Structures/Arrays/Array_Module.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Data_Structures/Arrays/Numpy_Arrays.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Data_Structures/Dictionaries/Dictionary_Comprehensions.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Data_Structures/Dictionaries/Dictionary_Operations.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Data_Structures/Lists/List_Comprehensions.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Data_Structures/Lists/List_Operations.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Data_Structures/Sets/Frozen_Sets.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Data_Structures/Sets/Set_Operations.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Data_Structures/Strings/String_Formatting.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Data_Structures/Strings/String_Operations.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Data_Structures/Tuples/Named_Tuples.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Data_Structures/Tuples/Tuple_Basics.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Divide_and_Conquer/Binary_Search.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Divide_and_Conquer/Karatsuba_Algorithm.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Divide_and_Conquer/Merge_Sort.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Divide_and_Conquer/Quick_Sort.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Divide_and_Conquer/Strassen's_Matrix_Multiplication.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Dynamic_Programming/Coin_Change_Problem.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Dynamic_Programming/Edit_Distance.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Dynamic_Programming/Fibonacci_Sequence.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Dynamic_Programming/Knapsack_Problem.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Dynamic_Programming/Longest_Common_Subsequence.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Dynamic_Programming/Longest_Increasing_Subsequence.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Dynamic_Programming/Matrix_Chain_Multiplication.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Dynamic_Programming/Memoization.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Dynamic_Programming/Tabulation.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Functional_Programming/Functools.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Functional_Programming/Higher_Order_Functions.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Functional_Programming/Immutability.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Functional_Programming/Itertools.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Functional_Programming/Recursion_Techniques.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Graph_Algorithms/Bellman-Ford_Algorithm.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Graph_Algorithms/Breadth_First_Search.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Graph_Algorithms/Depth_First_Search.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Graph_Algorithms/Dijkstra's_Algorithm.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Graph_Algorithms/Floyd-Warshall_Algorithm.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Graph_Algorithms/Graph_Representation.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Graph_Algorithms/Kruskal's_Algorithm.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Graph_Algorithms/Prim's_Algorithm.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Graph_Algorithms/Strongly_Connected_Components.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Graph_Algorithms/Topological_Sort.md"
+    },
+    {
+      "id": 711,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Activity_Selection/711_Job_Sequencing_with_Deadlines.md"
+    },
+    {
+      "id": 712,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Activity_Selection/712_Classroom_Allocation.md"
+    },
+    {
+      "id": 713,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Activity_Selection/713_Course_Schedule_III.md"
+    },
+    {
+      "id": 714,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Activity_Selection/714_Meeting_Rooms_II.md"
+    },
+    {
+      "id": 21221,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Fractional_Knapsack/21221_Fractional_Knapsack_Problem.md"
+    },
+    {
+      "id": 731,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Greedy_Coloring_of_Graphs/731_Chromatic_Number_of_a_Graph.md"
+    },
+    {
+      "id": 732,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Greedy_Coloring_of_Graphs/732_Greedy_Algorithm_for_Graph_Coloring.md"
+    },
+    {
+      "id": 733,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Greedy_Coloring_of_Graphs/733_Graph_Coloring_Problem.md"
+    },
+    {
+      "id": 21282,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Greedy_String_Manipulation/21282_Partition_Labels.md"
+    },
+    {
+      "id": 781,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Greedy_String_Manipulation/781_Minimum_Number_of_Deletions_to_Make_a_String_Balanced.md"
+    },
+    {
+      "id": 782,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Greedy_String_Manipulation/782_Remove_K_Digits.md"
+    },
+    {
+      "id": 784,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Greedy_String_Manipulation/784_Reorganize_String.md"
+    },
+    {
+      "id": 741,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Greedy_in_Arrays/741_Jump_Game_II.md"
+    },
+    {
+      "id": 742,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Greedy_in_Arrays/742_Boats_to_Save_People.md"
+    },
+    {
+      "id": 743,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Greedy_in_Arrays/743_Candy_Distribution.md"
+    },
+    {
+      "id": 751,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Greedy_in_Graphs/751_Minimum_Cost_to_Connect_All_Points.md"
+    },
+    {
+      "id": 752,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Greedy_in_Graphs/752_Network_Delay_Time.md"
+    },
+    {
+      "id": 753,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Greedy_in_Graphs/753_Find_City_With_the_Smallest_Number_of_Neighbors_at_a_Threshold_Distance.md"
+    },
+    {
+      "id": 761,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Greedy_in_Matrix/761_Diagonal_Traverse_II.md"
+    },
+    {
+      "id": 771,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Greedy_in_Trees/771_Binary_Tree_Cameras.md"
+    },
+    {
+      "id": 772,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Greedy_in_Trees/772_Minimum_Cost_Tree_From_Leaf_Values.md"
+    },
+    {
+      "id": 781,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Huffman_Coding/781_Huffman_Encoding.md"
+    },
+    {
+      "id": 782,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Huffman_Coding/782_Optimal_File_Merge_Pattern.md"
+    },
+    {
+      "id": 7101,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Interval_Scheduling/7101_Meeting_Rooms.md"
+    },
+    {
+      "id": 7111,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Minimum_Spanning_Tree/7111_Kruskals_Algorithm.md"
+    },
+    {
+      "id": 7112,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Minimum_Spanning_Tree/7112_Prims_Algorithm.md"
+    },
+    {
+      "id": 7113,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Minimum_Spanning_Tree/7113_Connecting_Cities_with_Minimum_Cost.md"
+    },
+    {
+      "id": 212121,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Miscellaneous_Greedy_Problems/212121_Gas_Station.md"
+    },
+    {
+      "id": 7122,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Miscellaneous_Greedy_Problems/7122_Task_Scheduling.md"
+    },
+    {
+      "id": 7123,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Miscellaneous_Greedy_Problems/7123_Minimum_Number_of_Taps_to_Open_to_Water_a_Garden.md"
+    },
+    {
+      "id": 7124,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Miscellaneous_Greedy_Problems/7124_Insert_Interval.md"
+    },
+    {
+      "id": 7125,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Miscellaneous_Greedy_Problems/7125_Merge_Intervals.md"
+    },
+    {
+      "id": 7126,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Miscellaneous_Greedy_Problems/7126_Min_Arrows_To_Burst_Balloons.md"
+    },
+    {
+      "id": 7127,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Miscellaneous_Greedy_Problems/7127_Non_Overlapping_Intervals.md"
+    },
+    {
+      "id": 7131,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Set_Cover/7131_Minimum_Set_Cover.md"
+    },
+    {
+      "id": 7132,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Set_Cover/7132_Weighted_Set_Cover.md"
+    },
+    {
+      "id": 7133,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Set_Cover/7133_Approximation_Algorithms_for_Set_Cover.md"
+    },
+    {
+      "id": 7141,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Stock_Buy_and_Sell/7141_Best_Time_to_Buy_and_Sell_Stock.md"
+    },
+    {
+      "id": 7142,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Stock_Buy_and_Sell/7142_Best_Time_to_Buy_and_Sell_Stock_II.md"
+    },
+    {
+      "id": 7143,
+      "path": "Algorithms_and_Data_Structures/Greedy_Algorithms/Stock_Buy_and_Sell/7143_Best_Time_to_Buy_and_Sell_Stock_with_Cooldown.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Mathematical_Algorithms/Catalan_Number.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Mathematical_Algorithms/Euclidean_Algorithm.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Mathematical_Algorithms/Fast_Exponentiation.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Mathematical_Algorithms/Matrix_Exponentiation.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Mathematical_Algorithms/Prime_Numbers.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Python_Internals/Bytecode_Operations.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Python_Internals/GIL_(Global_Interpreter_Lock).md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Python_Internals/Memory_Management.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Searching/Binary_Search.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Searching/Exponential_Search.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Searching/Interpolation_Search.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Searching/Jump_Search.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Searching/Linear_Search.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Searching/Sublist_Search.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Sorting/Bubble_Sort.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Sorting/Bucket_Sort.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Sorting/Counting_Sort.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Sorting/Heap_Sort.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Sorting/Insertion_Sort.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Sorting/Merge_Sort.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Sorting/Quick_Sort.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Sorting/Radix_Sort.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Sorting/Selection_Sort.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Sorting/Shell_Sort.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/String_Algorithms/Aho-Corasick_Algorithm.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/String_Algorithms/KMP_Algorithm.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/String_Algorithms/Manacher's_Algorithm.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/String_Algorithms/Rabin-Karp_Algorithm.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/String_Algorithms/Suffix_Array_and_LCP.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/String_Algorithms/Z_Algorithm.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Tree_Algorithms/AVL_Tree.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Tree_Algorithms/B-Tree.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Tree_Algorithms/Binary_Search_Tree.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Tree_Algorithms/Binary_Tree_Traversals.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Tree_Algorithms/Fenwick_Tree.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Tree_Algorithms/Red-Black_Tree.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Tree_Algorithms/Segment_Tree.md"
+    },
+    {
+      "id": null,
+      "path": "Algorithms_and_Data_Structures/Tree_Algorithms/Trie.md"
+    },
+    {
+      "id": null,
+      "path": "Basics/Control_Flow/Conditional_Statements.md"
+    },
+    {
+      "id": null,
+      "path": "Basics/Control_Flow/Loops.md"
+    },
+    {
+      "id": null,
+      "path": "Basics/Functions/Decorators.md"
+    },
+    {
+      "id": null,
+      "path": "Basics/Functions/Function_Basics.md"
+    },
+    {
+      "id": null,
+      "path": "Basics/Functions/Lambda_Functions.md"
+    },
+    {
+      "id": null,
+      "path": "Basics/Modules_and_Packages/Creating_Modules.md"
+    },
+    {
+      "id": null,
+      "path": "Basics/Modules_and_Packages/Importing_Modules.md"
+    },
+    {
+      "id": null,
+      "path": "Basics/Modules_and_Packages/Package_Structure.md"
+    },
+    {
+      "id": null,
+      "path": "Basics/Variables_and_Data_Types.md"
+    },
+    {
+      "id": null,
+      "path": "Best_Practices_and_Code_Style/Code_Documentation/Docstrings.md"
+    },
+    {
+      "id": null,
+      "path": "Best_Practices_and_Code_Style/Code_Documentation/Type_Annotations.md"
+    },
+    {
+      "id": null,
+      "path": "Best_Practices_and_Code_Style/Code_Organization/Module_Design.md"
+    },
+    {
+      "id": null,
+      "path": "Best_Practices_and_Code_Style/Code_Organization/Project_Structure.md"
+    },
+    {
+      "id": null,
+      "path": "Best_Practices_and_Code_Style/PEP8_Guidelines.md"
+    },
+    {
+      "id": null,
+      "path": "Concurrency/Asyncio/Asynchronous_Context_Managers.md"
+    },
+    {
+      "id": null,
+      "path": "Concurrency/Asyncio/Event_Loops.md"
+    },
+    {
+      "id": null,
+      "path": "Concurrency/Concurrent_Futures/ProcessPoolExecutor.md"
+    },
+    {
+      "id": null,
+      "path": "Concurrency/Concurrent_Futures/ThreadPoolExecutor.md"
+    },
+    {
+      "id": null,
+      "path": "Concurrency/Mixing_Concurrency_Models/Asyncio_and_Multiprocessing.md"
+    },
+    {
+      "id": null,
+      "path": "Concurrency/Mixing_Concurrency_Models/Best_Practices_for_Mixed_Concurrency.md"
+    },
+    {
+      "id": null,
+      "path": "Concurrency/Mixing_Concurrency_Models/Combining_Threading_with_Asyncio.md"
+    },
+    {
+      "id": null,
+      "path": "Concurrency/Mixing_Concurrency_Models/Mixing_Threading_and_Multiprocessing.md"
+    },
+    {
+      "id": null,
+      "path": "Concurrency/Multiprocessing/Inter-Process_Communication.md"
+    },
+    {
+      "id": null,
+      "path": "Concurrency/Multiprocessing/Process_Creation.md"
+    },
+    {
+      "id": null,
+      "path": "Concurrency/Threading/Thread_Basics.md"
+    },
+    {
+      "id": null,
+      "path": "Concurrency/Threading/Thread_Synchronization.md"
+    },
+    {
+      "id": 5110,
+      "path": "Data_Science_and_Machine_Learning/Deep_Learning/5110_Advanced_Transfer_Learning.md"
+    },
+    {
+      "id": 511,
+      "path": "Data_Science_and_Machine_Learning/Deep_Learning/511_Introduction_to_PyTorch.md"
+    },
+    {
+      "id": 512,
+      "path": "Data_Science_and_Machine_Learning/Deep_Learning/512_Introduction_to_TensorFlow.md"
+    },
+    {
+      "id": 513,
+      "path": "Data_Science_and_Machine_Learning/Deep_Learning/513_Model_Optimization.md"
+    },
+    {
+      "id": 514,
+      "path": "Data_Science_and_Machine_Learning/Deep_Learning/514_Model_Training.md"
+    },
+    {
+      "id": 515,
+      "path": "Data_Science_and_Machine_Learning/Deep_Learning/515_Transfer_Learning.md"
+    },
+    {
+      "id": 516,
+      "path": "Data_Science_and_Machine_Learning/Deep_Learning/516_Introduction_to_PyTorch.md"
+    },
+    {
+      "id": 517,
+      "path": "Data_Science_and_Machine_Learning/Deep_Learning/517_Introduction_to_TensorFlow.md"
+    },
+    {
+      "id": 518,
+      "path": "Data_Science_and_Machine_Learning/Deep_Learning/518_Advanced_Model_Optimization.md"
+    },
+    {
+      "id": 519,
+      "path": "Data_Science_and_Machine_Learning/Deep_Learning/519_Advanced_Model_Training.md"
+    },
+    {
+      "id": 521,
+      "path": "Data_Science_and_Machine_Learning/Machine_Learning_Pipelines/521_Building_End_to_End_Pipelines.md"
+    },
+    {
+      "id": 522,
+      "path": "Data_Science_and_Machine_Learning/Machine_Learning_Pipelines/522_Model_Deployment_with_FastAPI.md"
+    },
+    {
+      "id": 523,
+      "path": "Data_Science_and_Machine_Learning/Machine_Learning_Pipelines/523_Model_Deployment_with_Flask.md"
+    },
+    {
+      "id": 524,
+      "path": "Data_Science_and_Machine_Learning/Machine_Learning_Pipelines/524_Advanced_Building_End_to_End_Pipelines.md"
+    },
+    {
+      "id": 525,
+      "path": "Data_Science_and_Machine_Learning/Machine_Learning_Pipelines/525_Advanced_Model_Deployment_with_FastAPI.md"
+    },
+    {
+      "id": 526,
+      "path": "Data_Science_and_Machine_Learning/Machine_Learning_Pipelines/526_Model_Deployment_with_Flask.md"
+    },
+    {
+      "id": 531,
+      "path": "Data_Science_and_Machine_Learning/Matplotlib_and_Seaborn/531_Advanced_Visualizations.md"
+    },
+    {
+      "id": 532,
+      "path": "Data_Science_and_Machine_Learning/Matplotlib_and_Seaborn/532_Basic_Plotting.md"
+    },
+    {
+      "id": 533,
+      "path": "Data_Science_and_Machine_Learning/Matplotlib_and_Seaborn/533_Advanced_Visualizations.md"
+    },
+    {
+      "id": 534,
+      "path": "Data_Science_and_Machine_Learning/Matplotlib_and_Seaborn/534_Basic_Plotting.md"
+    },
+    {
+      "id": 541,
+      "path": "Data_Science_and_Machine_Learning/NumPy/541_Array_Operations.md"
+    },
+    {
+      "id": 542,
+      "path": "Data_Science_and_Machine_Learning/NumPy/542_Mathematical_Functions.md"
+    },
+    {
+      "id": 543,
+      "path": "Data_Science_and_Machine_Learning/NumPy/543_Array_Operations.md"
+    },
+    {
+      "id": 544,
+      "path": "Data_Science_and_Machine_Learning/NumPy/544_Mathematical_Functions.md"
+    },
+    {
+      "id": 551,
+      "path": "Data_Science_and_Machine_Learning/Pandas/551_Data_Cleaning.md"
+    },
+    {
+      "id": 552,
+      "path": "Data_Science_and_Machine_Learning/Pandas/552_DataFrame_Operations.md"
+    },
+    {
+      "id": null,
+      "path": "Data_Science_and_Machine_Learning/Pandas/DataFrame_Operations.md"
+    },
+    {
+      "id": null,
+      "path": "Data_Science_and_Machine_Learning/Pandas/Data_Cleaning.md"
+    },
+    {
+      "id": 561,
+      "path": "Data_Science_and_Machine_Learning/Scikit-learn/561_Model_Evaluation.md"
+    },
+    {
+      "id": 562,
+      "path": "Data_Science_and_Machine_Learning/Scikit-learn/562_Model_Selection.md"
+    },
+    {
+      "id": 563,
+      "path": "Data_Science_and_Machine_Learning/Scikit-learn/563_Preprocessing.md"
+    },
+    {
+      "id": 564,
+      "path": "Data_Science_and_Machine_Learning/Scikit-learn/564_Supervised_Learning.md"
+    },
+    {
+      "id": 565,
+      "path": "Data_Science_and_Machine_Learning/Scikit-learn/565_Unsupervised_Learning.md"
+    },
+    {
+      "id": 611,
+      "path": "Database_Operations/NoSQL_Databases/611_MongoDB_with_PyMongo.md"
+    },
+    {
+      "id": 612,
+      "path": "Database_Operations/NoSQL_Databases/612_Redis_with_redis-py.md"
+    },
+    {
+      "id": 621,
+      "path": "Database_Operations/ORM/621_Django_ORM.md"
+    },
+    {
+      "id": 622,
+      "path": "Database_Operations/ORM/622_SQLAlchemy.md"
+    },
+    {
+      "id": 631,
+      "path": "Database_Operations/SQL_Databases/631_PostgreSQL_with_Psycopg2.md"
+    },
+    {
+      "id": 632,
+      "path": "Database_Operations/SQL_Databases/632_SQLite3.md"
+    },
+    {
+      "id": null,
+      "path": "Deployment_and_DevOps/CI_CD/GitHub_Actions.md"
+    },
+    {
+      "id": null,
+      "path": "Deployment_and_DevOps/CI_CD/Jenkins_for_Python.md"
+    },
+    {
+      "id": null,
+      "path": "Deployment_and_DevOps/Containerization/Docker_Compose.md"
+    },
+    {
+      "id": null,
+      "path": "Deployment_and_DevOps/Containerization/Docker_for_Python.md"
+    },
+    {
+      "id": null,
+      "path": "Deployment_and_DevOps/Orchestration_and_Automation/Ansible_for_Automation.md"
+    },
+    {
+      "id": null,
+      "path": "Deployment_and_DevOps/Orchestration_and_Automation/Kubernetes_Basics.md"
+    },
+    {
+      "id": null,
+      "path": "Deployment_and_DevOps/Orchestration_and_Automation/Terraform_Basics.md"
+    },
+    {
+      "id": null,
+      "path": "Deployment_and_DevOps/Package_Management/Pip.md"
+    },
+    {
+      "id": null,
+      "path": "Deployment_and_DevOps/Package_Management/Poetry.md"
+    },
+    {
+      "id": null,
+      "path": "Deployment_and_DevOps/Serverless/AWS_Lambda_Basics.md"
+    },
+    {
+      "id": null,
+      "path": "Deployment_and_DevOps/Serverless/Azure_Functions.md"
+    },
+    {
+      "id": null,
+      "path": "Deployment_and_DevOps/Serverless/GCP_Functions.md"
+    },
+    {
+      "id": null,
+      "path": "Deployment_and_DevOps/Virtual_Environments/Venv.md"
+    },
+    {
+      "id": null,
+      "path": "Deployment_and_DevOps/Virtual_Environments/Virtualenv.md"
+    },
+    {
+      "id": null,
+      "path": "Design_Patterns/Behavioral_Patterns/Observer.md"
+    },
+    {
+      "id": null,
+      "path": "Design_Patterns/Behavioral_Patterns/Strategy.md"
+    },
+    {
+      "id": null,
+      "path": "Design_Patterns/Creational_Patterns/Factory_Method.md"
+    },
+    {
+      "id": null,
+      "path": "Design_Patterns/Creational_Patterns/Singleton.md"
+    },
+    {
+      "id": null,
+      "path": "Design_Patterns/Structural_Patterns/Adapter.md"
+    },
+    {
+      "id": null,
+      "path": "Design_Patterns/Structural_Patterns/Decorator.md"
+    },
+    {
+      "id": null,
+      "path": "Exception_Handling/Context_Managers_for_Exception_Handling.md"
+    },
+    {
+      "id": null,
+      "path": "Exception_Handling/Custom_Exceptions.md"
+    },
+    {
+      "id": null,
+      "path": "Exception_Handling/Try_Except_Blocks.md"
+    },
+    {
+      "id": null,
+      "path": "File_Handling/File_IO_Operations.md"
+    },
+    {
+      "id": null,
+      "path": "File_Handling/JSON_Processing.md"
+    },
+    {
+      "id": null,
+      "path": "File_Handling/Working_with_CSV.md"
+    },
+    {
+      "id": null,
+      "path": "File_Handling/XML_Parsing.md"
+    },
+    {
+      "id": null,
+      "path": "Networking/HTTP_Requests/AIOHTTP_for_Async_Requests.md"
+    },
+    {
+      "id": null,
+      "path": "Networking/HTTP_Requests/Requests_Library.md"
+    },
+    {
+      "id": null,
+      "path": "Networking/Socket_Programming/TCP_Sockets.md"
+    },
+    {
+      "id": null,
+      "path": "Networking/Socket_Programming/UDP_Sockets.md"
+    },
+    {
+      "id": null,
+      "path": "Networking/Web_Scraping/BeautifulSoup.md"
+    },
+    {
+      "id": null,
+      "path": "Networking/Web_Scraping/Scrapy_Framework.md"
+    },
+    {
+      "id": null,
+      "path": "Object_Oriented_Programming/Abstract_Classes_and_Interfaces/ABC_Module.md"
+    },
+    {
+      "id": null,
+      "path": "Object_Oriented_Programming/Abstract_Classes_and_Interfaces/Protocols.md"
+    },
+    {
+      "id": null,
+      "path": "Object_Oriented_Programming/Classes_and_Objects/Class_Definition.md"
+    },
+    {
+      "id": null,
+      "path": "Object_Oriented_Programming/Classes_and_Objects/Instance_and_Class_Variables.md"
+    },
+    {
+      "id": null,
+      "path": "Object_Oriented_Programming/Encapsulation/Access_Modifiers.md"
+    },
+    {
+      "id": null,
+      "path": "Object_Oriented_Programming/Encapsulation/Properties.md"
+    },
+    {
+      "id": null,
+      "path": "Object_Oriented_Programming/Inheritance/Multiple_Inheritance.md"
+    },
+    {
+      "id": null,
+      "path": "Object_Oriented_Programming/Inheritance/Single_Inheritance.md"
+    },
+    {
+      "id": null,
+      "path": "Object_Oriented_Programming/Polymorphism/Method_Overriding.md"
+    },
+    {
+      "id": null,
+      "path": "Object_Oriented_Programming/Polymorphism/Operator_Overloading.md"
+    },
+    {
+      "id": null,
+      "path": "Performance_Optimization/Code_Optimization/Algorithmic_Efficiency.md"
+    },
+    {
+      "id": null,
+      "path": "Performance_Optimization/Code_Optimization/Cython_for_Speed.md"
+    },
+    {
+      "id": null,
+      "path": "Performance_Optimization/Profiling/Memory_Profiler.md"
+    },
+    {
+      "id": null,
+      "path": "Performance_Optimization/Profiling/cProfile.md"
+    },
+    {
+      "id": null,
+      "path": "Python_2_to_3_Migration/Division_Operator.md"
+    },
+    {
+      "id": null,
+      "path": "Python_2_to_3_Migration/Print_Function.md"
+    },
+    {
+      "id": null,
+      "path": "Python_2_to_3_Migration/Unicode_Strings.md"
+    },
+    {
+      "id": null,
+      "path": "Security/API_Security.md"
+    },
+    {
+      "id": null,
+      "path": "Security/Authentication_and_Authorization.md"
+    },
+    {
+      "id": null,
+      "path": "Security/Cryptography/Encryption_with_Cryptography.md"
+    },
+    {
+      "id": null,
+      "path": "Security/Cryptography/Hashing_with_Hashlib.md"
+    },
+    {
+      "id": null,
+      "path": "Security/Input_Validation.md"
+    },
+    {
+      "id": null,
+      "path": "Security/OWASP_Best_Practices.md"
+    },
+    {
+      "id": null,
+      "path": "Security/Web_Security/CSRF_Protection.md"
+    },
+    {
+      "id": null,
+      "path": "Security/Web_Security/XSS_Prevention.md"
+    },
+    {
+      "id": null,
+      "path": "Standard_Library_Deep_Dive/Collections_Module/Counter.md"
+    },
+    {
+      "id": null,
+      "path": "Standard_Library_Deep_Dive/Collections_Module/DefaultDict.md"
+    },
+    {
+      "id": null,
+      "path": "Standard_Library_Deep_Dive/Collections_Module/Deque.md"
+    },
+    {
+      "id": null,
+      "path": "Standard_Library_Deep_Dive/Concurrent_Module/Executors.md"
+    },
+    {
+      "id": null,
+      "path": "Standard_Library_Deep_Dive/Concurrent_Module/Futures.md"
+    },
+    {
+      "id": null,
+      "path": "Standard_Library_Deep_Dive/Functools_Module/LRU_Cache.md"
+    },
+    {
+      "id": null,
+      "path": "Standard_Library_Deep_Dive/Functools_Module/Partial.md"
+    },
+    {
+      "id": null,
+      "path": "Standard_Library_Deep_Dive/Itertools_Module/Combinations.md"
+    },
+    {
+      "id": null,
+      "path": "Standard_Library_Deep_Dive/Itertools_Module/Permutations.md"
+    },
+    {
+      "id": null,
+      "path": "Standard_Library_Deep_Dive/Itertools_Module/Product.md"
+    },
+    {
+      "id": null,
+      "path": "Standard_Library_Deep_Dive/Typing_Module/Generic_Types.md"
+    },
+    {
+      "id": null,
+      "path": "Standard_Library_Deep_Dive/Typing_Module/Type_Hints.md"
+    },
+    {
+      "id": null,
+      "path": "Testing/Mocking/Pytest_monkeypatch.md"
+    },
+    {
+      "id": null,
+      "path": "Testing/Mocking/Unittest_mock.md"
+    },
+    {
+      "id": null,
+      "path": "Testing/Test_Coverage/Coverage_py.md"
+    },
+    {
+      "id": null,
+      "path": "Testing/Unit_Testing/Pytest.md"
+    },
+    {
+      "id": null,
+      "path": "Testing/Unit_Testing/Unittest_Framework.md"
+    },
+    {
+      "id": null,
+      "path": "Web_Development/Django/Django_REST_Framework.md"
+    },
+    {
+      "id": null,
+      "path": "Web_Development/Django/Models.md"
+    },
+    {
+      "id": null,
+      "path": "Web_Development/Django/Views.md"
+    },
+    {
+      "id": null,
+      "path": "Web_Development/FastAPI/Dependency_Injection.md"
+    },
+    {
+      "id": null,
+      "path": "Web_Development/FastAPI/Path_Operations.md"
+    },
+    {
+      "id": null,
+      "path": "Web_Development/Flask/Flask_RESTful.md"
+    },
+    {
+      "id": null,
+      "path": "Web_Development/Flask/Routing.md"
+    },
+    {
+      "id": null,
+      "path": "Web_Development/Flask/Templates.md"
+    }
+  ]
+}

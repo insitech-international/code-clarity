@@ -1,0 +1,17 @@
+Advanced_Data_Structures
+Backtracking
+Bit_Manipulation
+Computational_Geometry
+Data_Structures
+Divide_and_Conquer
+Dynamic_Programming
+Functional_Programming
+Graph_Algorithms
+Greedy_Algorithms
+Mathematical_Algorithms
+Python_Internals
+Searching
+Sorting
+String_Algorithms
+Tree_Algorithms
+directory_listing.txt

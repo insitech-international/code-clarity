@@ -1,0 +1,4 @@
+Ansible_for_Automation.md
+Kubernetes_Basics.md
+Terraform_Basics.md
+directory_listing.txt
